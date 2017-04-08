@@ -1,2 +1,4 @@
-# bpgallery
-A Joomla gallery component.
+# BP Gallery
+A development branch of Joomla! gallery component.
+
+
