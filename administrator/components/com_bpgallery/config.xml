@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    
+	<fieldset
+		name="component"
+		label="COM_BPGALLERY_FIELDSET_CONFIG_COMPONENT_LABEL"
+		description="COM_BPGALLERY_FIELDSET_CONFIG_COMPONENT_DESC"
+		>
+
+		
+	</fieldset>
+    
+	<fieldset
+		name="category"
+		label="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_LABEL"
+		description="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_DESC"
+		>
+
+		
+	</fieldset>
+    
+    <fieldset
+		name="image"
+		label="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_LABEL"
+		description="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_DESC"
+		>
+
+		
+	</fieldset>
+
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC"
+		>
+
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			filter="rules"
+			validate="rules"
+			component="com_bpgallery"
+			section="component"
+		/>
+	</fieldset>
+</config>

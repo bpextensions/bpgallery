@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.1" method="upgrade">
+	<name>com_bpgallery</name>
+	<author>Artur Stępień</author>
+	<creationDate>April 2017</creationDate>
+	<copyright>(C) 2017 BestProject. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later; see LICENSE.txt</license>
+	<authorEmail>artur.stepien@bestproject.pl</authorEmail>
+	<authorUrl>www.bestproject.pl</authorUrl>
+	<version>1.0.0</version>
+	<description>COM_BPGALLERY_XML_DESCRIPTION</description>
+
+	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+    
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<files folder="site">
+		<folder>controllers</folder>
+		<folder>assets</folder>
+		<folder>views</folder>
+		<folder>helpers</folder>
+		<folder>models</folder>
+		<filename>bpgallery.php</filename>
+		<filename>controller.php</filename>
+		<filename>router.php</filename>
+	</files>
+    
+    <languages folder="site">
+        <language tag="en-GB">language/en-GB.com_bpgallery.ini</language>
+        <language tag="en-GB">language/en-GB.com_bpgallery.sys.ini</language>
+    </languages>
+    
+	<administration>
+        
+		<files folder="admin">
+			<filename>access.xml</filename>
+			<filename>bpgallery.php</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>models</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+		</files>
+        
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB.com_bpgallery.ini</language>
+			<language tag="en-GB">language/en-GB.com_bpgallery.sys.ini</language>
+		</languages>
+        
+		<menu img="class:bpgallery">com_bpgallery</menu>
+		<submenu>
+			<!--
+				Note that all & must be escaped to &amp; for the file to be valid
+				XML and be parsed by the installer
+			-->
+			<menu
+				link="option=com_bpgallery"
+				view="images"
+				img="class:images"
+				alt="BPGallery/Images"
+				>
+				com_bpgallery_images
+			</menu>
+			<menu
+				link="option=com_categories&amp;extension=com_bpgallery"
+				view="categories"
+				img="class:bpgallery-cat"
+				alt="BPGallery/Categories"
+				>
+				com_bpgallery_categories
+			</menu>
+		</submenu>
+        
+	</administration>
+</extension>
