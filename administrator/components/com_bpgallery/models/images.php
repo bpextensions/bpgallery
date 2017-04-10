@@ -53,8 +53,6 @@ class BPGalleryModelImages extends JModelList
 	 * Method to get the maximum ordering value for each category.
 	 *
 	 * @return  array
-	 *
-	 * @since   1.6
 	 */
 	public function &getCategoryOrders()
 	{
@@ -226,7 +224,7 @@ class BPGalleryModelImages extends JModelList
 	 *
 	 * @return  void
 	 */
-	protected function populateState($ordering = 'a.name', $direction = 'asc')
+	protected function populateState($ordering = 'a.id', $direction = 'desc')
 	{
 		// Load the filter state.
 		$this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string'));
