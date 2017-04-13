@@ -29,6 +29,8 @@ class BPGalleryController extends JControllerLegacy
 	{
 
 		$view   = $this->input->get('view', 'images');
+		$this->input->set('view', $view);
+		
 		$layout = $this->input->get('layout', 'default');
 		$id     = $this->input->getInt('id');
 

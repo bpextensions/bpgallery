@@ -4,8 +4,8 @@
 		<field
 			name="search"
 			type="text"
-			label="COM_BPGALLERY_BANNERS_FILTER_SEARCH_LABEL"
-			description="COM_BPGALLERY_BANNERS_FILTER_SEARCH_DESC"
+			label="COM_BPGALLERY_IMAGES_FILTER_SEARCH_LABEL"
+			description="COM_BPGALLERY_IMAGES_FILTER_SEARCH_DESC"
 			hint="JSEARCH_FILTER"
 		/>
 
