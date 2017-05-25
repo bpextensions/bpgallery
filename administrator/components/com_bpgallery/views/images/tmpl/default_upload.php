@@ -11,6 +11,7 @@ $this->document->addScriptDeclaration('
 		$(document).BPGalleryUpload({
             text_intro:"'.JText::_('COM_BPGALLERY_IMAGES_UPLOAD_TIP').'",
             text_browse:"'.JText::_('COM_BPGALLERY_IMAGES_BROWSE_BUTTON').'",
+            upload_url":"'.JRoute::_('index.php?option=com_bpgallery&task=image.upload&format=json').'",
         });
 	});
 ');
