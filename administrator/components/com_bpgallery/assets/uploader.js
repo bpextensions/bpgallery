@@ -38,7 +38,7 @@
             // Create contents
             var $contents = $(
                 '<i class="icon-upload"></i><p>'+this.settings.text_intro+'</p>'+
-                '<button class="btn" id="bpgallery_upload_field_button"><i class="icon-search"></i> '+this.settings.text_browse+'</button>'
+                '<button class="btn btn-success" id="bpgallery_upload_field_button"><i class="icon-search"></i> '+this.settings.text_browse+'</button>'
             );
     
             

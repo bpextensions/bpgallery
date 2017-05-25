@@ -11,7 +11,7 @@ $this->document->addScriptDeclaration('
 		$(document).BPGalleryUpload({
             text_intro:"'.JText::_('COM_BPGALLERY_IMAGES_UPLOAD_TIP').'",
             text_browse:"'.JText::_('COM_BPGALLERY_IMAGES_BROWSE_BUTTON').'",
-            upload_url":"'.JRoute::_('index.php?option=com_bpgallery&task=image.upload&format=json').'",
+            upload_url:"'.JRoute::_('index.php?option=com_bpgallery&task=image.upload&format=json').'"
         });
 	});
 ');
@@ -28,7 +28,7 @@ $this->document->addStyleSheetVersion('/administrator/components/com_bpgallery/a
         <div id="bpgallery_upload_container">
             <i class="icon-upload"></i>
             <p><?php echo JText::_('COM_BPGALLERY_IMAGES_UPLOAD_TIP') ?></p>
-            <p><button class="btn" id="bpgallery_upload_field_button"><i class="icon-search"></i> <?php echo JText::_('COM_BPGALLERY_IMAGES_BROWSE_BUTTON') ?></button></p>
+            <p><button class="btn btn-success" id="bpgallery_upload_field_button"><i class="icon-search"></i> <?php echo JText::_('COM_BPGALLERY_IMAGES_BROWSE_BUTTON') ?></button></p>
         </div>
     </div>
     <div class="modal-footer">
