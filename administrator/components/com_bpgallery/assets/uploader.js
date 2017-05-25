@@ -8,7 +8,8 @@
         // Holds upload settings
         this.settings = $.extend({
             'text_intro':'Drag &amp; drop files on this box or select them using <strong>Browse</strong> button below.',
-            'text_browse':'Browse'
+            'text_browse':'Browse',
+            'upload_url':'index.php?option=com_bpgallery&task=image.upload&format=json'
         }, settings);
 
         // Upload files list (queue)
@@ -257,10 +258,9 @@
          */
         this.uploadAction = function() {
             
-            console.log('SHOULD NOT Upload.');
             // If there is anything to upload
             if( this.queue.length>0 ) {
-                console.log('Uploading.');
+                
             }
         };
 
