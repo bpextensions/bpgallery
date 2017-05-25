@@ -40,7 +40,6 @@
                 '<i class="icon-upload"></i><p>'+this.settings.text_intro+'</p>'+
                 '<button class="btn btn-success" id="bpgallery_upload_field_button"><i class="icon-search"></i> '+this.settings.text_browse+'</button>'
             );
-    
             
             // Get drop container element
             var $container = $('#bpgallery_upload_container');
@@ -78,6 +77,31 @@
 
             return $list;
         };
+        
+        /**
+         * Check if selected file exists in files queue.
+         * 
+         * @param {File}    file    File object to search for.
+         * @returns {Boolean}
+         */
+        this.fileExistsInQueue = function(file){
+                        
+            // Check queue list for a selected file
+            for(var i=0,ic=this.queue.length; i<ic; i++) {
+                
+                // Check if file exists
+                if ( 
+                    this.queue[i].name===file.name &&
+                    this.queue[i].size===file.size &&
+                    this.queue[i].type===file.type &&
+                    this.queue[i].lastModified===file.lastModified
+                ) {
+                    return i;
+                }
+            }
+            
+            return false;
+        };
 
         /**
          * Add new files to the list
@@ -87,45 +111,67 @@
          */
         this.addFiles = function (files) {
             
-            // Enable upload button
-            $('#bpgallery_upload_form .modal-footer .btn.btn-primary').removeAttr('disabled');
-            
-            // Add files to upload queue
-            this.queue.push.apply(this.queue, Array.prototype.slice.call(files));
-            
-            // Update files counter
-            $('#uploadFormLabel small').text('('+this.queue.length+')');
-
             // Make sure we have the queue table
             var $list = this.prepareFilesList();
+            
+            files = Array.from(files);
 
-            // Create and append row in queue table for each file
-            for (var i = 0, file = files[0]; i < files.length; i++, file = files[i]) {
-
-                // Create a row
-                var $row = $('<li class="thumbnail pull-left">\n\
-                    <span class="image"></span>\n\
-                    <span class="name">'+file.name+'</span>\n\
-                    <a href="#" class="btn-remove"><i class="icon-trash"></i></a>\n\
-                </li>');
-
-                // Prepare file remove action
-                $row.find('.btn-remove').click($.proxy(this.removeFileAction, this));
+            // Check each file for adding
+            for(var i=0,ic=files.length,file=files[0]; i<ic; i++,file=files[i]) {
                 
-                // Get preview element
-                file.$preview = $row.find('.image');
+                // Check for this file position in queue
+                var position = this.fileExistsInQueue(file);
                 
-                // Load preview image
-                file.$preview.reader = new FileReader();
-                $(file.$preview.reader).on('load',$.proxy(function (e) {
-                    this.css('background-image', 'url('+e.target.result+')');
-                }, file.$preview));
-                file.$preview.reader.readAsDataURL(file);
+                // If file exists in queue
+                if( position!==false ) {
+                    
+                    // Remove this file from files to add and update index+counter
+                   files.splice(position,1);
+                   i--;
+                   ic--;
+                   
+                // File is new in the queue
+                } else {
+                    
+                    // Add file to the queue array
+                    this.queue.push(file);
+                    
+                    // Create a row
+                    var $row = $('<li class="thumbnail pull-left">\n\
+                        <span class="image disabled"></span>\n\
+                        <span class="name">'+file.name+'</span>\n\
+                        <span class="progress"><span></span></span>\n\
+                        <a href="#" class="btn-remove"><i class="icon-trash"></i></a>\n\
+                    </li>');
+                    
+                    // Prepare file remove action
+                    $row.find('.btn-remove').click($.proxy(this.removeFileAction, this));
+                    
+                    // Get preview element
+                    file.$preview = $row.find('.image');
+                    
+                    // Load preview image
+                    file.$preview.reader = new FileReader();
+                    $(file.$preview.reader).on('load',$.proxy(function (e) {
+                        this.css('background-image', 'url('+e.target.result+')');
+                        this.removeClass('disabled');
+                    }, file.$preview));
+                    file.$preview.reader.readAsDataURL(file);
 
-                // Append a row
-                $list.append($row);
+                    // Append a row
+                    $list.append($row);
+                }
             }
-
+            
+            // There are files in the queue
+            if( this.queue.length>0 ) {
+                
+                // Enable upload button
+                $('#bpgallery_upload_form .modal-footer .btn.btn-primary').removeAttr('disabled');
+                
+                // Update files counter
+                $('#uploadFormLabel small').text('('+this.queue.length+')');
+            }
         };
 
         /**
