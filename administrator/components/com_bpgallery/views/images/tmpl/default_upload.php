@@ -43,7 +43,7 @@ $this->document->addStyleSheetVersion('/administrator/components/com_bpgallery/a
         <input name="bpgallery_upload_field_input" type="file" id="bpgallery_upload_field_input" multiple class="hidden"/>
         <div class="btn-group">
             <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo JText::_('JCANCEL') ?></button>
-            <button class="btn btn-primary"><i class="icon-upload"></i> <?php echo JText::_('COM_BPGALLERY_IMAGES_UPLOAD_BUTTON') ?></button>
+            <button class="btn btn-primary" disabled><i class="icon-upload"></i> <?php echo JText::_('COM_BPGALLERY_IMAGES_UPLOAD_BUTTON') ?></button>
         </div>
     </div>
 </div>

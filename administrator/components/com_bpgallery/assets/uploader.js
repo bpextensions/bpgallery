@@ -19,11 +19,14 @@
          */
         this.init = function () {
 
-            // Setup files drag & drop action
+            // Bind files drag & drop actions
             this.setupDragAndDrop();
 
-            // Setup browse button action
+            // Bind browse button action
             this.setupBrowseButtonAction();
+            
+            // Bind upload button action
+            this.setupUploadButtonAction();
         };
 
         /**
@@ -83,6 +86,8 @@
          */
         this.addFiles = function (files) {
             
+            // Enable upload button
+            $('#bpgallery_upload_form .modal-footer .btn.btn-primary').removeAttr('disabled');
             
             // Add files to upload queue
             this.queue.push.apply(this.queue, Array.prototype.slice.call(files));
@@ -151,6 +156,9 @@
                 
                 // Remove images counter
                 $('#uploadFormLabel small').text('');
+                
+                // Disable upload button
+                $('#bpgallery_upload_form .modal-footer .btn.btn-primary').attr('disabled','');
             }
         };
 
@@ -235,6 +243,25 @@
                 this.addFiles(e.target.files);
 
             }, this));
+        };
+        
+        /**
+         * Binds upload button action.
+         */
+        this.setupUploadButtonAction = function() {
+            $('#bpgallery_upload_form .modal-footer .btn.btn-primary').click($.proxy(this.uploadAction, this));
+        };
+        
+        /**
+         * Performs Java Script upload.
+         */
+        this.uploadAction = function() {
+            
+            console.log('SHOULD NOT Upload.');
+            // If there is anything to upload
+            if( this.queue.length>0 ) {
+                console.log('Uploading.');
+            }
         };
 
         // Initialize uploader
