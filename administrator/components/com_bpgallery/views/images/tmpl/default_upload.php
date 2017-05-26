@@ -33,12 +33,13 @@ $this->document->addStyleSheetVersion('/administrator/components/com_bpgallery/a
     </div>
     <div class="modal-footer">
         <?php
-        $field = new JFormFieldCategory();
-        $xml   = new SimpleXMLElement('<field name="category" type="category" extension="com_bpgallery"><option value="">JOPTION_SELECT_CATEGORY</option></field>');
+        JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR.'/components/com_categories/models/fields/modal/category.php');
+        $field = new JFormFieldModal_Category();
+        $xml   = new SimpleXMLElement('<field name="category" type="modal_category" extension="com_bpgallery" new="true" edit="true" select="true" />');
         $field->setup($xml, '');
         $field->setValue($this->state->get('filter.category_id',''));
         ?>
-        <div class="pull-left">
+        <div class="pull-left category-selection">
             <?php echo $field->renderField(array('hiddenLabel' => true)) ?>
         </div>
         <input name="bpgallery_upload_field_input" type="file" id="bpgallery_upload_field_input" multiple class="hidden"/>

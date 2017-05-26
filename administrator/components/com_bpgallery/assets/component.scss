@@ -9,12 +9,6 @@
     p {
         text-align:center;
     }
-/*    &.active,&.hover {
-        border-color:#1C66A6;
-        i {
-            color:#1C66A6;
-        }
-    }*/
     &.hasFiles {
         border:0;border-radius:0;padding:0;margin:0px;
     }
@@ -84,7 +78,7 @@
             }
             .progress {
                 position:absolute;bottom:10px;left:0;margin:0 10px;background:rgba(0,0,0,0.8);
-                border-radius:5px;height:5px;z-index:9999;opacity:0;
+                border-radius:5px;height:5px;z-index:99991;opacity:0;
                 span {
                     background:#46A546;width:0%;border-radius:5px;height:5px;
                     display:block;
@@ -93,42 +87,26 @@
         }
     }
     .modal-footer {
-        .control-group {
-            margin:0;
-            .chzn-container {
-                text-align:left !important;
-                .chzn-single {
-                    background-color: #e6e6e6;
-                    background-image: linear-gradient(to bottom,#fff,#e6e6e6);
-                    background-repeat: repeat-x;
-                    text-shadow: 0 1px 1px rgba(255,255,255,0.75);
-                    border: 1px solid #bbb;padding: 4px 12px;box-shadow:0;height:auto;
-                    line-height:18px;
-                    b {
-                        /*background-position:0 5px;*/
-                        &:after {
-                            position:relative;top:5px;
+        .category-selection {
+            &>.control-group {
+                margin:0;
+                &>.controls {
+                    &>.input-append {
+                        margin:0;
+                        &>.btn {
+                            border-radius:0;margin:0 0 0 -1px;
+                            &:last-child {
+                                border-radius:0 3px 3px 0;
+                            }
                         }
-                    }
-                    &:hover {
-                        background-color: #e6e6e6;
-                    }
-                }
-                
-                &.chzn-with-drop {
-                    .chzn-single {
-                        background:#fff !important;box-shadow:none;
-                    }
-                }
-                &.chzn-container-active {
-                    .chzn-single {
-                        background:#fff !important;box-shadow:none;
                     }
                 }
             }
+            .modal {
+                z-index:999999;
+            }
         }
     }
-    /*max-width:800px;*/
 }
 #adminForm {
     .thumbnail {
