@@ -1,6 +1,8 @@
 <?php
 defined('_JEXEC') or die;
 
+JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR.'/components/com_categories/models/fields/modal/category.php');
+
 $this->document->addScriptVersion(
     '/administrator/components/com_bpgallery/assets/uploader.js',
     filemtime(JPATH_COMPONENT.'/assets/uploader.js'
@@ -33,14 +35,13 @@ $this->document->addStyleSheetVersion('/administrator/components/com_bpgallery/a
     </div>
     <div class="modal-footer">
         <?php
-        JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR.'/components/com_categories/models/fields/modal/category.php');
         $field = new JFormFieldModal_Category();
-        $xml   = new SimpleXMLElement('<field name="category" type="modal_category" extension="com_bpgallery" new="true" edit="true" select="true" />');
+        $xml   = new SimpleXMLElement('<field name="category" type="modal_category" extension="com_bpgallery" new="true" select="true" />');
         $field->setup($xml, '');
         $field->setValue($this->state->get('filter.category_id',''));
         ?>
         <div class="pull-left category-selection">
-            <?php echo $field->renderField(array('hiddenLabel' => true)) ?>
+            <?php echo str_ireplace('type="hidden"','type="text" class="hidden"',$field->renderField(array('hiddenLabel' => true))) ?>
         </div>
         <input name="bpgallery_upload_field_input" type="file" id="bpgallery_upload_field_input" multiple class="hidden"/>
         <div class="btn-group">

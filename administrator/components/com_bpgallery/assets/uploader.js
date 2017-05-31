@@ -28,6 +28,9 @@
             
             // Bind upload button action
             this.setupUploadButtonAction();
+            
+            // Category selection action
+            this.bindCategorySelectAction();
         };
 
         /**
@@ -166,8 +169,8 @@
             // There are files in the queue
             if( this.queue.length>0 ) {
                 
-                // Enable upload button
-                $('#bpgallery_upload_form .modal-footer .btn.btn-primary').removeAttr('disabled');
+                // We have files so check if we can enable upload button
+                this.canUpload();
                 
                 // Update files counter
                 $('#uploadFormLabel small').text('('+this.queue.length+')');
@@ -204,8 +207,8 @@
                 // Remove images counter
                 $('#uploadFormLabel small').text('');
                 
-                // Disable upload button
-                $('#bpgallery_upload_form .modal-footer .btn.btn-primary').attr('disabled','');
+                // We have no files so force script to check upload possibility
+                this.canUpload();
             }
         };
 
@@ -300,14 +303,148 @@
         };
         
         /**
+         * Check if user can perform upload action (we have files and category selected).
+         * 
+         * @returns {boolean}
+         */
+        this.canUpload = function(event) {
+
+            var category_id = $('#category_id').val();
+            var $btn = $('#bpgallery_upload_form .modal-footer .btn.btn-primary');
+            
+            // If user did not selected files or category
+            if( this.queue.length<1 || (category_id!=='' && parseInt(category_id)<1) ) {
+                
+                // Disable upload button
+                $btn.attr('disabled','');
+                
+                return false;
+                
+            // If files and category are selected
+            } else {
+                
+                // Enable upload button
+                $btn.removeAttr('disabled');
+                
+                return true;
+                
+            }
+        };
+        
+        /**
          * Performs Java Script upload.
          */
         this.uploadAction = function() {
             
             // If there is anything to upload
-            if( this.queue.length>0 ) {
+            if( this.canUpload() ) {
+                
+                
+                this.currentUploadFile = this.queue[0];
+                var category_id = $('#category_id').val();
+                
+                this.currentUploadThumbnail = $('#bpgallery_upload_container .images .thumbnail').first();
+                this.currentUploadProgressBar = this.currentUploadThumbnail.find('.progress span');
+                this.currentUploadProgressBar.parent().addClass('uploading');
+                
+                var fd = new FormData();
+                fd.append('image', this.currentUploadFile);
+
+                console.log('Performing upload of ',this.currentUploadFile.name);
+                
+                 $.ajax({
+                    // Your server script to process the upload
+                    url: 'index.php?option=com_bpgallery&task.upload&category_id='+category_id,
+                    type: 'POST',
+
+                    // Form data
+                    data: fd,
+
+                    // Tell jQuery not to process data or worry about content-type
+                    // You *must* include these options!
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    
+                    // Custom XMLHttpRequest
+                    xhr: $.proxy(function() {
+                        var myXhr = $.ajaxSettings.xhr();
+                        if (myXhr.upload) {
+                            
+                            // For handling the progress of the upload
+                            myXhr.upload.addEventListener('progress', $.proxy(function(e) {
+                                
+                                if (e.lengthComputable) {
+                                    this.currentUploadProgressBar.css({
+                                        'width': parseInt((e.loaded*100)/e.total)+'%'
+                                    });
+                                }
+                                
+                            }, this) , false);
+                        }
+                        return myXhr;
+                    }, this),
+                    
+                    success: $.proxy(function(){
+                        
+                        console.log('Done.');
+                        
+                        // Remove element
+                        var e = {
+                            target:this.currentUploadThumbnail[0]
+                        };
+                        
+                        this.removeFileAction(e);
+                        
+                        // No more images, reload the window
+                        if( this.queue.length===0 ) {
+                            window.location.href = window.location.href;
+                            
+                        // There are still images, upload next
+                        } else {
+                            this.uploadAction();
+                        }
+                        
+                        
+                    }, this)
+                });
                 
             }
+        };
+        
+        /**
+         * Bind category select actions
+         */
+        this.bindCategorySelectAction = function() {
+            
+            // Get input element
+            var $element = $('#category_id');
+            
+            // Dirty workaround for lack of onChange event on disabled/readonly/hidden fields
+            var val_old,val_new = $element.val();
+
+            // Check category id every 0.1sec
+            setInterval(function(){
+                // Get curretn field value
+                val_new = $element.val();
+                
+                // if value changed
+                if( val_old!==val_new ) {
+                    
+                    // Save new value for later
+                    val_old = val_new;
+                    
+                    // Fix field value
+                    if( val_new==='' ) $element.val('0');
+                    
+                    // Trigget change
+                    $element.trigger('change');
+                }
+            }, 100);
+            // End for workaround
+            
+            // Enable upload button if there is a category selected
+            $element.change($.proxy(this.canUpload, this));
         };
 
         // Initialize uploader

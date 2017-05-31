@@ -83,6 +83,9 @@
                     background:#46A546;width:0%;border-radius:5px;height:5px;
                     display:block;
                 }
+                &.uploading {
+                    opacity:1;
+                }
             }
         }
     }
