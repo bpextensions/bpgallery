@@ -354,7 +354,7 @@
                 
                  $.ajax({
                     // Your server script to process the upload
-                    url: 'index.php?option=com_bpgallery&task.upload&category_id='+category_id,
+                    url: 'index.php?option=com_bpgallery&task=image.upload&category_id='+category_id,
                     type: 'POST',
 
                     // Form data
