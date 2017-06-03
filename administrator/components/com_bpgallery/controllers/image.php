@@ -51,46 +51,6 @@ class BPGalleryControllerImage extends JControllerAdmin
     }
 
     /**
-     * Image upload action.
-     * 
-     * @return  string
-     */
-    public function upload()
-    {
-
-        // Do not cache the response to this, its a redirect, and mod_expires and google chrome browser bugs cache it forever!
-        $app = JFactory::getApplication();
-        $app->allowCache(false);
-
-        // Access check.
-        if (!$this->allowAdd()) {
-            $app->close(500);
-        }
-
-        // Prepare data
-        $data = $this->input->files->get('image');
-        $data['category_id'] = $this->input->getInt('category_id');
-
-        // Get application model
-        $model = $this->getModel();
-
-        // If save process succesed
-        if( $model->save($data) ) {
-
-            // Return success status code
-            $app->close(200);
-
-        // save process failed
-        } else {
-
-            // Return server error code
-            $app->close(500);
-        }
-
-        return true;
-    }
-
-    /**
      * Method override to check if you can add a new record.
      *
      * @param   array  $data  An array of input data.
@@ -113,7 +73,7 @@ class BPGalleryControllerImage extends JControllerAdmin
         }
 
         // In the absence of better information, revert to the component permissions.
-        return parent::allowAdd($data);
+        return false;
     }
 
     /**
@@ -140,6 +100,6 @@ class BPGalleryControllerImage extends JControllerAdmin
         }
 
         // Since there is no asset tracking, revert to the component permissions.
-        return parent::allowEdit($data, $key);
+        return false;
     }
 }
