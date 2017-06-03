@@ -20,11 +20,29 @@
 	</fieldset>
     
     <fieldset
-		name="image"
-		label="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_LABEL"
-		description="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_DESC"
+		name="images"
+        type="text"
+        layout="table"
+		label="COM_BPGALLERY_FIELDSET_CONFIG_IMAGES_LABEL"
+		description="COM_BPGALLERY_FIELDSET_CONFIG_IMAGES_DESC"
 		>
 
+        <field 
+            name="images_path" default="/images/gallery"
+            label="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_LABEL"
+            description="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_DESC"
+            required="true" 
+        />
+		
+        <field 
+            name="sizes" default="{'sizes1':{'width':'200','height':'200','method':'crop'},'sizes2':{'width':'1920','height':'1080','method':'fit'}}"
+            type="subform"
+            label="COM_BPGALLERY_FIELDSET_IMAGES_SIZES_LABEL"
+            description="COM_BPGALLERY_FIELDSET_IMAGES_SIZES_DESC"
+            multiple="true"
+            layout="joomla.form.field.subform.repeatable-table"
+            formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
+        />
 		
 	</fieldset>
 

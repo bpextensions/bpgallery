@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <field 
+        name="width" 
+        type="number" 
+        label="COM_BPGALLERY_FIELDSET_IMAGE_SIZE_WIDTH_LABEL"
+        description="COM_BPGALLERY_FIELDSET_IMAGE_SIZE_WIDTH_DESC"
+        required="true" filter="INT"
+    />
+    <field 
+        name="height" 
+        type="number" 
+        label="COM_BPGALLERY_FIELDSET_IMAGE_SIZE_HEIGHT_LABEL"
+        description="COM_BPGALLERY_FIELDSET_IMAGE_SIZE_HEIGHT_DESC"
+        required="true" filter="INT"
+    />
+    <field 
+        name="method"
+        type="list"
+        label="COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_LABEL"
+        description="COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_DESC"
+        required="true" filter="WORD"
+    >
+        <option value="fit">COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_FIT</option>
+        <option value="fit_width">COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_FIT_WIDTH</option>
+        <option value="fit_height">COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_FIT_HEIGHT</option>
+        <option value="crop">COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_CROP</option>
+        <option value="fill">COM_BPGALLERY_FIELDSET_IMAGE_SIZE_METHOD_FILL</option>
+    </field>
+</form>
