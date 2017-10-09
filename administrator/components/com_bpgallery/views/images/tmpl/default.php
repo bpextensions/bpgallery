@@ -77,7 +77,7 @@ if ($saveOrder)
 						$ordering  = ($listOrder == 'ordering');
 						$item->cat_link = JRoute::_('index.php?option=com_categories&extension=com_bpgallery&task=edit&type=other&cid[]=' . $item->catid);
 						$item->item_link = JRoute::_('index.php?option=com_bpgallery&task=image.edit&id=' . (int) $item->id);
-						$item->thumbnail = BPGalleryHelper::getThumbnail($item, 64, 64, BPGalleryHelper::METHOD_FILL);
+						$item->thumbnail = BPGalleryHelper::getThumbnail($item, 64, 64, BPGalleryHelper::METHOD_CROP);
 						$item->thumbnail_preview = BPGalleryHelper::getThumbnail($item, 320, 320, BPGalleryHelper::METHOD_FIT);
 						$canCreate  = $user->authorise('core.create',     'com_bpgallery.category.' . $item->catid);
 						$canEdit    = $user->authorise('core.edit',       'com_bpgallery.category.' . $item->catid);
