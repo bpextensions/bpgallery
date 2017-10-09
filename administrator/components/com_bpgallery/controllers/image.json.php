@@ -58,7 +58,7 @@ class BPGalleryControllerImage extends JControllerAdmin
 
         // Check content type
         $permitted_types = array(
-            'image/jpeg', 'image/png'
+            'image/jpeg', 'image/png', 'image/gif'
         );
         if( !in_array($file['type'], $permitted_types) ) {
             $this->close(415);
