@@ -61,7 +61,7 @@ class BPGalleryControllerImage extends JControllerAdmin
             'image/jpeg', 'image/png'
         );
         if( !in_array($file['type'], $permitted_types) ) {
-            $this->close(400);
+            $this->close(415);
         }
 
         // Prepare data
@@ -75,6 +75,7 @@ class BPGalleryControllerImage extends JControllerAdmin
         }
 
         // Get application model
+        /* @var $model BPGalleryModelImage */
         $model = $this->getModel();
 
         // Response holder
