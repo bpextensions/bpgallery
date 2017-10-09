@@ -191,7 +191,7 @@ class BPGalleryModelImage extends JModelAdmin
 
         // Prepare path
         $filename = $this->getSafeFilename($basename, $ext);
-        $path     = JPATH_ROOT.$this->images_path.'/'.$filename;
+        $path     = JPATH_ROOT.$this->images_path.'/original/'.$filename;
 
         // If uploading the file failed.
         if (!JFile::upload($data['upload_image'], $path)) {
@@ -233,7 +233,7 @@ class BPGalleryModelImage extends JModelAdmin
 
         // Prepare path for this filename
         $filename = $basename.'.'.strtolower($extension);
-        $path     = $this->images_path.'/'.$filename;
+        $path     = JPATH_ROOT.$this->images_path.'/original/'.$filename;
 
         // If path is save (no overwriting)
         if (!file_exists($path)) {
