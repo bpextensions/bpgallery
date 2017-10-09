@@ -45,6 +45,7 @@ class BPGalleryControllerImage extends JControllerAdmin
         // Do not cache the response to this, its a redirect, and mod_expires and google chrome browser bugs cache it forever!
         $app = JFactory::getApplication();
         $app->allowCache(false);
+        $debugMode = $app->isClient('administrator') OR $app->get('debug');
 
         // Set mime
         $app->mimeType = 'application/json';
@@ -61,17 +62,32 @@ class BPGalleryControllerImage extends JControllerAdmin
             'image/jpeg', 'image/png', 'image/gif'
         );
         if( !in_array($file['type'], $permitted_types) ) {
+
+            // Useful debug message
+            if( $debugMode ) {
+                echo json_encode(['error'=>JText::sprintf('COM_BPGALLERY_ERROR_UNSUPPORTED_FILE_S', $file['type'])]);
+            }
+
             $this->close(415);
         }
 
         // Prepare data
-        $data = array('category_id' => $this->input->getInt('category_id'));
-        $data['upload_image'] = $file['tmp_name'];
-        $data['upload_file_name'] = $file['name'];
+        $data = [
+            'catid' => $this->input->getInt('category_id'),
+            'upload_image' => $file['tmp_name'],
+            'upload_file_name' => $file['name'],
+         ];
 
         // Access check.
         if (!$this->allowAdd($data)) {
-            $app->close(550);
+
+            // Useful debug message
+            if( $debugMode ) {
+                echo json_encode(['error'=>JText::_('COM_BPGALLERY_ERROR_MISSING_ADD_PERMISSION')]);
+            }
+
+            $app->setHeader('status', 550);
+            $app->close();
         }
 
         // Get application model
@@ -84,11 +100,27 @@ class BPGalleryControllerImage extends JControllerAdmin
         // If save process succesed
         if ($model->save($data)) {
 
+            // Useful debug message
+            if( $debugMode ) {
+                $response = array_merge($response, [
+                    'result'=>JText::_('COM_BPGALLERY_SUCCESS_ADDED'),
+                    'data'=>$data
+                ]);
+            }
+
             // Send proper status code
             $app->setHeader('status', 200);
 
             // save process failed
         } else {
+
+            // Useful debug message
+            if( $debugMode ) {
+                $response = array_merge($response, [
+                    'error'=>JText::_('COM_BPGALLERY_ERROR_SAVING_IMAGE_DATA'),
+                    'data'=>$data
+                ]);
+            }
 
             // Send proper status code
             $app->setHeader('status', 500);
@@ -118,7 +150,7 @@ class BPGalleryControllerImage extends JControllerAdmin
      */
     protected function allowAdd($data = array())
     {
-        $categoryId = ArrayHelper::getValue($data, 'category_id', 0, 'int');
+        $categoryId = ArrayHelper::getValue($data, 'catid', 0, 'int');
         $allow      = null;
 
         // Check permissions for this category
