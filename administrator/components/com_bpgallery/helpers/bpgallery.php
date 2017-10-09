@@ -151,28 +151,29 @@ class BPGalleryHelper extends JHelperContent
                                         $method = self::METHOD_CROP,
                                         $url = true, $relative = true)
     {
+        $filename           = (is_object($image) ? $image->filename : basename($image));
         $relative_base_path = self::getParam('images_path', '/images/gallery');
         $absolute_base_path = JPATH_ROOT.$relative_base_path;
 
-        $original_relative = $relative_base_path.'/original/'.$image->filename;
-        $original_path     = $absolute_base_path.'/original/'.$image->filename;
+        $original_relative = $relative_base_path.'/original/'.$filename;
+        $original_path     = $absolute_base_path.'/original/'.$filename;
 
-        $directory         = md5($width.'|'.$height.'|'.$method);
+        $directory = 'thumbs_'.(int) $width.'x'.(int) $height.'-'.$method;
 
-        $output_base       = $relative_base_path.'/'.$directory;
-        $output_relative   = $output_base.'/'.$image->filename;
-        $output_absolute   = JPATH_ROOT.$output_relative;
+        $output_base     = $relative_base_path.'/'.$directory;
+        $output_relative = $output_base.'/'.$filename;
+        $output_absolute = JPATH_ROOT.$output_relative;
 
         // If thumbnail doesn't exists, create it
-        if( !file_exists($output_absolute) ) {
-            
+        if (!file_exists($output_absolute)) {
+
             $app = JFactory::getApplication();
 
             // For the administrator and application debug add error message
             $showMessage = $app->isClient('administrator') OR $app->get('debug');
 
             // If original file was not found
-            if (!file_exists($original_path)) {
+            if (!file_exists($original_path) OR !is_file($original_path)) {
 
                 // For the administrator and application debug add error message
                 if ($showMessage) {
@@ -186,7 +187,7 @@ class BPGalleryHelper extends JHelperContent
             } else {
 
                 // If output file exists, remove it
-                if( file_exists($output_absolute) ) {
+                if (file_exists($output_absolute)) {
                     JFile::delete($output_absolute);
                 }
 
@@ -194,25 +195,29 @@ class BPGalleryHelper extends JHelperContent
                 $output_image = new JImage($original_path);
 
                 // Create a proper image:
-
                 // Crop the image/fill the dimensions
                 if (in_array($method, [self::METHOD_CROP, self::METHOD_FILL])) {
-                    $output_image->resize($width, $height, false, JImage::SCALE_OUTSIDE);
-                    $output_image = $output_image->crop($width, $height, null, null, true);
+                    $output_image->resize($width, $height, false,
+                        JImage::SCALE_OUTSIDE);
+                    $output_image = $output_image->crop($width, $height, null,
+                        null, true);
 
-                // Fit the image inside box
+                    // Fit the image inside box
                 } elseif ($method === self::METHOD_FIT) {
-                    $output_image->resize($width, $height, null, JImage::SCALE_INSIDE);
+                    $output_image->resize($width, $height, null,
+                        JImage::SCALE_INSIDE);
 
-                // Fit image inside box width
+                    // Fit image inside box width
                 } elseif ($method === self::METHOD_FIT_WIDTH) {
                     $height = 1;
-                    $output_image->resize($width, $height, false, JImage::SCALE_OUTSIDE);
+                    $output_image->resize($width, $height, false,
+                        JImage::SCALE_OUTSIDE);
 
-                // Fit image inside box height
+                    // Fit image inside box height
                 } elseif ($method === self::METHOD_FIT_HEIGHT) {
                     $width = 1;
-                    $output_image->resize($width, $height, false, JImage::SCALE_OUTSIDE);
+                    $output_image->resize($width, $height, false,
+                        JImage::SCALE_OUTSIDE);
                 }
 
                 // Get image type
@@ -233,12 +238,13 @@ class BPGalleryHelper extends JHelperContent
                 }
 
                 // Ensure target directory exists
-                if( !file_exists(JPATH_ROOT.$output_base) ) {
+                if (!file_exists(JPATH_ROOT.$output_base)) {
                     mkdir(JPATH_ROOT.$output_base, 0755, true);
                 }
 
                 // If we failed to save the output image
-                if (!$output_image->toFile($output_absolute, $image_type)) {
+                $result = $output_image->toFile($output_absolute, $image_type);
+                if (!$result) {
 
                     // Show error message
                     if ($showMessage) {
@@ -249,6 +255,11 @@ class BPGalleryHelper extends JHelperContent
 
                     // Failed, return default message
                     return self::$defaultImage;
+                }
+
+                // Destroy image instance
+                if (is_object($output_image)) {
+                    unset($output_image);
                 }
             }
         }
