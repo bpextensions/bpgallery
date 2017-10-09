@@ -77,8 +77,8 @@ if ($saveOrder)
 						$ordering  = ($listOrder == 'ordering');
 						$item->cat_link = JRoute::_('index.php?option=com_categories&extension=com_bpgallery&task=edit&type=other&cid[]=' . $item->catid);
 						$item->item_link = JRoute::_('index.php?option=com_bpgallery&task=image.edit&id=' . (int) $item->id);
-						$item->thumbnail_small = BPGalleryHelper::getSmallThumbnail($item);
-						$item->thumbnail_medium = BPGalleryHelper::getMediumThumbnail($item);
+						$item->thumbnail = BPGalleryHelper::getThumbnail($item, 64, 64, BPGalleryHelper::METHOD_FILL);
+						$item->thumbnail_preview = BPGalleryHelper::getThumbnail($item, 320, 320, BPGalleryHelper::METHOD_FIT);
 						$canCreate  = $user->authorise('core.create',     'com_bpgallery.category.' . $item->catid);
 						$canEdit    = $user->authorise('core.edit',       'com_bpgallery.category.' . $item->catid);
 						$canCheckin = $user->authorise('core.manage',     'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
@@ -125,12 +125,12 @@ if ($saveOrder)
 							<td class="nowrap has-context">
 								<div class="pull-left">
 									<?php if( $canEdit ): ?>
-										<a href="<?php echo $item->item_link ?>" class="thumbnail hasPopover" data-placement="right" data-content="<img src='<?php echo $item->thumbnail_medium ?>' />" data-original-title="<?php echo $this->escape($item->title) ?>">
-											<img src="<?php echo $item->thumbnail_small ?>" alt="<?php echo $this->escape($item->title) ?>" />
+										<a href="<?php echo $item->item_link ?>" class="thumbnail hasPopover" data-placement="right" data-content="<img src='<?php echo $item->thumbnail_preview ?>' />" data-original-title="<?php echo $this->escape($item->title) ?>">
+											<img src="<?php echo $item->thumbnail ?>" alt="<?php echo $this->escape($item->title) ?>" />
 										</a>
 									<?php else: ?>
-										<span class="thumbnail hasPopover" data-placement="right" data-content="<img src='<?php echo $item->thumbnail_medium ?>' />" data-original-title="<?php echo $this->escape($item->title) ?>">
-											<img src="<?php echo $item->thumbnail_small ?>" alt="<?php echo $this->escape($item->title) ?>" />
+										<span class="thumbnail hasPopover" data-placement="right" data-content="<img src='<?php echo $item->thumbnail_preview ?>' />" data-original-title="<?php echo $this->escape($item->title) ?>">
+											<img src="<?php echo $item->thumbnail ?>" alt="<?php echo $this->escape($item->title) ?>" />
 										</span>
 									<?php endif ?>
 								</div>
