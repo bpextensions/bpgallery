@@ -19,6 +19,20 @@ class BPGalleryModelImage extends JModelAdmin
      */
     public $typeAlias = 'com_bpgallery.image';
 
+    /**
+     * Thumbnail generation methods used to translate component settings
+     * to helper constants.
+     *
+     * @var array
+     */
+    private $generationMethods = [
+        BPGalleryHelper::METHOD_FIT => 'fit',
+        BPGalleryHelper::METHOD_FIT_WIDTH => 'fit_width',
+        BPGalleryHelper::METHOD_FIT_HEIGHT => 'fit_height',
+        BPGalleryHelper::METHOD_CROP => 'crop',
+        BPGalleryHelper::METHOD_FILL => 'fill',
+    ];
+
     public function __construct($config = array())
     {
 
@@ -26,8 +40,11 @@ class BPGalleryModelImage extends JModelAdmin
         parent::__construct($config);
 
         // Store basic params into model for laster use
-        $this->params      = JComponentHelper::getParams('com_bpgallery');
-        $this->images_base = $this->params->get('images_path', '/images/gallery');
+        $this->params = JComponentHelper::getParams('com_bpgallery');
+        
+        // Debugging errors
+        $app = JFactory::getApplication();
+        $this->debugMode = $app->isClient('administrator') OR $app->get('debug');
     }
 
     /**
@@ -181,7 +198,7 @@ class BPGalleryModelImage extends JModelAdmin
     {
 
         // Get upload file details
-        $basename = pathinfo($data['upload_file_name'], PATHINFO_BASENAME);
+        $basename = pathinfo($data['upload_file_name'], PATHINFO_FILENAME);
         $ext      = pathinfo($data['upload_file_name'], PATHINFO_EXTENSION);
 
         // Fill the title if it is missing
@@ -190,27 +207,55 @@ class BPGalleryModelImage extends JModelAdmin
         }
 
         // Prepare path
-        $filename = $this->getSafeFilename($basename, $ext);
-        $path     = JPATH_ROOT.$this->images_path.'/original/'.$filename;
+        $images_path          = $this->params->get('images_path', '/images/gallery');
+        $filename             = $this->getSafeFilename($basename, $ext);
+        $images_path_absolute = JPATH_ROOT.$images_path.'/original';
+        $path                 = $images_path_absolute.'/'.$filename;
+
+        // Ensure darget directory exists
+        if (!file_exists($images_path_absolute)) {
+            mkdir($images_path_absolute, 0755, true);
+        }
 
         // If uploading the file failed.
         if (!JFile::upload($data['upload_image'], $path)) {
 
+            // If debug is enabled, provide usefull message
+            if( $this->debugMode ) {
+                echo json_encode(['error' =>JText::sprintf('COM_BPGALLERY_ERROR_IMAGE_UPLOAD_S',$data['upload_image'],$path)]);
+                JFactory::getApplication()->close(500);
+            }
+
             // Return failure.
             return false;
 
-            // Uplod successed, so save filename to image data.
+        // Uplod successed, so save filename to image data.
         } else {
-
-            $data['image'] = $filename;
+            $data['filename'] = $filename;
         }
 
-        // Generate thumbnails
-        // If data save opr generating thumbnails failes
-        if (!$this->generateThumbnails($path) OR ! parent::save($data)) {
+        // If data save or thumbnails generation failes
+        $result_thumbnails_generation = $this->generateThumbnails($path);
+        $result_save = $result_thumbnails_generation AND parent::save($data);
+        if (!$result_thumbnails_generation OR !$result_save) {
 
             // Remove thumbnails
             $this->removeThumbnails($path);
+
+            // If debug is enabled, provide usefull message
+            if( $this->debugMode ) {
+
+                $errors = [];
+                if( !$result_thumbnails_generation ) {
+                    $errors[] = JText::sprintf('COM_BPGALLERY_ERROR_CREATING_THUMBNAILS_S', $path);
+                }
+                if( !$result_save ) {
+                    $errors[] = JText::_('COM_BPGALLERY_ERROR_SAVING_IMAGE_DATA');
+                }
+
+                echo json_encode(['errors' =>$errors, 'data' => $data]);
+                JFactory::getApplication()->close(500);
+            }
 
             // Return failure
             return false;
@@ -232,8 +277,10 @@ class BPGalleryModelImage extends JModelAdmin
     {
 
         // Prepare path for this filename
-        $filename = $basename.'.'.strtolower($extension);
-        $path     = JPATH_ROOT.$this->images_path.'/original/'.$filename;
+        $images_path = \BPGalleryHelper::getParam('images_path',
+                '/images/gallery');
+        $filename    = $basename.'.'.strtolower($extension);
+        $path        = JPATH_ROOT.$images_path.'/original/'.$filename;
 
         // If path is save (no overwriting)
         if (!file_exists($path)) {
@@ -249,13 +296,13 @@ class BPGalleryModelImage extends JModelAdmin
             $end = end($parts);
 
             // If this is a number
-            if (is_numeric($end)) {
+            if (count($parts) > 1 AND is_numeric($end)) {
 
                 // Remove it
                 array_pop($parts);
 
                 // increase it and append again
-                $parts[] = $end++;
+                $parts[] = (int) $end + 1;
 
                 // Not a number
             } else {
@@ -279,7 +326,7 @@ class BPGalleryModelImage extends JModelAdmin
      *
      * @return  boolean
      */
-    protected function removeThumbnails($path)
+    public function removeThumbnails($path)
     {
 
         $filename = pathinfo($path, PATHINFO_FILENAME);
@@ -295,9 +342,32 @@ class BPGalleryModelImage extends JModelAdmin
      * 
      * @return  boolean
      */
-    protected function generateThumbnails($path)
+    public function generateThumbnails($path)
     {
-        // TODO: Generate thumbnails.
+
+        // Get thumbnail sizes
+        $sizes = \BPGalleryHelper::getParam('sizes', '');
+        if (!empty($sizes)) {
+            $sizes = (array) $sizes;
+        } else {
+            $sizes = [];
+        }
+
+        // Add default (component views) thumbnail sizes
+        $defaultSizes = [
+            ['width' => 64,'height' => 64,'method' => 'crop']  ,
+            ['width' => 320,'height' => 320,'method' => 'fit']
+        ];
+        $defaultSizes = (array)json_decode(json_encode($defaultSizes));
+        $sizes = array_merge($sizes, $defaultSizes);
+
+        // For each thumbnail size, create a thumbnail
+        foreach ($sizes AS $size) {
+            $method = array_search($size->method, $this->generationMethods);
+            \BPGalleryHelper::getThumbnail($path, $size->width, $size->height,
+                $method);
+        }
+
         return true;
     }
 
