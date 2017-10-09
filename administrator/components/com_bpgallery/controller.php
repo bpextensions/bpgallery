@@ -9,8 +9,6 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('BPGalleryHelper', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/bpgallery.php');
-
 /**
  * BP Gallery master display controller.
  */
