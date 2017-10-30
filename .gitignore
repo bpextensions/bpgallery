@@ -1,0 +1,17 @@
+/**
+!/administrator/
+/administrator/*
+!/administrator/components/
+/administrator/components/*
+!/administrator/components/com_bpgallery/**
+
+!/components/
+/components/*
+!/components/com_bpgallery/**
+
+!/LICENSE
+!/README.md
+!/database_model.mwb
+!/build.xml
+!/composer.json
+!/.gitignore

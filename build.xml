@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="BPGallery" default="clean,build" basedir="." description="BPGallery build task">
+
+    <target name="build:com_bpgallery">
+        <echo msg="Creating component directory" />
+        <mkdir dir="./.build/com_bpgallery" />
+        <mkdir dir="./.build/com_bpgallery/admin" />
+        <mkdir dir="./.build/com_bpgallery/site" />
+        <mkdir dir="./.build/com_bpgallery/install" />
+        
+        <echo msg="Building component installer" />
+        <copy todir="./.build/com_bpgallery/admin" >
+            <fileset dir="./administrator/components/com_bpgallery">
+                <include name="**/*" />
+                <exclude name="install/upgrade.php" />
+                
+            </fileset>
+        </copy>
+        <copy todir="./.build/com_bpgallery/site" >
+            <fileset dir="./components/com_bpgallery">
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <copy file="./administrator/components/com_bpgallery/install/upgrade.php" tofile="./.build/com_bpgallery/install/upgrade.php" overwrite="true"/>
+        <move file="./.build/com_bpgallery/admin/bpgallery.xml" tofile="./.build/com_bpgallery/bpgallery.xml" overwrite="true"/>
+        
+        <echo msg="Creating component zipfile." />
+        <zip destfile="./.build/com_bpgallery.zip" basedir="./.build/com_bpgallery"/>
+    </target>
+    
+    <target name="build">
+        <echo msg="Creating build directory ./.build" />
+        <mkdir dir="./.build" />
+        
+        <echo msg="Building each of the extensions" />
+        <phingcall target="build:com_bpgallery"></phingcall>
+        
+    </target>
+
+    <target name="clean">
+        <echo msg="Removing build directory ./.build if exists" />
+        <delete dir="./.build" includeemptydirs="true"/>
+    </target>
+
+</project>
