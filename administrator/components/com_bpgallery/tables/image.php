@@ -1,9 +1,10 @@
 <?php
+
 /**
- * @author		Artur Stępień (artur.stepien@bestproject.pl)
- * @website		www.bestproject.pl
- * @copyright	Copyright (C) 2017 Best Project, Inc. All rights reserved.
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ * @author		${author.name} (${author.email})
+ * @website		${author.url}
+ * @copyright	${copyrights}
+ * @license		${license.url} ${license.name}
  */
 
 defined('_JEXEC') or die;

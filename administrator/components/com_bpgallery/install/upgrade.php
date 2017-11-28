@@ -1,12 +1,12 @@
 <?php
+
 /**
- * @package     BPGallery.Administrator
- * @subpackage  com_bpgallery
- * @author      Artur Stępień (artur.stepien@bestproject.pl)
- * @copyright   (C) 2017 - Best Project
- * @license     http://www.gnu.org/licenses/old-licenses/gpl-3.0-standalone.html
- * @link        http://www.bestproject.pl
+ * @author		${author.name} (${author.email})
+ * @website		${author.url}
+ * @copyright	${copyrights}
+ * @license		${license.url} ${license.name}
  */
+
 defined('_JEXEC') or die;
 
 class com_bpgalleryInstallerScript

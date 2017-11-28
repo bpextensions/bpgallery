@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @author		${author.name} (${author.email})
+ * @website		${author.url}
+ * @copyright	${copyrights}
+ * @license		${license.url} ${license.name}
+ */
+
 defined('_JEXEC') or die;
 
 JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR.'/components/com_categories/models/fields/modal/category.php');
