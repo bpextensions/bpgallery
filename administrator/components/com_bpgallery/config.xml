@@ -28,7 +28,7 @@
 		>
 
         <field 
-            name="images_path" default="/images/gallery"
+            name="images_path" default="/images/gallery" readonly="true"
             label="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_LABEL"
             description="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_DESC"
             required="true" 
