@@ -14,7 +14,7 @@ use Joomla\Utilities\ArrayHelper;
 /**
  * Image controller class.
  */
-class BPGalleryControllerImage extends JControllerAdmin
+class BPGalleryControllerImage extends JControllerForm
 {
     /**
      * The prefix to use with controller messages.
@@ -22,35 +22,6 @@ class BPGalleryControllerImage extends JControllerAdmin
      * @var    string
      */
     protected $text_prefix = 'COM_BPGALLERY_IMAGE';
-
-    /**
-     * Constructor.
-     *
-     * @param   array  $config  An optional associative array of configuration settings.
-     *
-     * @see     JControllerLegacy
-     */
-    public function __construct($config = array())
-    {
-        parent::__construct($config);
-    }
-
-    /**
-     * Method to get a model object, loading it if required.
-     *
-     * @param   string  $name    The model name. Optional.
-     * @param   string  $prefix  The class prefix. Optional.
-     * @param   array   $config  Configuration array for model. Optional.
-     *
-     * @return  JModelLegacy  The model.
-     *
-     * @since   1.6
-     */
-    public function getModel($name = 'Image', $prefix = 'BPGalleryModel',
-                             $config = array('ignore_request' => true))
-    {
-        return parent::getModel($name, $prefix, $config);
-    }
 
     /**
      * Method override to check if you can add a new record.
@@ -104,4 +75,24 @@ class BPGalleryControllerImage extends JControllerAdmin
         // Since there is no asset tracking, revert to the component permissions.
         return false;
     }
+
+    /**
+	 * Method to run batch operations.
+	 *
+	 * @param   string  $model  The model
+	 *
+	 * @return  boolean  True on success.
+	 */
+	public function batch($model = null)
+	{
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		// Set the model
+		$model = $this->getModel('Image', '', array());
+
+		// Preset the redirect
+		$this->setRedirect(JRoute::_('index.php?option=com_bpgallery&view=images' . $this->getRedirectToListAppend(), false));
+
+		return parent::batch($model);
+	}
 }
