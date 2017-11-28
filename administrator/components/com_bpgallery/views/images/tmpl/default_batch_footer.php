@@ -7,7 +7,6 @@
  * @license		${license.url} ${license.name}
  */
 
-return;
 defined('_JEXEC') or die;
 ?>
 <a class="btn" type="button" onclick="document.getElementById('batch-category-id').value='';document.getElementById('batch-language-id').value=''" data-dismiss="modal">
