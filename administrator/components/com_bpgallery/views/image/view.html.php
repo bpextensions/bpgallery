@@ -9,14 +9,12 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('BannersHelper', JPATH_ADMINISTRATOR . '/components/com_banners/helpers/banners.php');
+JLoader::register('BPGalleryHelper', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/bpgallery.php');
 
 /**
- * View to edit a client.
- *
- * @since  1.5
+ * View to edit an image.
  */
-class BannersViewClient extends JViewLegacy
+class BPGalleryViewImage extends JViewLegacy
 {
 	/**
 	 * The JForm object
@@ -55,10 +53,11 @@ class BannersViewClient extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+
 		$this->form  = $this->get('Form');
 		$this->item  = $this->get('Item');
 		$this->state = $this->get('State');
-		$this->canDo = JHelperContent::getActions('com_banners');
+		$this->canDo = JHelperContent::getActions('com_bpgallery');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
@@ -68,15 +67,13 @@ class BannersViewClient extends JViewLegacy
 
 		$this->addToolbar();
 
-		return parent::display($tpl);
+        return parent::display($tpl);
 	}
 
 	/**
 	 * Add the page title and toolbar.
 	 *
 	 * @return  void
-	 *
-	 * @since   1.6
 	 */
 	protected function addToolbar()
 	{
@@ -88,43 +85,40 @@ class BannersViewClient extends JViewLegacy
 		$canDo      = $this->canDo;
 
 		JToolbarHelper::title(
-			$isNew ? JText::_('COM_BANNERS_MANAGER_CLIENT_NEW') : JText::_('COM_BANNERS_MANAGER_CLIENT_EDIT'),
-			'bookmark banners-clients'
+			$isNew ? JText::_('COM_BPGALLERY_MANAGER_IMAGE_NEW') : JText::_('COM_BPGALLERY_MANAGER_IMAGE_EDIT'),
+			'image images'
 		);
 
 		// If not checked out, can save the item.
 		if (!$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create')))
 		{
-			JToolbarHelper::apply('client.apply');
-			JToolbarHelper::save('client.save');
+			JToolbarHelper::apply('image.apply');
+			JToolbarHelper::save('image.save');
 		}
 
 		if (!$checkedOut && $canDo->get('core.create'))
 		{
-			JToolbarHelper::save2new('client.save2new');
+			JToolbarHelper::save2new('image.save2new');
 		}
 
 		// If an existing item, can save to a copy.
 		if (!$isNew && $canDo->get('core.create'))
 		{
-			JToolbarHelper::save2copy('client.save2copy');
+			JToolbarHelper::save2copy('image.save2copy');
 		}
 
 		if (empty($this->item->id))
 		{
-			JToolbarHelper::cancel('client.cancel');
+			JToolbarHelper::cancel('image.cancel');
 		}
 		else
 		{
 			if (JComponentHelper::isEnabled('com_contenthistory') && $this->state->params->get('save_history', 0) && $canDo->get('core.edit'))
 			{
-				JToolbarHelper::versions('com_banners.client', $this->item->id);
+				JToolbarHelper::versions('com_bpgallery.image', $this->item->id);
 			}
 
-			JToolbarHelper::cancel('client.cancel', 'JTOOLBAR_CLOSE');
+			JToolbarHelper::cancel('image.cancel', 'JTOOLBAR_CLOSE');
 		}
-
-		JToolbarHelper::divider();
-		JToolbarHelper::help('JHELP_COMPONENTS_BANNERS_CLIENTS_EDIT');
 	}
 }
