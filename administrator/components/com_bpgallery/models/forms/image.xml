@@ -33,7 +33,9 @@
         
         <field
 			name="filename"
-			type="text"
+			type="media"
+            directory="gallery/original"
+            preview="true" preview_width="320" perview_height="200"
 			label="COM_BPGALLERY_FIELD_FILENAME_LABEL"
 			description="COM_BPGALLERY_FIELD_FILENAME_DESC"
 			size="40"
