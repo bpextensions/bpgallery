@@ -25,7 +25,7 @@ $saveOrder = $listOrder == 'a.ordering';
 if ($saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_bpgallery&task=images.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'articleList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
+	JHtml::_('sortablelist.sortable', 'imageList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_bpgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
@@ -42,7 +42,7 @@ if ($saveOrder)
 				<?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
 			</div>
 		<?php else : ?>
-			<table class="table table-striped" id="articleList">
+			<table class="table table-striped" id="imageList">
 				<thead>
 					<tr>
 						<th width="1%" class="nowrap center hidden-phone">
