@@ -153,7 +153,7 @@ class BPGalleryHelper extends JHelperContent
                                         $method = self::METHOD_CROP,
                                         $url = true, $relative = true)
     {
-        $filename           = (is_object($image) ? $image->filename : basename($image));
+        $filename           = (is_object($image) ? basename($image->filename) : basename($image));
         $relative_base_path = self::getParam('images_path', '/images/gallery');
         $absolute_base_path = JPATH_ROOT.$relative_base_path;
 
