@@ -233,7 +233,7 @@ class BPGalleryModelImage extends JModelAdmin
 
         // Uplod successed, so save filename to image data.
         } else {
-            $data['filename'] = $filename;
+            $data['filename'] = $images_path.'/'.$filename;
         }
 
         // If data save or thumbnails generation failes
