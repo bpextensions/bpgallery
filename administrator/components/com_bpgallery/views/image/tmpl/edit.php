@@ -36,7 +36,6 @@ JFactory::getDocument()->addScriptDeclaration('
 			<div class="span9">
 				<?php
 				echo $this->form->renderField('filename');
-				echo $this->form->renderField('catid');
 				echo $this->form->renderField('intro');
 				echo $this->form->renderField('description');
 				echo $this->form->renderFieldset('extra');
