@@ -16,30 +16,29 @@ JHtml::_('formbehavior.chosen', 'select');
 JFactory::getDocument()->addScriptDeclaration('
 	Joomla.submitbutton = function(task)
 	{
-		if (task == "client.cancel" || document.formvalidator.isValid(document.getElementById("client-form")))
+		if (task == "image.cancel" || document.formvalidator.isValid(document.getElementById("image-form")))
 		{
-			Joomla.submitform(task, document.getElementById("client-form"));
+			Joomla.submitform(task, document.getElementById("image-form"));
 		}
 	};
 ');
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_banners&layout=edit&id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="client-form" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_bpgallery&layout=edit&id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="image-form" class="form-validate">
 
 	<?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
 	<div class="form-horizontal">
 		<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
 
-		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', empty($this->item->id) ? JText::_('COM_BANNERS_NEW_CLIENT') : JText::_('COM_BANNERS_EDIT_CLIENT')); ?>
+		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', empty($this->item->id) ? JText::_('COM_BPGALLERY_NEW_IMAGE') : JText::_('COM_BPGALLERY_EDIT_IMAGE')); ?>
 		<div class="row-fluid">
 			<div class="span9">
 				<?php
-				echo $this->form->renderField('contact');
-				echo $this->form->renderField('email');
-				echo $this->form->renderField('purchase_type');
-				echo $this->form->renderField('track_impressions');
-				echo $this->form->renderField('track_clicks');
+				echo $this->form->renderField('filename');
+				echo $this->form->renderField('catid');
+				echo $this->form->renderField('intro');
+				echo $this->form->renderField('description');
 				echo $this->form->renderFieldset('extra');
 				?>
 			</div>
