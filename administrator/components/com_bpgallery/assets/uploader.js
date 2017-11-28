@@ -1,5 +1,9 @@
-
-
+/**
+ * @author		${author.name} (${author.email})
+ * @website		${author.url}
+ * @copyright	${copyrights}
+ * @license		${license.url} ${license.name}
+ */
 
 (function ($) {
 
