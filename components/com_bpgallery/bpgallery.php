@@ -13,7 +13,7 @@ JLoader::register('BPGalleryHelperRoute', JPATH_COMPONENT . '/helpers/route.php'
 
 $input = JFactory::getApplication()->input;
 
-if ($input->get('view') === 'contacts' && $input->get('layout') === 'modal')
+if ($input->get('view') === 'images' && $input->get('layout') === 'modal')
 {
 	if (!JFactory::getUser()->authorise('core.create', 'com_bpgallery'))
 	{

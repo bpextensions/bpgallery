@@ -82,7 +82,7 @@ class ImageRouterRulesLegacy implements JComponentRouterRulesInterface
 			unset($query['view']);
 		}
 
-		// Are we dealing with a contact that is attached to a menu item?
+		// Are we dealing with a image that is attached to a menu item?
 		if (isset($view) && ($mView == $view) and isset($query['id']) and ($mId == (int) $query['id']))
 		{
 			unset($query['view'], $query['catid'], $query['id']);
@@ -94,7 +94,7 @@ class ImageRouterRulesLegacy implements JComponentRouterRulesInterface
 		{
 			if ($mId != (int) $query['id'] || $mView != $view)
 			{
-				if ($view == 'contact' && isset($query['catid']))
+				if ($view == 'image' && isset($query['catid']))
 				{
 					$catid = $query['catid'];
 				}

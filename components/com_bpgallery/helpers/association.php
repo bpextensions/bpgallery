@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('BPGalleryHelper', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/contact.php');
+JLoader::register('BPGalleryHelper', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/bpgallery.php');
 JLoader::register('BPGalleryHelperRoute', JPATH_SITE . '/components/com_bpgallery/helpers/route.php');
 JLoader::register('CategoryHelperAssociation', JPATH_ADMINISTRATOR . '/components/com_categories/helpers/association.php');
 
@@ -32,7 +32,7 @@ abstract class BPGalleryHelperAssociation extends CategoryHelperAssociation
 		$view   = $view === null ? $jinput->get('view') : $view;
 		$id     = empty($id) ? $jinput->getInt('id') : $id;
 
-		if ($view === 'contact')
+		if ($view === 'image')
 		{
 			if ($id)
 			{

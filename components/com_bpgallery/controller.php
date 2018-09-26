@@ -27,7 +27,7 @@ class BPGalleryController extends JControllerLegacy
 	{
 		$this->input = JFactory::getApplication()->input;
 
-		// Contact frontpage Editor contacts proxying:
+		// Image frontpage Editor images proxying:
 		if ($this->input->get('view') === 'category' && $this->input->get('layout') === 'modal')
 		{
 			JHtml::_('stylesheet', 'system/adminlist.css', array(), true);
