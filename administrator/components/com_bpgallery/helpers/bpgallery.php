@@ -45,6 +45,12 @@ class BPGalleryHelper extends JHelperContent
      * @var Joomla\Registry\Registry
      */
     private static $params;
+
+    /**
+     * Default image if file is lost/missing.
+     * 
+     * @var string
+     */
     protected static $defaultImage = '/administrator/components/com_bpgallery/assets/default.svg';
 
     /**
@@ -271,7 +277,7 @@ class BPGalleryHelper extends JHelperContent
         if ($url) {
             return $relative ? $output_relative.'?'.$mtime : JURI::base().$output_relative.'?'.$mtime;
 
-            // App requests PATH
+        // App requests PATH
         } else {
             return $relative ? $output_relative : $output_absolute;
         }
