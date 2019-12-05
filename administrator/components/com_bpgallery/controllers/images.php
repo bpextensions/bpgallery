@@ -1,15 +1,15 @@
 <?php
 
 /**
- * @author		${author.name} (${author.email})
- * @website		${author.url}
- * @copyright	${copyrights}
- * @license		${license.url} ${license.name}
+ * @author        ${author.name} (${author.email})
+ * @website        ${author.url}
+ * @copyright    ${copyrights}
+ * @license        ${license.url} ${license.name}
+ * @package        ${package}
+ * @subpackage        ${subpackage}
  */
 
 defined('_JEXEC') or die;
-
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Images list controller class.

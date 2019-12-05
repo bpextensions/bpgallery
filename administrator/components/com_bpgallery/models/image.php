@@ -1,10 +1,12 @@
 <?php
 
 /**
- * @author		${author.name} (${author.email})
- * @website		${author.url}
- * @copyright	${copyrights}
- * @license		${license.url} ${license.name}
+ * @author        ${author.name} (${author.email})
+ * @website        ${author.url}
+ * @copyright    ${copyrights}
+ * @license        ${license.url} ${license.name}
+ * @package        ${package}
+ * @subpackage        ${subpackage}
  */
 
 defined('_JEXEC') or die;
@@ -233,7 +235,7 @@ class BPGalleryModelImage extends JModelAdmin
 
         // Uplod successed, so save filename to image data.
         } else {
-            $data['filename'] = $images_path.'/'.$filename;
+            $data['filename'] = ltrim($images_path . '/original/' . $filename, '/');
         }
 
         // If data save or thumbnails generation failes

@@ -1,0 +1,37 @@
+{
+    "name": "com_bpgallery",
+    "version": "1.0.0",
+    "description": "Joomla! 3 gallery component",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "./node_modules/.bin/encore dev --progress",
+        "watch": "./node_modules/.bin/encore dev --watch",
+        "watch-prod": "./node_modules/.bin/encore prod --watch",
+        "prod": "./node_modules/.bin/encore prod --progress",
+        "build": "./node_modules/.bin/encore prod --progress"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bestproject/bpgallery.git"
+    },
+    "author": "Artur Stepien",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/bestproject/bpgallery/issues"
+    },
+    "homepage": "https://github.com/bestproject/bpgallery#readme",
+    "devDependencies": {
+        "@babel/preset-env": "^7.7.4",
+        "@symfony/webpack-encore": "^0.28.2",
+        "core-js": "^3.4.7",
+        "node-sass": "^4.13.0",
+        "sass-loader": "^7.3.1",
+        "webpack-notifier": "^1.8.0"
+    },
+    "dependencies": {},
+    "browserslist": [
+        "> 0.25%",
+        "not dead",
+        "IE 11"
+    ]
+}

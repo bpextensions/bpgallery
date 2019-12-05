@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="BPGallery" default="clean,build" basedir="." description="BPGallery build task">
-    
-    <property file="./build.properties" />
-    
+
+    <property file="./build.properties"/>
+
+    <php expression="date('F Y')" returnProperty="build.date"/>
+    <php expression="date('Y')" returnProperty="build.year"/>
+
     <target name="build:com_bpgallery">
-        <echo msg="Creating component directory" />
-        <mkdir dir="./.build/com_bpgallery" />
-        <mkdir dir="./.build/com_bpgallery/admin" />
-        <mkdir dir="./.build/com_bpgallery/site" />
-        <mkdir dir="./.build/com_bpgallery/install" />
-        
-        <echo msg="Building component installer" />
-        <copy todir="./.build/com_bpgallery/admin" >
+        <echo msg="Creating component directories"/>
+        <mkdir dir="./.build/com_bpgallery/admin"/>
+        <mkdir dir="./.build/com_bpgallery/site"/>
+        <mkdir dir="./.build/com_bpgallery/install"/>
+
+        <echo msg="Building assets with Webpack"/>
+        <exec command="npm run build" passthru="true" checkreturn="true"/>
+
+        <echo msg="Building component installer"/>
+        <copy todir="./.build/com_bpgallery/admin">
             <fileset dir="./administrator/components/com_bpgallery">
-                <include name="**/*" />
-                <exclude name="install/upgrade.php" />
+                <include name="**/*"/>
+                <exclude name="install/upgrade.php"/>
             </fileset>
             <filterchain>
                 <replacetokens begintoken="${" endtoken="}">
-                    <token key="copyrights" value="${copyrights}" />
-                    <token key="license.name" value="${license.name}" />
-                    <token key="license.url" value="${license.url}" />
-                    <token key="version" value="${version}" />
-                    <token key="author.url" value="${author.url}" />
-                    <token key="author.name" value="${author.name}" />
-                    <token key="author.email" value="${author.email}" />
+                    <token key="build.date" value="${build.date}"/>
+                    <token key="build.year" value="${build.year}"/>
+                    <token key="copyrights" value="${copyrights}"/>
+                    <token key="license.name" value="${license.name}"/>
+                    <token key="license.url" value="${license.url}"/>
+                    <token key="build.version" value="${build.version}"/>
+                    <token key="package" value="${package}"/>
+                    <token key="subpackage" value="${subpackage}"/>
+                    <token key="author.url" value="${author.url}"/>
+                    <token key="author.name" value="${author.name}"/>
+                    <token key="author.email" value="${author.email}"/>
                 </replacetokens>
             </filterchain>
         </copy>

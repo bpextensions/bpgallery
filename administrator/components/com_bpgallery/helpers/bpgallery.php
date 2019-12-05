@@ -1,10 +1,12 @@
 <?php
 
 /**
- * @author		${author.name} (${author.email})
- * @website		${author.url}
- * @copyright	${copyrights}
- * @license		${license.url} ${license.name}
+ * @author        ${author.name} (${author.email})
+ * @website        ${author.url}
+ * @copyright    ${copyrights}
+ * @license        ${license.url} ${license.name}
+ * @package        ${package}
+ * @subpackage        ${subpackage}
  */
 
 defined('_JEXEC') or die;
@@ -51,7 +53,7 @@ class BPGalleryHelper extends JHelperContent
      * 
      * @var string
      */
-    protected static $defaultImage = '/administrator/components/com_bpgallery/assets/default.svg';
+    protected static $defaultImage = '/administrator/components/com_bpgallery/assets/images/default.svg';
 
     /**
      * Configure the Linkbar.

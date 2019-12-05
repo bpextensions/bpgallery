@@ -1,0 +1,212 @@
+
+#bpgallery_upload_container {
+    text-align: center;
+    border: 1px dashed #aaa;
+    margin: 15px;
+    border-radius: 10px;
+    padding: 64px 0;
+
+    & > i {
+        font-size: 64px;
+        color: #aaa;
+        margin-bottom: 30px;
+        display: inline-block;
+        height: 64px;
+        width: 64px;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    &.hasFiles {
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        margin: 0px;
+    }
+
+    .progress {
+        margin: 0;
+        width: 100px;
+    }
+
+    table {
+        margin: -1px 0 0 0;
+
+        .min {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .btn {
+            i {
+                margin-right: 0;
+            }
+        }
+    }
+
+    &:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+}
+
+.progress#bpgallery_upload_progress {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+#bpgallery_upload_form {
+    .modal-header {
+        #uploadFormLabel small {
+            margin-left: 10px;
+        }
+    }
+
+    .modal-body {
+        padding: 0;
+        width: 100%;
+        max-height: 400px;
+        overflow-y: auto;
+
+        .thumbnail {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: #f0f0f0;
+            overflow: hidden;
+
+            .image {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: block;
+                top: 0;
+                left: 0;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center center;
+                z-index: 9999;
+                transition: 0.9s linear all;
+
+                &.disabled {
+                    opacity: 0;
+                }
+            }
+
+            .btn-remove {
+                position: absolute;
+                display: block;
+                top: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.95);
+                opacity: 1;
+                transition: 0.5s linear all;
+                z-index: 99999;
+                padding: 10px;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+
+                i {
+                    font-size: 16px;
+                    width: 24px;
+                    height: 24px;
+                    margin: 0;
+                    color: #666;
+
+                    &:before {
+                        position: relative;
+                        top: 2px;
+                    }
+                }
+            }
+
+            &:hover {
+                .btn-remove {
+                    background: #fff;
+                    box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+
+                    i {
+                        color: red;
+                    }
+                }
+
+                box-shadow: 0 0 6px rgba(0, 0, 0, 0.1), inset 0 0 1px 0 #fff;
+            }
+
+            .name {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                font-size: 11px;
+                color: #444;
+                text-align: center;
+                display: block;
+                width: 100%;
+                word-wrap: break-word;
+                padding: 0 5px 5px 5px;
+                box-sizing: border-box;
+                box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            }
+
+            .progress {
+                position: absolute;
+                bottom: 10px;
+                left: 0;
+                margin: 0 10px;
+                background: rgba(0, 0, 0, 0.8);
+                border-radius: 5px;
+                height: 5px;
+                z-index: 99991;
+                opacity: 0;
+
+                span {
+                    background: #46A546;
+                    width: 0%;
+                    border-radius: 5px;
+                    height: 5px;
+                    display: block;
+                }
+
+                &.uploading {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .modal-footer {
+        .category-selection {
+            & > .control-group {
+                margin: 0;
+
+                & > .controls {
+                    & > .input-append {
+                        margin: 0;
+
+                        & > .btn {
+                            border-radius: 0;
+                            margin: 0 0 0 -1px;
+
+                            &:last-child {
+                                border-radius: 0 3px 3px 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .modal {
+                z-index: 999999;
+            }
+        }
+    }
+}
+
+#adminForm {
+    .thumbnail {
+        margin-right: 10px;
+    }
+}

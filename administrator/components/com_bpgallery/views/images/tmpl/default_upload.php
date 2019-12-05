@@ -1,32 +1,36 @@
 <?php
 
 /**
- * @author		${author.name} (${author.email})
- * @website		${author.url}
- * @copyright	${copyrights}
- * @license		${license.url} ${license.name}
+ * @author        ${author.name} (${author.email})
+ * @website        ${author.url}
+ * @copyright    ${copyrights}
+ * @license        ${license.url} ${license.name}
+ * @package        ${package}
+ * @subpackage        ${subpackage}
  */
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die;
 
-JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR.'/components/com_categories/models/fields/modal/category.php');
+$doc = Factory::getDocument();
 
-$this->document->addScriptVersion(
-    '/administrator/components/com_bpgallery/assets/uploader.js',
-    filemtime(JPATH_COMPONENT.'/assets/uploader.js'
-));
-$this->document->addScriptDeclaration('
+JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR . '/components/com_categories/models/fields/modal/category.php');
+
+Text::script('COM_BPGALLERY_IMAGES_UPLOAD_TIP');
+Text::script('COM_BPGALLERY_IMAGES_BROWSE_BUTTON');
+
+$doc->addScriptVersion('/administrator/components/com_bpgallery/assets/component.js', ['version' => 'auto']);
+$doc->addScriptDeclaration('
 	jQuery(document).ready(function($){
 		$("#toolbar-new button").attr("onclick","jQuery(\"#bpgallery_upload_form\").modal(\"show\")");
 		$(document).BPGalleryUpload({
-            text_intro:"'.JText::_('COM_BPGALLERY_IMAGES_UPLOAD_TIP').'",
-            text_browse:"'.JText::_('COM_BPGALLERY_IMAGES_BROWSE_BUTTON').'",
-            upload_url:"'.JRoute::_('index.php?option=com_bpgallery&task=image.upload&format=json').'"
+            upload_url:"' . JRoute::_('index.php?option=com_bpgallery&task=image.upload&format=json') . '"
         });
 	});
 ');
-$this->document->addStyleSheetVersion('/administrator/components/com_bpgallery/assets/component.css',
-    filemtime(JPATH_COMPONENT.'/assets/component.css'));
+$doc->addStyleSheetVersion('/administrator/components/com_bpgallery/assets/component.css', ['version' => 'auto']);
 ?>
 <!-- Modal -->
 <div id="bpgallery_upload_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="bpgallery_upload_form" aria-hidden="true">

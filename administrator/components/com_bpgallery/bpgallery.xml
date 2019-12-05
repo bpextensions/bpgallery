@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.5" method="upgrade">
-	<name>com_bpgallery</name>
-	<author>Artur Stępień</author>
-	<creationDate>April 2017</creationDate>
-	<copyright>(C) 2017 BestProject. All rights reserved.</copyright>
-	<license>GNU General Public License version 3 or later; see LICENSE.txt</license>
-	<authorEmail>artur.stepien@bestproject.pl</authorEmail>
-	<authorUrl>www.bestproject.pl</authorUrl>
-	<version>1.0.0</version>
-	<description>COM_BPGALLERY_XML_DESCRIPTION</description>
+<extension type="component" version="3.9" method="upgrade">
+    <name>com_bpgallery</name>
+    <author>${author.name}</author>
+    <creationDate>${build.date}</creationDate>
+    <copyright>(C) ${build.year} ${copyrights}. All rights reserved.</copyright>
+    <license>${license.name}; see ${license.url}</license>
+    <authorEmail>${author.email}</authorEmail>
+    <authorUrl>${author.url}</authorUrl>
+    <version>${build.version}</version>
+    <description>COM_BPGALLERY_XML_DESCRIPTION</description>
 
     <!-- Install/Upgdate script -->
-	<scriptfile>install/upgrade.php</scriptfile>
+    <scriptfile>install/upgrade.php</scriptfile>
 
-	<install> <!-- Runs on install -->
-		<sql>
-			<file driver="mysql" charset="utf8">install/sql/install.mysql.utf8.sql</file>
-		</sql>
-	</install>
+    <install> <!-- Runs on install -->
+        <sql>
+            <file driver="mysql" charset="utf8">install/sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
     
 	<uninstall> <!-- Runs on uninstall -->
 		<sql>
@@ -42,10 +42,12 @@
 		<filename>controller.php</filename>
 		<filename>router.php</filename>
 	</files>
-    
+
     <languages folder="site">
         <language tag="en-GB">language/en-GB.com_bpgallery.ini</language>
         <language tag="en-GB">language/en-GB.com_bpgallery.sys.ini</language>
+        <language tag="pl-PL">language/pl-PL.com_bpgallery.ini</language>
+        <language tag="pl-PL">language/pl-PL.com_bpgallery.sys.ini</language>
     </languages>
     
 	<administration>
