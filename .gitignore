@@ -14,6 +14,7 @@ administrator/components/com_bpgallery/assets/**
 components/**
 !components/com_bpgallery
 !components/com_bpgallery/**
+components/com_bpgallery/assets
 
 !LICENSE
 !README.md
