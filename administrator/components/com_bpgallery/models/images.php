@@ -103,25 +103,31 @@ class BPGalleryModelImages extends JModelList
 				. 'a.publish_down'
 			)
 		);
-		$query->from($db->quoteName('#__bpgallery_images', 'a'));
+        $query->from($db->quoteName('#__bpgallery_images', 'a'));
 
-		// Join over the language
-		$query->select('l.title AS language_title, l.image AS language_image')
-			->join('LEFT', $db->quoteName('#__languages', 'l') . ' ON l.lang_code = a.language');
+        // Join over the language
+        $query->select('l.title AS language_title, l.image AS language_image')
+            ->join('LEFT', $db->quoteName('#__languages', 'l') . ' ON l.lang_code = a.language');
 
-		// Join over the users for the checked out user.
-		$query->select($db->quoteName('uc.name', 'editor'))
-			->join('LEFT', $db->quoteName('#__users', 'uc') . ' ON uc.id = a.checked_out');
+        // Join over the users for the checked out user.
+        $query->select($db->quoteName('uc.name', 'editor'))
+            ->join('LEFT', $db->quoteName('#__users', 'uc') . ' ON uc.id = a.checked_out');
 
-		// Join over the categories.
-		$query->select($db->quoteName('c.title', 'category_title'))
-			->join('LEFT', $db->quoteName('#__categories', 'c') . ' ON c.id = a.catid');
+        // Join over the asset groups.
+        $query->select($db->quoteName('ag.title', 'access_level'))
+            ->join(
+                'LEFT',
+                $db->quoteName('#__viewlevels', 'ag') . ' ON ' . $db->quoteName('ag.id') . ' = ' . $db->quoteName('a.access')
+            );
 
-		// Filter by published state
-		$published = $this->getState('filter.published');
+        // Join over the categories.
+        $query->select($db->quoteName('c.title', 'category_title'))
+            ->join('LEFT', $db->quoteName('#__categories', 'c') . ' ON c.id = a.catid');
 
-		if (is_numeric($published))
-		{
+        // Filter by published state
+        $published = $this->getState('filter.published');
+
+        if (is_numeric($published)) {
 			$query->where($db->quoteName('a.state') . ' = ' . (int) $published);
 		}
 		elseif ($published === '')

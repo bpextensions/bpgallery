@@ -166,15 +166,23 @@
 			filter="user_utc"
 		/>
 
-		<field
-			name="publish_down"
-			type="calendar"
-			label="COM_BPGALLERY_FIELD_PUBLISH_DOWN_LABEL"
-			description="COM_BPGALLERY_FIELD_PUBLISH_DOWN_DESC"
-			format="%Y-%m-%d %H:%M:%S"
-			size="22"
-			filter="user_utc"
-		/>
-	</fieldset>
+        <field
+                name="publish_down"
+                type="calendar"
+                label="COM_BPGALLERY_FIELD_PUBLISH_DOWN_LABEL"
+                description="COM_BPGALLERY_FIELD_PUBLISH_DOWN_DESC"
+                format="%Y-%m-%d %H:%M:%S"
+                size="22"
+                filter="user_utc"
+        />
+
+        <field
+                name="access"
+                type="accesslevel"
+                label="JFIELD_ACCESS_LABEL"
+                description="JFIELD_ACCESS_DESC"
+                size="1"
+        />
+    </fieldset>
 
 </form>

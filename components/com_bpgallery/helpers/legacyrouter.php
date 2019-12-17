@@ -14,17 +14,17 @@ defined('_JEXEC') or die;
 /**
  * Legacy routing rules class from com_bpgallery
  */
-class ImageRouterRulesLegacy implements JComponentRouterRulesInterface
+class BPGalleryRouterRulesLegacy implements JComponentRouterRulesInterface
 {
-	/**
-	 * Constructor for this legacy router
-	 *
-	 * @param   JComponentRouterAdvanced  $router  The router this rule belongs to
-	 *
-	 * @since       3.6
-	 * @deprecated  4.0
-	 */
-	public function __construct($router)
+    /**
+     * Constructor for this legacy router
+     *
+     * @param JComponentRouterAdvanced $router The router this rule belongs to
+     *
+     * @since       3.6
+     * @deprecated  4.0
+     */
+    public function __construct($router)
 	{
 		$this->router = $router;
 	}

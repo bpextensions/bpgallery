@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_BPGALLERY_CATEGORY_VIEW_DEFAULT_TITLE" option="COM_BPGALLERY_CATEGORY_VIEW_DEFAULT_OPTION">
+	<layout title="COM_BPGALLERY_VIEW_CATEGORY_DEFAULT_TITLE" option="COM_BPGALLERY_VIEW_CATEGORY_DEFAULT_OPTION">
 		<message>
-			<![CDATA[COM_BPGALLERY_CATEGORY_VIEW_DEFAULT_DESC]]>
+			<![CDATA[COM_BPGALLERY_VIEW_CATEGORY_DEFAULT_DESC]]>
 		</message>
 	</layout>
 
 	<!-- Add fields to the request variables for the layout. -->
 	<fields name="request"
-		addfieldpath="/administrator/components/com_categories/models/fields"
+			addfieldpath="/administrator/components/com_categories/models/fields"
 	>
 		<fieldset name="request"
 			addfieldpath="/administrator/components/com_bpgallery/models/fields"
@@ -105,167 +105,109 @@
 			</field>
 
 
-			<field 
-				name="show_subcat_desc" 
-				type="list"
-				label="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_LABEL"
-				description="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_DESC"
-				useglobal="true"
-				class="chzn-color"
-				>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-			</field>
-
-			<field 
-				name="show_cat_items" 
-				type="list"
-				label="COM_BPGALLERY_FIELD_SHOW_CAT_ITEMS_LABEL"
-				description="COM_BPGALLERY_FIELD_SHOW_CAT_ITEMS_DESC"
-				useglobal="true"
-				class="chzn-color"
-				>
+			<field
+					name="show_subcat_desc"
+					type="list"
+					label="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_LABEL"
+					description="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_DESC"
+					useglobal="true"
+					class="chzn-color"
+			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
 		</fieldset>
 
-		<fieldset name="advanced" label="JGLOBAL_LIST_LAYOUT_OPTIONS">
-
-			<field 
-				name="spacer2" 
-				type="spacer" 
-				label="JGLOBAL_SUBSLIDER_DRILL_CATEGORIES_LABEL"
-				class="text"
-			/>
+		<fieldset name="category_default" label="COM_BPGALLERY_FIELDSET_IMAGES_LABEL">
 
 			<field
-				name="filter_field"
-				type="list"
-				label="JGLOBAL_FILTER_FIELD_LABEL"
-				description="JGLOBAL_FILTER_FIELD_DESC"
-				default=""
-				useglobal="true"
-				class="chzn-color"
-				>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-			</field>
-
-			<field 
-				name="show_pagination_limit" 
-				type="list"
-				label="JGLOBAL_DISPLAY_SELECT_LABEL"
-				description="JGLOBAL_DISPLAY_SELECT_DESC"
-				useglobal="true"
-				class="chzn-color"
-				>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-			</field>
-
-			<field 
-				name="show_pagination" 
-				type="list"
-				label="JGLOBAL_PAGINATION_LABEL"
-				description="JGLOBAL_PAGINATION_DESC"
-				useglobal="true"
-				>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-				<option value="2">JGLOBAL_AUTO</option>
-			</field>
-
-			<field
-				name="show_pagination_results"
-				type="list"
-				label="JGLOBAL_PAGINATION_RESULTS_LABEL"
-				description="JGLOBAL_PAGINATION_RESULTS_DESC"
-				useglobal="true"
-				class="chzn-color"
-				>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
-
-			</field>
-
-			<field 
-				name="initial_sort" 
-				type="list"
-				label="COM_BPGALLERY_FIELD_INITIAL_SORT_LABEL"
-				description="COM_BPGALLERY_FIELD_INITIAL_SORT_DESC"
-				useglobal="true"
-				>
-				<option value="name">COM_BPGALLERY_FIELD_VALUE_NAME</option>
-				<option value="sortname">COM_BPGALLERY_FIELD_VALUE_SORT_NAME</option>
-				<option value="ordering">COM_BPGALLERY_FIELD_VALUE_ORDERING</option>
-			</field>
-		</fieldset>
-
-		<fieldset name="image" label="COM_BPGALLERY_BASIC_OPTIONS_FIELDSET_LABEL"
-			addfieldpath="/administrator/components/com_fields/models/fields">
-			<field 
-				name="presentation_style"
-				type="list"
-				label="COM_BPGALLERY_FIELD_PRESENTATION_LABEL"
-				description="COM_BPGALLERY_FIELD_PRESENTATION_DESC"
-				useglobal="true"
-				>
-				<option value="sliders">COM_BPGALLERY_FIELD_VALUE_SLIDERS</option>
-				<option value="tabs">COM_BPGALLERY_FIELD_VALUE_TABS</option>
-				<option value="plain">COM_BPGALLERY_FIELD_VALUE_PLAIN</option>
-			</field>
-
-			<field 
-				name="show_image_category"
-				type="list"
-				label="COM_BPGALLERY_FIELD_IMAGE_SHOW_CATEGORY_LABEL"
-				description="COM_BPGALLERY_FIELD_IMAGE_SHOW_CATEGORY_DESC"
-				useglobal="true"
-				class="chzn-color"
-				>
-				<option value="hide">JHIDE</option>
-				<option value="show_no_link">COM_BPGALLERY_FIELD_VALUE_NO_LINK</option>
-				<option value="show_with_link">COM_BPGALLERY_FIELD_VALUE_WITH_LINK</option>
-			</field>
-
-			<field
-				name="show_tags"
-				type="list"
-				label="COM_BPGALLERY_FIELD_SHOW_TAGS_LABEL"
-				description="COM_BPGALLERY_FIELD_SHOW_TAGS_DESC"
-				useglobal="true"
-				class="chzn-color"
-				>
+					name="show_image_title"
+					type="list"
+					label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_LABEL"
+					description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_DESC"
+					default=""
+					useglobal="true"
+					class="chzn-color"
+			>
 				<option value="0">JHIDE</option>
 				<option value="1">JSHOW</option>
 			</field>
 
 			<field
-				name="show_user_custom_fields"
-				type="fieldgroups"
-				label="COM_BPGALLERY_FIELD_USER_CUSTOM_FIELDS_SHOW_LABEL"
-				description="COM_BPGALLERY_FIELD_USER_CUSTOM_FIELDS_SHOW_DESC"
-				multiple="true"
-				context="com_users.user"
-				>
-				<option value="-1">JALL</option>
+					name="show_image_intro"
+					type="list"
+					label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_LABEL"
+					description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_DESC"
+					default=""
+					useglobal="true"
+					class="chzn-color"
+			>
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
 			</field>
+
+			<field
+					name="image_lightbox"
+					type="list"
+					label="COM_BPGALLERY_CONFIG_IMAGE_LIGHTBOX_LABEL"
+					description="COM_BPGALLERY_CONFIG_IMAGE_LIGHTBOX_DESC"
+					default=""
+					useglobal="true"
+					class="chzn-color"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
+			<field
+					name="images_align"
+					type="list"
+					label="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_LABEL"
+					description="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_DESC"
+					default=""
+					useglobal="true"
+			>
+				<option value="left">JGLOBAL_LEFT</option>
+				<option value="center">JGLOBAL_CENTER</option>
+				<option value="between">COM_BPGALLERY_CONFIG_IMAGES_ALIGN_BETWEEN</option>
+				<option value="right">JGLOBAL_RIGHT</option>
+			</field>
+
+			<field
+					name="images_limit"
+					type="text"
+					label="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_LABEL"
+					description="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_DESC"
+					default=""
+					filter="INT"
+					useglobal="true"/>
 
 		</fieldset>
 
-		<fieldset name="integration">
+		<fieldset name="advanced">
 
-			<field 
-				name="show_feed_link" 
-				type="list"
-				label="JGLOBAL_Show_Feed_Link_Label"
-				description="JGLOBAL_Show_Feed_Link_Desc"
-				useglobal="true"
-				class="chzn-color"
-				>
-				<option value="0">JHIDE</option>
-				<option value="1">JSHOW</option>
+			<field
+					name="include_component_assets"
+					type="list"
+					label="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_LABEL"
+					description="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_DESC"
+					useglobal="true"
+					class="chzn-color"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
+			<field
+					name="include_theme_assets"
+					type="list"
+					label="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_LABEL"
+					description="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_DESC"
+					useglobal="true"
+					class="chzn-color"
+			>
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
 			</field>
 
 		</fieldset>

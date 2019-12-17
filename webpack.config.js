@@ -61,6 +61,9 @@ Encore
     .addStyleEntry('category-default', [
         './.dev/site/scss/themes/category/default.scss',
     ])
+    .addEntry('lightbox', [
+        './.dev/site/js/lightbox.js',
+    ])
     .copyFiles({
         from: './.dev/site/images',
 

@@ -159,12 +159,11 @@ class BPGalleryModelCategory extends JModelList
 
 		if (is_numeric($state))
 		{
-			$query->where('a.published = ' . (int) $state);
-		}
-		else
-		{
-			$query->where('(a.published IN (0,1,2))');
-		}
+            $query->where('a.state = ' . (int)$state);
+        }
+		else {
+            $query->where('(a.state IN (0,1,2))');
+        }
 
 		// Filter by start and end dates.
 		$nullDate = $db->quote($db->getNullDate());
@@ -205,37 +204,22 @@ class BPGalleryModelCategory extends JModelList
 		return $query;
 	}
 
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @param   string  $ordering   An optional ordering field.
-	 * @param   string  $direction  An optional direction (asc|desc).
-	 *
-	 * @return  void
-	 */
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @param string $ordering An optional ordering field.
+     * @param string $direction An optional direction (asc|desc).
+     *
+     * @return  void
+     *
+     * @throws Exception
+     */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
 		$params = JComponentHelper::getParams('com_bpgallery');
-
-		// List state information
-		$format = $app->input->getWord('format');
-
-		if ($format === 'feed')
-		{
-			$limit = $app->get('feed_limit');
-		}
-		else
-		{
-			$limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->get('list_limit'), 'uint');
-		}
-
-		$this->setState('list.limit', $limit);
-
-		$limitstart = $app->input->get('limitstart', 0, 'uint');
-		$this->setState('list.start', $limitstart);
 
 		// Optional filter text
 		$itemid = $app->input->get('Itemid', 0, 'int');
@@ -243,24 +227,33 @@ class BPGalleryModelCategory extends JModelList
 		$this->setState('list.filter', $search);
 
 		// Get list ordering default from the parameters
-		$menuParams = new Registry;
+        $menuParams = new Registry;
 
-		if ($menu = $app->getMenu()->getActive())
-		{
-			$menuParams->loadString($menu->params);
-		}
+        if ($menu = $app->getMenu()->getActive()) {
+            $menuParams->loadString($menu->params);
+        }
 
-		$mergedParams = clone $params;
-		$mergedParams->merge($menuParams);
+        $mergedParams = clone $params;
+        $mergedParams->merge($menuParams);
 
-		$orderCol = $app->input->get('filter_order', $mergedParams->get('initial_sort', 'ordering'));
-		if (!in_array($orderCol, $this->filter_fields))
-		{
-			$orderCol = 'ordering';
-		}
-		$this->setState('list.ordering', $orderCol);
+        // List state information
+        $format = $app->input->getWord('format');
+        if ($format === 'feed') {
+            $limit = $app->get('feed_limit');
+        } else {
+            $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $params->get('images_limit', $app->get('list_limit')), 'uint');
+        }
+        $this->setState('list.limit', $limit);
+        $limitstart = $app->input->get('limitstart', 0, 'uint');
+        $this->setState('list.start', $limitstart);
 
-		$listOrder = $app->input->get('filter_order_Dir', 'ASC');
+        $orderCol = $app->input->get('filter_order', $mergedParams->get('initial_sort', 'ordering'));
+        if (!in_array($orderCol, $this->filter_fields)) {
+            $orderCol = 'ordering';
+        }
+        $this->setState('list.ordering', $orderCol);
+
+        $listOrder = $app->input->get('filter_order_Dir', 'ASC');
 
 		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
 		{
@@ -289,38 +282,37 @@ class BPGalleryModelCategory extends JModelList
 		$this->setState('params', $params);
 	}
 
-	/**
-	 * Method to get category data for the current category
-	 *
-	 * @return  object  The category object
-	 */
+    /**
+     * Method to get category data for the current category
+     *
+     * @return  object  The category object
+     *
+     * @throws Exception
+     */
 	public function getCategory()
 	{
 		if (!is_object($this->_item))
 		{
 			$app = JFactory::getApplication();
 			$menu = $app->getMenu();
-			$active = $menu->getActive();
-			$params = new Registry;
+            $active = $menu->getActive();
+            $params = new Registry;
 
-			if ($active)
-			{
-				$params->loadString($active->params);
-			}
+            if ($active) {
+                $params->loadString($active->params);
+            }
 
-			$options = array();
-			$options['countItems'] = $params->get('show_cat_items', 1) || $params->get('show_empty_categories', 0);
-			$categories = JCategories::getInstance('Image', $options);
-			$this->_item = $categories->get($this->getState('category.id', 'root'));
-			if (is_object($this->_item))
-			{
-				$this->_children = $this->_item->getChildren();
-				$this->_parent = false;
+            $options = array();
+            $options['countItems'] = $params->get('show_cat_items', 1) || $params->get('show_empty_categories', 0);
+            $categories = JCategories::getInstance('BPGallery', $options);
+            $this->_item = $categories->get($this->getState('category.id', 'root'));
+            if (is_object($this->_item)) {
+                $this->_children = $this->_item->getChildren();
+                $this->_parent = false;
 
-				if ($this->_item->getParent())
-				{
-					$this->_parent = $this->_item->getParent();
-				}
+                if ($this->_item->getParent()) {
+                    $this->_parent = $this->_item->getParent();
+                }
 
 				$this->_rightsibling = $this->_item->getSibling();
 				$this->_leftsibling = $this->_item->getSibling(false);
@@ -335,11 +327,13 @@ class BPGalleryModelCategory extends JModelList
 		return $this->_item;
 	}
 
-	/**
-	 * Get the parent category.
-	 *
-	 * @return  mixed  An array of categories or false if an error occurs.
-	 */
+    /**
+     * Get the parent category.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
 	public function getParent()
 	{
 		if (!is_object($this->_item))
@@ -350,11 +344,13 @@ class BPGalleryModelCategory extends JModelList
 		return $this->_parent;
 	}
 
-	/**
-	 * Get the sibling (adjacent) categories.
-	 *
-	 * @return  mixed  An array of categories or false if an error occurs.
-	 */
+    /**
+     * Get the sibling (adjacent) categories.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
 	public function &getLeftSibling()
 	{
 		if (!is_object($this->_item))
@@ -365,11 +361,13 @@ class BPGalleryModelCategory extends JModelList
 		return $this->_leftsibling;
 	}
 
-	/**
-	 * Get the sibling (adjacent) categories.
-	 *
-	 * @return  mixed  An array of categories or false if an error occurs.
-	 */
+    /**
+     * Get the sibling (adjacent) categories.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
 	public function &getRightSibling()
 	{
 		if (!is_object($this->_item))
@@ -380,11 +378,13 @@ class BPGalleryModelCategory extends JModelList
 		return $this->_rightsibling;
 	}
 
-	/**
-	 * Get the child categories.
-	 *
-	 * @return  mixed  An array of categories or false if an error occurs.
-	 */
+    /**
+     * Get the child categories.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
 	public function &getChildren()
 	{
 		if (!is_object($this->_item))
@@ -395,13 +395,15 @@ class BPGalleryModelCategory extends JModelList
 		return $this->_children;
 	}
 
-	/**
-	 * Increment the hit counter for the category.
-	 *
-	 * @param   integer  $pk  Optional primary key of the category to increment.
-	 *
-	 * @return  boolean  True if successful; false otherwise and internal error set.
-	 */
+    /**
+     * Increment the hit counter for the category.
+     *
+     * @param integer $pk Optional primary key of the category to increment.
+     *
+     * @return  boolean  True if successful; false otherwise and internal error set.
+     *
+     * @throws Exception
+     */
 	public function hit($pk = 0)
 	{
 		$input = JFactory::getApplication()->input;

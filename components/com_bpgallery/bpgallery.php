@@ -12,6 +12,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('BPGalleryHelperRoute', JPATH_COMPONENT . '/helpers/route.php');
+JLoader::register('BPGalleryHelperLayout', JPATH_COMPONENT . '/helpers/layout.php');
 
 $input = JFactory::getApplication()->input;
 

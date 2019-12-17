@@ -23,9 +23,9 @@ class BPGalleryCategories extends JCategories
 	 */
 	public function __construct($options = array())
 	{
-		$options['table'] = '#__bpgallery_images';
-		$options['extension'] = 'com_bpgallery';
-		$options['statefield'] = 'published';
-		parent::__construct($options);
-	}
+        $options['table'] = '#__bpgallery_images';
+        $options['extension'] = 'com_bpgallery';
+        $options['statefield'] = 'state';
+        parent::__construct($options);
+    }
 }
