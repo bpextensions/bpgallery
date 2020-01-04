@@ -74,6 +74,21 @@ class BPGalleryHelper extends JHelperContent
             'index.php?option=com_categories&extension=com_bpgallery',
             $vName == 'categories'
         );
+
+        if (JComponentHelper::isEnabled('com_fields')) {
+            JHtmlSidebar::addEntry(
+                JText::_('JGLOBAL_FIELDS'),
+                'index.php?option=com_fields&context=com_bpgallery.image',
+                $vName == 'fields.fields'
+            );
+
+            JHtmlSidebar::addEntry(
+                JText::_('JGLOBAL_FIELD_GROUPS'),
+                'index.php?option=com_fields&view=groups&context=com_bpgallery.image',
+                $vName == 'fields.groups'
+            );
+        }
+
     }
 
     /**
@@ -147,15 +162,17 @@ class BPGalleryHelper extends JHelperContent
 
     /**
      * Get url/path of a thumbnail.
-     * 
-     * @param   JObject $image      Image object.
-     * @param   int     $width      Required image width.
-     * @param   int     $height     Required image height.
-     * @param   int     $method     Thumbnail generation method (default: self::METHOD_CROP)
-     * @param   bool    $url        Should method return URL (true) or PATH (false)
-     * @param   bool    $relative   Should method return relative or absolute url/path
+     *
+     * @param JObject $image Image object.
+     * @param int $width Required image width.
+     * @param int $height Required image height.
+     * @param int $method Thumbnail generation method (default: self::METHOD_CROP)
+     * @param bool $url Should method return URL (true) or PATH (false)
+     * @param bool $relative Should method return relative or absolute url/path
      *
      * @return  string
+     *
+     * @throws Exception
      */
     public static function getThumbnail($image, $width, $height,
                                         $method = self::METHOD_CROP,
@@ -163,8 +180,8 @@ class BPGalleryHelper extends JHelperContent
     {
         $filename           = (is_object($image) ? basename($image->filename) : basename($image));
         $relative_base_path = self::getParam('images_path', '/images/gallery');
-        $absolute_base_path = JPATH_ROOT.$relative_base_path;
-
+        $options['quality'] = self::getParam('quality', '70');
+        $absolute_base_path = JPATH_ROOT . $relative_base_path;
         $original_relative = $relative_base_path.'/original/'.$filename;
         $original_path     = $absolute_base_path.'/original/'.$filename;
 
@@ -239,12 +256,16 @@ class BPGalleryHelper extends JHelperContent
                     // Show error message
                     if ($showMessage) {
                         $message = JText::sprintf('COM_BPGALLERY_ERROR_UNSUPPORTED_FILE_S',
-                                $original_relative);
+                            $original_relative);
                         $app->enqueueMessage($message, 'error');
                     }
 
                     // Failed, return default message
                     return self::$defaultImage;
+                } elseif ($image_type === 'image/jpeg') {
+                    $options['quality'] = (int)$options['quality'];
+                } elseif ($image_type === 'image/png') {
+                    $options['quality'] = round((int)$options['quality'] / 10);
                 }
 
                 // Ensure target directory exists
@@ -253,7 +274,7 @@ class BPGalleryHelper extends JHelperContent
                 }
 
                 // If we failed to save the output image
-                $result = $output_image->toFile($output_absolute, $image_type);
+                $result = $output_image->toFile($output_absolute, $image_type, $options);
                 if (!$result) {
 
                     // Show error message
@@ -299,13 +320,35 @@ class BPGalleryHelper extends JHelperContent
         switch ($properties->mime) {
             case 'image/jpeg': $type = IMAGETYPE_JPEG;
                 break;
-            case 'image/png': $type = IMAGETYPE_PNG;
+            case 'image/png':
+                $type = IMAGETYPE_PNG;
                 break;
-            case 'image/gif': $type = IMAGETYPE_GIF;
+            case 'image/gif':
+                $type = IMAGETYPE_GIF;
                 break;
-            default: $type = 0;
+            default:
+                $type = 0;
         }
 
         return $type;
+    }
+
+
+    /**
+     * Returns valid contexts
+     *
+     * @return  array
+     *
+     * @since   1.0.0
+     */
+    public static function getContexts()
+    {
+        JFactory::getLanguage()->load('com_bpgallery', JPATH_ADMINISTRATOR);
+
+        $contexts = array(
+            'com_bpgallery.image' => JText::_('COM_BPGALLERY_IMAGE'),
+        );
+
+        return $contexts;
     }
 }

@@ -28,3 +28,4 @@ components/com_bpgallery/assets
 !/package.json
 !/package-lock.json
 !/composer.lock
+!/administrator/components/com_bpgallery/views/image/tmpl/edit_metadata.php

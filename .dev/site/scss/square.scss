@@ -1,0 +1,30 @@
+@import "component";
+
+.bpgallery-category {
+    &.bpgallery-category-square {
+        .items {
+            list-style: none;
+            display: flex;
+            align-items: flex-start;
+            margin: 0;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-left: -10px;
+            margin-right: -10px;
+
+            .image-link {
+                display: block;
+
+                .inner {
+                    margin: 10px;
+                    display: block;
+                }
+
+                .image {
+                    display: block;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

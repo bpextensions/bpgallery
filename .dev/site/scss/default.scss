@@ -1,0 +1,96 @@
+@import "component";
+
+.bpgallery-category {
+    &.bpgallery-category-default {
+        .items {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            margin: 0;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-left: -10px;
+            margin-right: -10px;
+
+            .image-link {
+                display: block;
+                margin: 10px;
+
+                .image {
+                    display: block;
+                }
+            }
+
+            &.images-align-left {
+                justify-content: flex-start;
+            }
+
+            &.images-align-right {
+                justify-content: flex-end;
+            }
+
+            &.images-align-center {
+                justify-content: space-evenly;
+            }
+
+            &.images-align-between {
+                justify-content: space-between;
+            }
+
+            @media screen and (max-width: 320px) {
+                justify-content: center;
+                .image-link {
+                    width: 100%;
+
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+            @media screen and (min-width: 321px) and (max-width: 799px) and (orientation: portrait) {
+                justify-content: space-between;
+                .image-link {
+                    width: 100%;
+
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+            @media screen and (min-width: 321px) and (max-width: 799px) and(orientation: landscape) {
+                justify-content: space-between;
+                .image-link {
+                    width: auto;
+                    height: 100px;
+
+                    img {
+                        width: auto;
+                        height: 100%;
+                    }
+                }
+            }
+            @media screen and (min-width: 800px) and (max-width: 1199px) {
+                .image-link {
+                    width: auto;
+                    height: 100px;
+
+                    img {
+                        width: auto;
+                        height: 100%;
+                    }
+                }
+            }
+            @media screen and (min-width: 1200px) {
+                .image-link {
+                    width: auto;
+                    height: 100px;
+
+                    img {
+                        width: auto;
+                        height: 100%;
+                    }
+                }
+            }
+        }
+    }
+}

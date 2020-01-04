@@ -1,0 +1,150 @@
+.bpgallery-category {
+    .items {
+        .image-link {
+            position: relative;
+            overflow: hidden;
+
+            .inner {
+                position: relative;
+                overflow: hidden;
+            }
+
+            img {
+                transition: .3s linear all;
+            }
+
+            span.overlay {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0);
+                display: block;
+                transition: .3s linear all;
+                z-index: 503;
+
+                &::before {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 100%;
+                    height: 1px;
+                    background: #fff;
+                    top: 50%;
+                    left: 50%;
+                    transition: .3s linear all;
+                    opacity: 0;
+                    transform: translate(-50%, -50%);
+                }
+
+                &::after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 1px;
+                    height: 100%;
+                    background: #fff;
+                    top: 50%;
+                    left: 50%;
+                    transition: .3s linear all;
+                    opacity: 0;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            &:hover {
+                .overlay {
+                    background: rgba(0, 0, 0, .6);
+
+                    &::before {
+                        opacity: 1;
+                        width: 3rem;
+                    }
+
+                    &::after {
+                        opacity: 1;
+                        height: 3rem;
+                    }
+                }
+
+                img {
+                    transform: scale(1.3);
+                    z-index: 501;
+                }
+            }
+        }
+    }
+
+    .categories-list {
+        .image-wrapper {
+            position: relative;
+            overflow: hidden;
+
+            img {
+                transition: .3s linear all;
+            }
+
+            span.overlay {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background: rgba(0, 0, 0, 0);
+                display: block;
+                transition: .3s linear all;
+                z-index: 503;
+
+                &::before {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 100%;
+                    height: 1px;
+                    background: #fff;
+                    top: 50%;
+                    left: 50%;
+                    transition: .3s linear all;
+                    opacity: 0;
+                    transform: translate(-50%, -50%);
+                }
+
+                &::after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 1px;
+                    height: 100%;
+                    background: #fff;
+                    top: 50%;
+                    left: 50%;
+                    transition: .3s linear all;
+                    opacity: 0;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            &:hover {
+                .overlay {
+                    background: rgba(0, 0, 0, .6);
+
+                    &::before {
+                        opacity: 1;
+                        width: 3rem;
+                    }
+
+                    &::after {
+                        opacity: 1;
+                        height: 3rem;
+                    }
+                }
+
+                img {
+                    transform: scale(1.3);
+                    z-index: 501;
+                }
+            }
+        }
+    }
+}

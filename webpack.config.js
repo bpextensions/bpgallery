@@ -54,9 +54,15 @@ Encore
         jquery: 'jQuery',
         joomla: 'Joomla',
     })
-    .addEntry('component', [
-        './.dev/site/js/component.js',
-        './.dev/site/scss/component.scss',
+    .addEntry('default', [
+        './.dev/site/scss/default.scss',
+    ])
+    .addEntry('square', [
+        './.dev/site/scss/square.scss',
+    ])
+    .addEntry('masonry', [
+        './.dev/site/js/masonry.js',
+        './.dev/site/scss/masonry.scss',
     ])
     .addStyleEntry('category-default', [
         './.dev/site/scss/themes/category/default.scss',

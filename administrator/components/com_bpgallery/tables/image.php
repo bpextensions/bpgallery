@@ -9,6 +9,8 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\Registry\Registry;
+
 defined('_JEXEC') or die;
 
 /**
@@ -16,8 +18,8 @@ defined('_JEXEC') or die;
  */
 class BPGalleryTableImage extends JTable
 {
-	/**
-	 * Constructor
+    /**
+     * Constructor
 	 *
 	 * @param   JDatabaseDriver  &$db  Database connector object
 	 */
@@ -85,14 +87,35 @@ class BPGalleryTableImage extends JTable
 		if (empty($this->publish_down))
 		{
 			$this->publish_down = $this->getDbo()->getNullDate();
-		}
+        }
 
-		if (empty($this->modified))
-		{
-			$this->modified = $this->getDbo()->getNullDate();
-		}
+        if (empty($this->modified)) {
+            $this->modified = $this->getDbo()->getNullDate();
+        }
 
-		return true;
-	}
+        return true;
+    }
+
+    /**
+     * Overloaded bind function
+     *
+     * @param array $array Named array
+     * @param mixed $ignore An optional array or space separated list of properties
+     *                          to ignore while binding.
+     *
+     * @return  mixed  Null if operation was satisfactory, otherwise returns an error string
+     *
+     * @see     Table::bind()
+     * @since   1.0
+     */
+    public function bind($array, $ignore = '')
+    {
+        if (isset($array['metadata']) && is_array($array['metadata'])) {
+            $registry = new Registry($array['metadata']);
+            $array['metadata'] = (string)$registry;
+        }
+
+        return parent::bind($array, $ignore);
+    }
 
 }

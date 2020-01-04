@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="COM_BPGALLERY_VIEW_CATEGORY_DEFAULT_TITLE" option="COM_BPGALLERY_VIEW_CATEGORY_DEFAULT_OPTION">
-		<message>
-			<![CDATA[COM_BPGALLERY_VIEW_CATEGORY_DEFAULT_DESC]]>
-		</message>
-	</layout>
+    <layout title="COM_BPGALLERY_VIEW_CATEGORY_SQUARES_TITLE" option="COM_BPGALLERY_VIEW_CATEGORY_SQUARES_OPTION">
+        <message>
+            <![CDATA[COM_BPGALLERY_VIEW_CATEGORY_SQUARES_DESC]]>
+        </message>
+    </layout>
 
-	<!-- Add fields to the request variables for the layout. -->
-	<fields name="request"
-			addfieldpath="/administrator/components/com_categories/models/fields"
-	>
-		<fieldset name="request"
-			addfieldpath="/administrator/components/com_bpgallery/models/fields"
-		>
-			<field
-				name="id"
-				type="modal_category"
-				label="COM_BPGALLERY_FIELD_CATEGORY_LABEL"
-				description="COM_BPGALLERY_FIELD_CATEGORY_DESC"
-				extension="com_bpgallery"
-				required="true"
-				select="true"
-				new="true"
-				edit="true"
-				clear="true"
-			/>
-		</fieldset>
-	</fields>
+    <!-- Add fields to the request variables for the layout. -->
+    <fields name="request"
+            addfieldpath="/administrator/components/com_categories/models/fields"
+    >
+        <fieldset name="request"
+                  addfieldpath="/administrator/components/com_bpgallery/models/fields"
+        >
+            <field
+                    name="id"
+                    type="modal_category"
+                    label="COM_BPGALLERY_FIELD_CATEGORY_LABEL"
+                    description="COM_BPGALLERY_FIELD_CATEGORY_DESC"
+                    extension="com_bpgallery"
+                    required="true"
+                    select="true"
+                    new="true"
+                    edit="true"
+                    clear="true"
+            />
+        </fieldset>
+    </fields>
 
 
-	<!-- Add fields to the parameters object for the layout. -->
-	<fields name="params">
+    <!-- Add fields to the parameters object for the layout. -->
+    <fields name="params">
+
 
         <fieldset
                 name="categories"
@@ -159,24 +160,20 @@
                     useglobal="true"/>
 
             <field
-                    name="category_default_settings_note"
+                    name="category_square_settings_note"
                     class=""
                     type="spacer"
-                    label="COM_BPGALLERY_FIELDSET_CATEGORY_DEFAULT_DESC"
+                    label="COM_BPGALLERY_FIELDSET_CATEGORY_SQUARE_DESC"
             />
 
             <field
-                    name="images_align"
-                    type="list"
-                    label="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_LABEL"
-                    description="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_DESC"
-                    useglobal="true"
-            >
-                <option value="left">JGLOBAL_LEFT</option>
-                <option value="center">JGLOBAL_CENTER</option>
-                <option value="between">COM_BPGALLERY_CONFIG_IMAGES_ALIGN_BETWEEN</option>
-                <option value="right">JGLOBAL_RIGHT</option>
-            </field>
+                    name="category_square_row_length"
+                    type="number"
+                    label="COM_BPGALLERY_CONFIG_CATEGORY_SQUARE_ROW_LENGTH_LABEL"
+                    description="COM_BPGALLERY_CONFIG_CATEGORY_SQUARE_ROW_LENGTH_DESC"
+                    filter="INT"
+                    min="1" max="20" step="1"
+                    useglobal="true"/>
 
         </fieldset>
 
@@ -194,8 +191,8 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_LABEL"
                     description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_DESC"
+                    useglobal="true"
                     class="chzn-color"
-                    useglobal="1"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -206,8 +203,8 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_LABEL"
                     description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_DESC"
+                    useglobal="true"
                     class="chzn-color"
-                    useglobal="1"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -218,41 +215,41 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_LABEL"
                     description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_DESC"
+                    useglobal="true"
                     class="chzn-color"
-                    useglobal="1"
             >
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
 
-		</fieldset>
+        </fieldset>
 
-		<fieldset name="advanced">
+        <fieldset name="advanced">
 
-			<field
-					name="include_component_assets"
-					type="list"
-					label="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_LABEL"
-					description="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_DESC"
-					useglobal="true"
-					class="chzn-color"
-			>
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
+            <field
+                    name="include_component_assets"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_LABEL"
+                    description="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_DESC"
+                    useglobal="true"
+                    class="chzn-color"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
 
-			<field
-					name="include_theme_assets"
-					type="list"
-					label="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_LABEL"
-					description="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_DESC"
-					useglobal="true"
-					class="chzn-color"
-			>
-				<option value="0">JNO</option>
-				<option value="1">JYES</option>
-			</field>
+            <field
+                    name="include_theme_assets"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_LABEL"
+                    description="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_DESC"
+                    useglobal="true"
+                    class="chzn-color"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
 
-		</fieldset>
-	</fields>
+        </fieldset>
+    </fields>
 </metadata>

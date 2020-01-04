@@ -18,29 +18,50 @@ JHtml::_('behavior.core');
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn = $this->escape($this->state->get('list.direction'));
 
-$images_align = $this->params->def('images_align', 'center');
-$image_lightbox = $this->params->get('images_lightbox', 1);
+$image_lightbox = $this->params->def('images_lightbox', 1);
+$square_row_length = $this->params->def('category_square_row_length', 4);
+$image_width = round(floor(100 / $square_row_length), 2);
+$this->document->addStyleDeclaration("
+    @media screen and (max-width: 360px) {
+        .bpgallery-category-square .items .image-link {
+            width: 100%
+        }
+    }
+    @media screen and (min-width:361px) and (max-width: 800px) {
+        .bpgallery-category-square .items .image-link {
+            width: 50%
+        }
+    }
+    @media screen and (min-width:361px) and (min-width: 801px) {
+        .bpgallery-category-square .items .image-link {
+            width: {$image_width}%
+        }
+    }
+");
+
 ?>
 <?php if (empty($this->items)) : ?>
     <p> <?php echo JText::_('COM_BPGALLERY_NO_IMAGES'); ?>     </p>
 <?php else : ?>
 
-    <ul class="items <?php echo 'images-align-' . $images_align ?>">
+    <ul class="items">
         <?php foreach ($this->items as $i => $item) :
-            $url_thumbnail = BPGalleryHelper::getThumbnail($item, 0, 100, BPGalleryHelper::METHOD_FIT_HEIGHT);
-            $url_medium = BPGalleryHelper::getThumbnail($item, 600, 0, BPGalleryHelper::METHOD_FIT_WIDTH);
+            $url_thumbnail = BPGalleryHelper::getThumbnail($item, 200, 200, BPGalleryHelper::METHOD_CROP);
+            $url_medium = BPGalleryHelper::getThumbnail($item, 600, 600, BPGalleryHelper::METHOD_CROP);
             $url_full = BPGalleryHelper::getThumbnail($item, 1920, 1080, BPGalleryHelper::METHOD_FIT);
             $url = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
             ?>
             <a href="<?php echo $image_lightbox ? $url_full : $url ?>"
                <?php if ($image_lightbox): ?>target="_blank"<?php endif ?> class="image-link"
                title="<?php echo $item->title ?>">
-                <span class="overlay"></span>
-                <img
-                        src="<?php echo $url_thumbnail ?>" alt="<?php echo $item->title ?>" class="image"
-                        srcset="<?php echo $url_thumbnail ?> 100w, <?php echo $url_medium ?> 400w, <?php echo $url_full ?> 1080w"
-                        sizes="100%"
-                >
+                <span class="inner">
+                    <span class="overlay"></span>
+                    <img
+                            src="<?php echo $url_thumbnail ?>" alt="<?php echo $item->title ?>" class="image"
+                            srcset="<?php echo $url_thumbnail ?> 200w, <?php echo $url_medium ?> 600w, <?php echo $url_full ?> 1920w"
+                            sizes="(max-width: 800px) 600px, (min-width:801px) 200px, 1920px"
+                    >
+                </span>
             </a>
         <?php endforeach; ?>
     </ul>

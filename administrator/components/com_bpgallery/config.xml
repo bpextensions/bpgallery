@@ -1,31 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-    
-	<fieldset
-		name="component"
-		label="COM_BPGALLERY_FIELDSET_CONFIG_COMPONENT_LABEL"
-		description="COM_BPGALLERY_FIELDSET_CONFIG_COMPONENT_DESC"
-	>
-
-
-	</fieldset>
 
 	<fieldset
-			name="category"
-			label="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_LABEL"
-			description="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORY_DESC"
+			name="categories"
+			label="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORIES_LABEL"
 	>
+		<field
+				name="categories_note"
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_CONFIG_CATEGORIES_DESC"
+				class="muted"
+		/>
 
-	</fieldset>
+		<field
+				name="show_category_title"
+				type="list"
+				label="JGLOBAL_SHOW_CATEGORY_TITLE"
+				description="JGLOBAL_SHOW_CATEGORY_TITLE_DESC"
+				class="chzn-color"
+				default="1"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
 
-	<fieldset name="category_default" label="COM_BPGALLERY_FIELDSET_CATEGORY_DEFAULT_LABEL">
+		<field
+				name="show_description"
+				type="list"
+				label="JGLOBAL_SHOW_CATEGORY_DESCRIPTION_LABEL"
+				description="JGLOBAL_SHOW_CATEGORY_DESCRIPTION_DESC"
+				class="chzn-color"
+				default="1"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+
+		<field
+				name="show_description_image"
+				type="list"
+				label="JGLOBAL_SHOW_CATEGORY_IMAGE_LABEL"
+				description="JGLOBAL_SHOW_CATEGORY_IMAGE_DESC"
+				class="chzn-color"
+				default="1"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+
+		<field
+				name="maxLevel"
+				type="list"
+				label="JGLOBAL_MAXIMUM_CATEGORY_LEVELS_LABEL"
+				description="JGLOBAL_MAXIMUM_CATEGORY_LEVELS_DESC"
+				default="-1"
+		>
+			<option value="-1">JALL</option>
+			<option value="0">JNONE</option>
+			<option value="1">J1</option>
+			<option value="2">J2</option>
+			<option value="3">J3</option>
+			<option value="4">J4</option>
+			<option value="5">J5</option>
+		</field>
+
+		<field
+				name="show_empty_categories"
+				type="list"
+				label="JGLOBAL_SHOW_EMPTY_CATEGORIES_LABEL"
+				description="COM_BPGALLERY_SHOW_EMPTY_CATEGORIES_DESC"
+				class="chzn-color"
+				default="0"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
 
 
 		<field
-				name="category_default_note"
+				name="show_subcat_desc"
+				type="list"
+				label="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_LABEL"
+				description="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_DESC"
+				class="chzn-color"
+				default="0"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+
+		<field
+				name="show_cat_num_images"
+				type="list"
+				label="COM_BPGALLERY_CONFIG_SHOW_CAT_NUM_IMAGES_LABEL"
+				description="COM_BPGALLERY_CONFIG_SHOW_CAT_NUM_IMAGES_DESC"
+				default="1"
+				filter="INT"
+				class="chzn-color"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+	</fieldset>
+
+	<fieldset name="category" label="COM_BPGALLERY_FIELDSET_CATEGORY_LABEL">
+
+		<field
+				name="images"
+				class="muted"
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_IMAGES_DESC"
+		/>
+
+		<field
+				name="category_common_settings_note"
+				class=""
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_CATEGORY_COMMON_DESC"
+		/>
+
+		<field
+				name="images_limit"
+				type="text"
+				label="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_LABEL"
+				description="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_DESC"
+				filter="INT"
+				default="25"/>
+
+		<field
+				name="category_default_settings_note"
+				class=""
 				type="spacer"
 				label="COM_BPGALLERY_FIELDSET_CATEGORY_DEFAULT_DESC"
-				class="text"
+		/>
+
+		<field
+				name="images_align"
+				type="list"
+				label="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_LABEL"
+				description="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_DESC"
+				default="center"
+		>
+			<option value="left">JGLOBAL_LEFT</option>
+			<option value="center">JGLOBAL_CENTER</option>
+			<option value="between">COM_BPGALLERY_CONFIG_IMAGES_ALIGN_BETWEEN</option>
+			<option value="right">JGLOBAL_RIGHT</option>
+		</field>
+
+		<field
+				name="category_square_settings_note"
+				class=""
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_CATEGORY_SQUARE_DESC"
+		/>
+
+		<field
+				name="category_square_row_length"
+				type="number"
+				label="COM_BPGALLERY_CONFIG_CATEGORY_SQUARE_ROW_LENGTH_LABEL"
+				description="COM_BPGALLERY_CONFIG_CATEGORY_SQUARE_ROW_LENGTH_DESC"
+				filter="INT"
+				min="1" max="20" step="1"
+				default="4"/>
+
+		<field
+				name="category_masonry_settings_note"
+				class=""
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_CATEGORY_MASONRY_DESC"
+		/>
+
+		<field
+				name="category_masonry_columns"
+				type="number"
+				label="COM_BPGALLERY_CONFIG_CATEGORY_MASONRY_COLUMNS_LABEL"
+				description="COM_BPGALLERY_CONFIG_CATEGORY_MASONRY_COLUMNS_DESC"
+				filter="INT"
+				min="1" max="20" step="1"
+				default="4"/>
+
+	</fieldset>
+
+	<fieldset name="image" label="COM_BPGALLERY_FIELDSET_IMAGE_LABEL">
+
+		<field
+				name="image"
+				class="muted"
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_IMAGE_DESC"
 		/>
 
 		<field
@@ -53,54 +215,39 @@
 		</field>
 
 		<field
-				name="image_lightbox"
+				name="images_lightbox"
 				type="list"
-				label="COM_BPGALLERY_CONFIG_IMAGE_LIGHTBOX_LABEL"
-				description="COM_BPGALLERY_CONFIG_IMAGE_LIGHTBOX_DESC"
-				default="1"
+				label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_LABEL"
+				description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_DESC"
+				default=""
 				class="chzn-color"
 		>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
 
-		<field
-				name="images_align"
-				type="list"
-				label="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_LABEL"
-				description="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_DESC"
-				default="center"
-		>
-			<option value="left">JGLOBAL_LEFT</option>
-			<option value="center">JGLOBAL_CENTER</option>
-			<option value="between">COM_BPGALLERY_CONFIG_IMAGES_ALIGN_BETWEEN</option>
-			<option value="right">JGLOBAL_RIGHT</option>
-		</field>
-
-		<field
-				name="images_limit"
-				type="text"
-				label="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_LABEL"
-				description="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_DESC"
-				filter="INT"
-				default="25"/>
-
 	</fieldset>
 
 	<fieldset
-			name="images"
+			name="thumbnails"
 			type="text"
 			layout="table"
-			label="COM_BPGALLERY_FIELDSET_CONFIG_IMAGES_LABEL"
-			description="COM_BPGALLERY_FIELDSET_CONFIG_IMAGES_DESC"
+			label="COM_BPGALLERY_FIELDSET_CONFIG_THUMBNAILS_LABEL"
+			description=""
 	>
 
-        <field 
-            name="images_path" default="/images/gallery" readonly="true"
-            label="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_LABEL"
-            description="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_DESC"
-            required="true" 
-        />
+		<field
+				name="thumbnails_note"
+				type="spacer" class="muted"
+				label="COM_BPGALLERY_FIELDSET_CONFIG_THUMBNAILS_DESC"
+		/>
+
+		<field
+				name="images_path" default="/images/gallery"
+				label="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_LABEL"
+				description="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_DESC"
+				required="true"
+		/>
 
 		<field
 				name="sizes"
@@ -144,19 +291,83 @@
 	</fieldset>
 
 	<fieldset
+			name="integration"
+			label="JGLOBAL_INTEGRATION_LABEL"
+	>
+
+		<field
+				name="integration_note"
+				type="spacer" class="muted"
+				label="COM_BPGALLERY_CONFIG_INTEGRATION_SETTINGS_DESC"
+		/>
+
+		<field
+				name="integration_sef"
+				type="note"
+				label="JGLOBAL_SEF_TITLE"
+		/>
+
+		<field
+				name="sef_advanced"
+				type="radio"
+				class="btn-group btn-group-yesno btn-group-reversed"
+				default="0"
+				label="JGLOBAL_SEF_ADVANCED_LABEL"
+				description="JGLOBAL_SEF_ADVANCED_DESC"
+				filter="integer"
+		>
+			<option value="0">JGLOBAL_SEF_ADVANCED_LEGACY</option>
+			<option value="1">JGLOBAL_SEF_ADVANCED_MODERN</option>
+		</field>
+
+		<field
+				name="sef_ids"
+				type="radio"
+				class="btn-group btn-group-yesno"
+				default="0"
+				label="JGLOBAL_SEF_NOIDS_LABEL"
+				description="JGLOBAL_SEF_NOIDS_DESC"
+				showon="sef_advanced:1"
+				filter="integer"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
+		<field
+				name="integration_customfields"
+				type="note"
+				label="JGLOBAL_FIELDS_TITLE"
+		/>
+
+		<field
+				name="custom_fields_enable"
+				type="radio"
+				label="JGLOBAL_CUSTOM_FIELDS_ENABLE_LABEL"
+				description="JGLOBAL_CUSTOM_FIELDS_ENABLE_DESC"
+				class="btn-group btn-group-yesno"
+				default="1"
+		>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
+	</fieldset>
+
+	<fieldset
 			name="permissions"
 			label="JCONFIG_PERMISSIONS_LABEL"
 			description="JCONFIG_PERMISSIONS_DESC"
 	>
 
 		<field
-			name="rules"
-			type="rules"
-			label="JCONFIG_PERMISSIONS_LABEL"
-			filter="rules"
-			validate="rules"
-			component="com_bpgallery"
-			section="component"
+				name="rules"
+				type="rules"
+				label="JCONFIG_PERMISSIONS_LABEL"
+				filter="rules"
+				validate="rules"
+				component="com_bpgallery"
+				section="component"
 		/>
 	</fieldset>
 </config>

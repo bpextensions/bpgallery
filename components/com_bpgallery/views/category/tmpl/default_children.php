@@ -10,37 +10,42 @@
  */
 
 defined('_JEXEC') or die;
-$class = ' class="first"';
 if ($this->maxLevel != 0 && count($this->children[$this->category->id]) > 0) :
 ?>
-<ul class="list-striped list-condensed">
+    <ul class="categories-list">
 <?php foreach ($this->children[$this->category->id] as $id => $child) : ?>
 	<?php
+    $image = $child->getParams()->get('image');
 	if ($this->params->get('show_empty_categories') || $child->numitems || count($child->getChildren())) :
-		if (!isset($this->children[$this->category->id][$id + 1]))
-		{
-			$class = ' class="last"';
-		}
-	?>
-	<li<?php echo $class; ?>>
-		<?php $class = ''; ?>
-			<h4 class="item-title">
-				<a href="<?php echo JRoute::_(BPGalleryHelperRoute::getCategoryRoute($child->id)); ?>">
-				<?php echo $this->escape($child->title); ?>
-				</a>
+        ?>
+        <li class="category-item">
+            <h4>
+                <a href="<?php echo JRoute::_(BPGalleryHelperRoute::getCategoryRoute($child->id)); ?>"
+                   class="category-anchor">
+                    <?php if (!empty($image)): ?>
+                        <span class="image-wrapper">
+                        <span class="overlay"></span>
+                        <img src="<?php echo $image ?>" alt="<?php echo $this->escape($child->title) ?>">
+                    </span>
+                    <?php endif ?>
+                    <span class="category-title">
+				        <?php echo $this->escape($child->title); ?>
 
-				<?php if ($this->params->get('show_cat_items') == 1) : ?>
-					<span class="badge badge-info pull-right" title="<?php echo JText::_('COM_BPGALLERY_CAT_NUM'); ?>"><?php echo $child->numitems; ?></span>
-				<?php endif; ?>
-			</h4>
+                        <?php if ($this->params->get('show_cat_num_images') == 1) : ?>
+                            <span class="badge badge-info pull-right" aria-hidden="true"
+                                  title="<?php echo JText::_('COM_BPGALLERY_CAT_NUM'); ?>"><?php echo $child->numitems; ?></span>
+                        <?php endif; ?>
+                    </span>
+                </a>
+            </h4>
 
-			<?php if ($this->params->get('show_subcat_desc') == 1) : ?>
-				<?php if ($child->description) : ?>
-					<div class="category-desc">
-						<?php echo JHtml::_('content.prepare', $child->description, '', 'com_bpgallery.category'); ?>
-					</div>
-				<?php endif; ?>
-			<?php endif; ?>
+            <?php if ($this->params->get('show_subcat_desc') == 1) : ?>
+                <?php if ($child->description) : ?>
+                    <div class="category-desc">
+                        <?php echo JHtml::_('content.prepare', $child->description, '', 'com_bpgallery.category'); ?>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
 
 			<?php if (count($child->getChildren()) > 0 ) :
 				$this->children[$child->id] = $child->getChildren();

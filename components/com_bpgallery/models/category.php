@@ -241,7 +241,7 @@ class BPGalleryModelCategory extends JModelList
         if ($format === 'feed') {
             $limit = $app->get('feed_limit');
         } else {
-            $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $params->get('images_limit', $app->get('list_limit')), 'uint');
+            $limit = $mergedParams->get('images_limit', $app->get('list_limit'));
         }
         $this->setState('list.limit', $limit);
         $limitstart = $app->input->get('limitstart', 0, 'uint');
@@ -269,18 +269,18 @@ class BPGalleryModelCategory extends JModelList
 
 		if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery')))
 		{
-			// Limit to published for people who can't edit or edit.state.
-			$this->setState('filter.published', 1);
+            // Limit to published for people who can't edit or edit.state.
+            $this->setState('filter.published', 1);
 
-			// Filter by start and end dates.
-			$this->setState('filter.publish_date', true);
-		}
+            // Filter by start and end dates.
+            $this->setState('filter.publish_date', true);
+        }
 
-		$this->setState('filter.language', JLanguageMultilang::isEnabled());
+        $this->setState('filter.language', JLanguageMultilang::isEnabled());
 
-		// Load the parameters.
-		$this->setState('params', $params);
-	}
+        // Load the parameters.
+        $this->setState('params', $mergedParams);
+    }
 
     /**
      * Method to get category data for the current category

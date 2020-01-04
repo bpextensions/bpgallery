@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_BPGALLERY_IMAGE_VIEW_DEFAULT_TITLE" option="COM_BPGALLERY_IMAGE_VIEW_DEFAULT_OPTION">
+        <message>
+            <![CDATA[COM_BPGALLERY_IMAGE_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+
+    <!-- Add fields to the request variables for the layout. -->
+    <fields name="request">
+        <fieldset name="request"
+                  addfieldpath="/administrator/components/com_bpgallery/models/fields">
+
+            <field
+                    name="id"
+                    type="modal_image"
+                    label="COM_BPGALLERY_FIELD_SELECT_IMAGE_LABEL"
+                    description="COM_BPGALLERY_FIELD_SELECT_IMAGE_DESC"
+                    required="true"
+                    select="true"
+                    new="true"
+                    edit="true"
+                    clear="true"
+            />
+
+        </fieldset>
+    </fields>
+
+    <!-- Add fields to the parameters object for the layout. -->
+    <fields name="params">
+
+        <fieldset name="image" label="COM_BPGALLERY_FIELDSET_IMAGE_LABEL">
+
+            <field
+                    name="image"
+                    class="muted"
+                    type="spacer"
+                    label="COM_BPGALLERY_FIELDSET_IMAGE_DESC"
+            />
+
+            <field
+                    name="show_image_title"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_LABEL"
+                    description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_DESC"
+                    class="chzn-color"
+                    useglobal="1"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field
+                    name="show_image_intro"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_LABEL"
+                    description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_DESC"
+                    class="chzn-color"
+                    useglobal="1"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field
+                    name="images_lightbox"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_LABEL"
+                    description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_DESC"
+                    class="chzn-color"
+                    useglobal="1"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+        </fieldset>
+    </fields>
+</metadata>

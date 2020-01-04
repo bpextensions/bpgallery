@@ -1,0 +1,26 @@
+@import "component";
+
+.bpgallery-category {
+    &.bpgallery-category-masonry {
+        .items {
+            list-style: none;
+            margin: 0;
+            margin-left: -10px;
+            margin-right: -10px;
+
+            .image-link {
+                display: block;
+
+                .inner {
+                    margin: 10px;
+                    display: block;
+                }
+
+                .image {
+                    display: block;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

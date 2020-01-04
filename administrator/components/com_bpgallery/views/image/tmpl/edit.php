@@ -15,6 +15,12 @@ JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 JHtml::_('behavior.formvalidator');
 JHtml::_('formbehavior.chosen', 'select');
 
+$this->ignore_fieldsets = array('jmetadata', 'item_associations');
+
+// Create shortcut to parameters.
+$params = clone $this->state->get('params');
+//$params->merge(new Registry($this->item->attribs));
+
 JFactory::getDocument()->addScriptDeclaration('
 	Joomla.submitbutton = function(task)
 	{
@@ -39,23 +45,38 @@ JFactory::getDocument()->addScriptDeclaration('
 				<?php
 				echo $this->form->renderField('filename');
 				echo $this->form->renderField('intro');
-				echo $this->form->renderField('description');
-				echo $this->form->renderFieldset('extra');
-				?>
-			</div>
-			<div class="span3">
-				<?php echo JLayoutHelper::render('joomla.edit.global', $this); ?>
-			</div>
-		</div>
-		<?php echo JHtml::_('bootstrap.endTab'); ?>
+                echo $this->form->renderField('description');
+                echo $this->form->renderFieldset('extra');
+                ?>
+            </div>
+            <div class="span3">
+                <?php echo JLayoutHelper::render('joomla.edit.global', $this); ?>
+            </div>
+        </div>
+        <?php echo JHtml::_('bootstrap.endTab'); ?>
 
-		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'metadata', JText::_('JGLOBAL_FIELDSET_METADATA_OPTIONS')); ?>
-		<?php echo $this->form->renderFieldset('metadata'); ?>
-		<?php echo JHtml::_('bootstrap.endTab'); ?>
+        <?php $this->show_options = $params->get('show_article_options', 1); ?>
+        <?php $this->ignore_fieldsets = ['details', 'metadata', 'item_associations'] ?>
+        <?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
-		<?php echo JHtml::_('bootstrap.endTabSet'); ?>
-	</div>
+        <?php // Do not show the publishing options if the edit form is configured not to. ?>
+        <?php //if ($params->get('show_publishing_options', 1) == 1) : ?>
+        <?php echo JHtml::_('bootstrap.addTab', 'myTab', 'publishing', JText::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
+        <div class="row-fluid form-horizontal-desktop">
+            <div class="span6">
+                <?php echo JLayoutHelper::render('joomla.edit.publishingdata', $this); ?>
+            </div>
+            <div class="span6">
+                <?php echo JLayoutHelper::render('joomla.edit.metadata', $this); ?>
+            </div>
+        </div>
+        <?php echo JHtml::_('bootstrap.endTab'); ?>
+        <?php //endif; ?>
 
-	<input type="hidden" name="task" value="" />
-	<?php echo JHtml::_('form.token'); ?>
+
+        <?php echo JHtml::_('bootstrap.endTabSet'); ?>
+    </div>
+
+    <input type="hidden" name="task" value=""/>
+    <?php echo JHtml::_('form.token'); ?>
 </form>
