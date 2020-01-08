@@ -20,27 +20,37 @@
 			class="input-xxlarge input-large-text"
 			size="40"
 			required="true"
-		/>
+        />
 
-		<field
-			name="alias"
-			type="text"
-			label="JFIELD_ALIAS_LABEL"
-			description="COM_BPGALLERY_FIELD_ALIAS_DESC"
-			size="40"
-			hint="JFIELD_ALIAS_PLACEHOLDER"
-		/>
-        
         <field
-				name="filename"
-				type="media"
-				directory="gallery/original"
-				preview="true" perview_height="200"
-				label="COM_BPGALLERY_FIELD_FILENAME_LABEL"
-				description="COM_BPGALLERY_FIELD_FILENAME_DESC"
-				size="40"
-				hint="COM_BPGALLERY_FIELD_FILENAME_PLACEHOLDER"
-		/>
+                name="alias"
+                type="text"
+                label="JFIELD_ALIAS_LABEL"
+                description="COM_BPGALLERY_FIELD_ALIAS_DESC"
+                size="40"
+                hint="JFIELD_ALIAS_PLACEHOLDER"
+        />
+
+        <field
+                name="alt"
+                type="text"
+                label="COM_BPGALLERY_FIELD_ALT_LABEL"
+                description="COM_BPGALLERY_FIELD_ALT_DESC"
+                size="40"
+                hint="COM_BPGALLERY_FIELD_ALT_HINT"
+        />
+
+        <field
+                name="filename"
+                type="media"
+                directory="gallery/original"
+                preview="true" perview_height="200"
+                required="true"
+                label="COM_BPGALLERY_FIELD_FILENAME_LABEL"
+                description="COM_BPGALLERY_FIELD_FILENAME_DESC"
+                size="40"
+                hint="COM_BPGALLERY_FIELD_FILENAME_PLACEHOLDER"
+        />
 
 		<field
 			name="catid"

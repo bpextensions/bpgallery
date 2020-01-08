@@ -34,21 +34,20 @@ class BPGalleryControllerImage extends JControllerForm
      */
     protected function allowAdd($data = array())
     {
-        $categoryId = ArrayHelper::getValue($data, 'category_id', 0, 'int');
-        $allow      = null;
+        $categoryId = ArrayHelper::getValue($data, 'catid', $this->input->getInt('filter_category_id'), 'int');
+        $allow = null;
 
         if ($categoryId) {
             // If the category has been passed in the URL check it.
-            $allow = JFactory::getUser()->authorise('core.create',
-                $this->option.'.category.'.$categoryId);
+            $allow = JFactory::getUser()->authorise('core.create', $this->option . '.category.' . $categoryId);
         }
 
-        if ($allow !== null) {
-            return $allow;
+        if ($allow === null) {
+            // In the absense of better information, revert to the component permissions.
+            return parent::allowAdd($data);
         }
 
-        // In the absence of better information, revert to the component permissions.
-        return false;
+        return $allow;
     }
 
     /**

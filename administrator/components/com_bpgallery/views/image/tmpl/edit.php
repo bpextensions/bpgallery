@@ -9,6 +9,8 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
@@ -16,6 +18,9 @@ JHtml::_('behavior.formvalidator');
 JHtml::_('formbehavior.chosen', 'select');
 
 $this->ignore_fieldsets = array('jmetadata', 'item_associations');
+
+$app = Factory::getApplication();
+$input = $app->input;
 
 // Create shortcut to parameters.
 $params = clone $this->state->get('params');
@@ -30,21 +35,29 @@ JFactory::getDocument()->addScriptDeclaration('
 		}
 	};
 ');
+
+// In case of modal
+$isModal = $input->get('layout') == 'modal' ? true : false;
+$layout = $isModal ? 'modal' : 'edit';
+$tmpl = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
+
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_bpgallery&layout=edit&id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="image-form" class="form-validate">
+<form action="<?php echo JRoute::_('index.php?option=com_bpgallery&layout=' . $layout . $tmpl . '&id=' . (int)$this->item->id); ?>"
+      method="post" name="adminForm" id="image-form" class="form-validate">
 
-	<?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
+    <?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
-	<div class="form-horizontal">
-		<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
+    <div class="form-horizontal">
+        <?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'general')); ?>
 
-		<?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', empty($this->item->id) ? JText::_('COM_BPGALLERY_NEW_IMAGE') : JText::_('COM_BPGALLERY_EDIT_IMAGE')); ?>
-		<div class="row-fluid">
-			<div class="span9">
-				<?php
-				echo $this->form->renderField('filename');
-				echo $this->form->renderField('intro');
+        <?php echo JHtml::_('bootstrap.addTab', 'myTab', 'general', empty($this->item->id) ? JText::_('COM_BPGALLERY_NEW_IMAGE') : JText::_('COM_BPGALLERY_EDIT_IMAGE')); ?>
+        <div class="row-fluid">
+            <div class="span9">
+                <?php
+                echo $this->form->renderField('filename');
+                echo $this->form->renderField('alt');
+                echo $this->form->renderField('intro');
                 echo $this->form->renderField('description');
                 echo $this->form->renderFieldset('extra');
                 ?>

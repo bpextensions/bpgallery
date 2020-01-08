@@ -13,7 +13,7 @@
 
             <field
                     name="id"
-                    type="modal_image"
+                    type="modal_bpgalleryimage"
                     label="COM_BPGALLERY_FIELD_SELECT_IMAGE_LABEL"
                     description="COM_BPGALLERY_FIELD_SELECT_IMAGE_DESC"
                     required="true"

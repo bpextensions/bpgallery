@@ -7,8 +7,9 @@ administrator/*
 administrator/components/*
 !administrator/components/com_bpgallery
 administrator/components/com_bpgallery/assets
-administrator/components/com_bpgallery/assets/*
-administrator/components/com_bpgallery/assets/**
+!administrator/components/com_bpgallery/models
+!administrator/components/com_bpgallery/models/fields
+!administrator/components/com_bpgallery/models/fields/**
 
 !components
 components/**
@@ -25,7 +26,6 @@ components/com_bpgallery/assets
 .idea
 !build.properties
 !webpack.config.js
-!/package.json
-!/package-lock.json
-!/composer.lock
-!/administrator/components/com_bpgallery/views/image/tmpl/edit_metadata.php
+!package.json
+!package-lock.json
+!composer.lock

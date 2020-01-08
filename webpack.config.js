@@ -1,5 +1,8 @@
 var Encore = require('@symfony/webpack-encore');
 
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+}
 // ADMIN CONFIGURATION ---------------------------------------
 
 // Module build configuration
@@ -79,5 +82,32 @@ Encore
 
 const siteConfig = Encore.getWebpackConfig();
 
+// MEDIA CONFIGURATION ---------------------------------------
+
+// Module build configuration
+Encore.reset();
+Encore
+    .setOutputPath('media/com_bpgallery')
+    .setPublicPath('/media/com_bpgallery/')
+    .cleanupOutputBeforeBuild()
+    .enableBuildNotifications()
+    .enableSassLoader()
+    .disableSingleRuntimeChunk()
+    .enableVersioning(false)
+    .enableSourceMaps(!Encore.isProduction())
+    .configureBabel(function (babelConfig) {
+    }, {})
+    .addExternals({
+        jquery: 'jQuery',
+        joomla: 'Joomla',
+    })
+    .addEntry('modal_image', './.dev/media/js/modal_image.js')
+    .configureFilenames({
+        css: 'css/[name].css',
+        js: 'js/[name].js'
+    });
+
+const mediaConfig = Encore.getWebpackConfig();
+
 // Export configurations
-module.exports = [adminConfig, siteConfig];
+module.exports = [adminConfig, siteConfig, mediaConfig];

@@ -179,6 +179,19 @@
 				min="1" max="20" step="1"
 				default="4"/>
 
+		<field
+				name="category_masonry_gap"
+				type="list"
+				label="COM_BPGALLERY_CONFIG_CATEGORY_MASONRY_GAP_LABEL"
+				description="COM_BPGALLERY_CONFIG_CATEGORY_MASONRY_GAP_DESC"
+				default="1"
+				filter="INT"
+				class="chzn-color"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
 	</fieldset>
 
 	<fieldset name="image" label="COM_BPGALLERY_FIELDSET_IMAGE_LABEL">

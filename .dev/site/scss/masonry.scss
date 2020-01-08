@@ -21,6 +21,15 @@
                     width: 100%;
                 }
             }
+
+            &.nogap {
+                margin-left: 0px;
+                margin-right: 0px;
+
+                .inner {
+                    margin: 0px;
+                }
+            }
         }
     }
 }

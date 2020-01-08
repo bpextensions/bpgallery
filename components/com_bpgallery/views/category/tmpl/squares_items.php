@@ -50,6 +50,7 @@ $this->document->addStyleDeclaration("
             $url_medium = BPGalleryHelper::getThumbnail($item, 600, 600, BPGalleryHelper::METHOD_CROP);
             $url_full = BPGalleryHelper::getThumbnail($item, 1920, 1080, BPGalleryHelper::METHOD_FIT);
             $url = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
+            $alt = empty($item->alt) ? $item->title : $item->alt;
             ?>
             <a href="<?php echo $image_lightbox ? $url_full : $url ?>"
                <?php if ($image_lightbox): ?>target="_blank"<?php endif ?> class="image-link"
@@ -57,7 +58,7 @@ $this->document->addStyleDeclaration("
                 <span class="inner">
                     <span class="overlay"></span>
                     <img
-                            src="<?php echo $url_thumbnail ?>" alt="<?php echo $item->title ?>" class="image"
+                            src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image"
                             srcset="<?php echo $url_thumbnail ?> 200w, <?php echo $url_medium ?> 600w, <?php echo $url_full ?> 1920w"
                             sizes="(max-width: 800px) 600px, (min-width:801px) 200px, 1920px"
                     >
