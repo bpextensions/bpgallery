@@ -10,6 +10,8 @@
  */
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die;
@@ -36,25 +38,37 @@ class com_bpgalleryInstallerScript
 
     /**
      * Method to install the component
+     *
+     * @param InstallerAdapter $parent Manifest file instance
      */
-    function install($parent)
+    function install(InstallerAdapter $parent)
     {
-//		JFactory::getApplication()->enqueueMessage('Running install');
+//        Factory::getApplication()->enqueueMessage('Post install');
+        $parent->getParent()->setRedirectURL('index.php?option=com_bpgallery');
     }
 
     /**
      * Method to uninstall the component
+     *
+     * @param InstallerAdapter $parent Manifest file instance
+     *
+     * @throws Exception
      */
-    function uninstall($parent)
+    function uninstall(InstallerAdapter $parent)
     {
+//        Factory::getApplication()->enqueueMessage('Post uninstall');
+
+        $params = ComponentHelper::getParams('com_bpgallery');
+        $path = JPATH_SITE . $params->get('images_path', '/images/gallery');
 
         // Remove images directory
-        if (!is_null($this->images_path) and is_dir($this->images_path)) {
-            $count = $this->rmdir($this->images_path);
+        if (is_dir($path)) {
+            $count = $this->rmdir($path);
+            Factory::getApplication()->enqueueMessage(sprintf('Path: %s, count: %s', $path, $count));
 
             // Inform user about removed images
             if ($count > 0) {
-                Factory::getApplication()->enqueueMessage(sprintf($this->msg_uninstall_images, $count));
+                Factory::getApplication()->enqueueMessage(Text::sprintf('COM_BPGALLERY_MSG_UNINSTALL_IMAGES_S', $count));
             }
 
         }
@@ -69,53 +83,53 @@ class com_bpgalleryInstallerScript
      */
     protected function rmdir(string $path): int
     {
-        $count = 0;
+        $count = 1;
         foreach (new DirectoryIterator($path) as $f) {
             if ($f->isDot()) continue;
             if ($f->isFile()) {
                 unlink($f->getPathname());
                 $count++;
             } else if ($f->isDir()) {
-                $count += $this->rmdir($path);
+                $count += $this->rmdir($f->getPathname());
             }
         }
+
+        rmdir($path);
 
         return $count;
     }
 
     /**
      * Method to update the component
+     *
+     * @param InstallerAdapter $parent Manifest file instance
      */
-    function update($parent)
+    function update(InstallerAdapter $parent)
     {
-//		JFactory::getApplication()->enqueueMessage('Running update');
+//        Factory::getApplication()->enqueueMessage('Update');
     }
 
     /**
      * Method to run before an install/update/uninstall method
      *
      * @param String $type Name of actions (update,install,uninstall,discover_install)
-     * @param Object $parent Manifest file instance
+     * @param InstallerAdapter $parent Manifest file instance
+     *
+     * @throws Exception
      */
-    function preflight($type, $parent)
+    function preflight($type, InstallerAdapter $parent)
     {
-        if ($type === 'uninstall') {
-            $params = ComponentHelper::getParams('com_bpgallery');
-            $path = $params->get('images_path', '/images/gallery');
-            $this->images_path = JPATH_SITE . $path;
-
-            $this->msg_uninstall_images = Text::_('COM_BPGALLERY_MSG_UNINSTALL_IMAGES_S');
-        }
+//        Factory::getApplication()->enqueueMessage('Preflight: '.$type);
     }
 
     /**
      * Method to run after an install/update/uninstall method
      *
      * @param String $type Name of actions (update,install,uninstall,discover_install)
-     * @param Object $parent Manifest file instance
+     * @param InstallerAdapter $parent Manifest file instance
      */
-    function postflight($type, $parent)
+    function postflight($type, InstallerAdapter $parent)
     {
-
+//        Factory::getApplication()->enqueueMessage('Postflight: '.$type);
     }
 }

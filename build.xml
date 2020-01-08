@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="BPGallery" default="clean,build" basedir="." description="BPGallery build task">
+<project name="BPGallery" default="build:clean" basedir="." description="BPGallery build task">
 
     <property file="./build.properties"/>
 
@@ -25,6 +25,76 @@
                 <replacetokens begintoken="${" endtoken="}">
                     <token key="build.date" value="${build.date}"/>
                     <token key="build.year" value="${build.year}"/>
+                    <token key="build.version" value="${build.version}"/>
+                    <token key="build.release" value="${build.release}"/>
+                    <token key="copyrights" value="${copyrights}"/>
+                    <token key="license.name" value="${license.name}"/>
+                    <token key="license.url" value="${license.url}"/>
+                    <token key="package" value="${package}"/>
+                    <token key="subpackage" value="${subpackage}"/>
+                    <token key="author.url" value="${author.url}"/>
+                    <token key="author.name" value="${author.name}"/>
+                    <token key="author.email" value="${author.email}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <copy todir="./.build/com_bpgallery/site">
+            <fileset dir="./components/com_bpgallery">
+                <include name="**/*"/>
+            </fileset>
+            <filterchain>
+                <replacetokens begintoken="${" endtoken="}">
+                    <token key="build.date" value="${build.date}"/>
+                    <token key="build.year" value="${build.year}"/>
+                    <token key="build.version" value="${build.version}"/>
+                    <token key="build.release" value="${build.release}"/>
+                    <token key="copyrights" value="${copyrights}"/>
+                    <token key="license.name" value="${license.name}"/>
+                    <token key="license.url" value="${license.url}"/>
+                    <token key="package" value="${package}"/>
+                    <token key="subpackage" value="${subpackage}"/>
+                    <token key="author.url" value="${author.url}"/>
+                    <token key="author.name" value="${author.name}"/>
+                    <token key="author.email" value="${author.email}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+
+        <copy todir="./.build/com_bpgallery/media">
+            <fileset dir="./media/com_bpgallery">
+                <include name="**/*"/>
+                <exclude name="manifest.json"/>
+                <exclude name="entrypoints.json"/>
+            </fileset>
+            <filterchain>
+                <replacetokens begintoken="${" endtoken="}">
+                    <token key="build.date" value="${build.date}"/>
+                    <token key="build.year" value="${build.year}"/>
+                    <token key="build.version" value="${build.version}"/>
+                    <token key="build.release" value="${build.release}"/>
+                    <token key="copyrights" value="${copyrights}"/>
+                    <token key="license.name" value="${license.name}"/>
+                    <token key="license.url" value="${license.url}"/>
+                    <token key="package" value="${package}"/>
+                    <token key="subpackage" value="${subpackage}"/>
+                    <token key="author.url" value="${author.url}"/>
+                    <token key="author.name" value="${author.name}"/>
+                    <token key="author.email" value="${author.email}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+
+        <copy todir="./.build/com_bpgallery/install">
+            <fileset dir="./administrator/components/com_bpgallery/install/">
+                <include name="upgrade.php"/>
+            </fileset>
+            <filterchain>
+                <replacetokens begintoken="${" endtoken="}">
+                    <token key="build.date" value="${build.date}"/>
+                    <token key="build.year" value="${build.year}"/>
                     <token key="copyrights" value="${copyrights}"/>
                     <token key="license.name" value="${license.name}"/>
                     <token key="license.url" value="${license.url}"/>
@@ -37,32 +107,32 @@
                 </replacetokens>
             </filterchain>
         </copy>
-        <copy todir="./.build/com_bpgallery/site" >
-            <fileset dir="./components/com_bpgallery">
-                <include name="**/*" />
-            </fileset>
-        </copy>
-        <copy file="./administrator/components/com_bpgallery/install/upgrade.php" tofile="./.build/com_bpgallery/install/upgrade.php" overwrite="true"/>
-        <move file="./.build/com_bpgallery/admin/bpgallery.xml" tofile="./.build/com_bpgallery/bpgallery.xml" overwrite="true"/>
-        
 
-        
-        <echo msg="Creating component zipfile." />
-        <zip destfile="./.build/com_bpgallery.zip" basedir="./.build/com_bpgallery"/>
+        <move file="./.build/com_bpgallery/admin/bpgallery.xml" tofile="./.build/com_bpgallery/bpgallery.xml"
+              overwrite="true"/>
+
+        <echo msg="Creating component zipfile."/>
+        <zip destfile="./.build/com_bpgallery_v${build.version}_${build.release}.zip" basedir="./.build/com_bpgallery"/>
     </target>
     
     <target name="build">
         <echo msg="Creating build directory ./.build" />
         <mkdir dir="./.build" />
-        
-        <echo msg="Building each of the extensions" />
+
+        <echo msg="Building each of the extensions"/>
         <phingcall target="build:com_bpgallery"></phingcall>
-        
+
     </target>
 
     <target name="clean">
-        <echo msg="Removing build directory ./.build if exists" />
+        <echo msg="Removing build directory ./.build if exists"/>
         <delete dir="./.build" includeemptydirs="true"/>
+    </target>
+
+    <target name="build:clean">
+        <echo msg="Creating a clean build."/>
+        <phingcall target="clean"></phingcall>
+        <phingcall target="build"></phingcall>
     </target>
 
 </project>

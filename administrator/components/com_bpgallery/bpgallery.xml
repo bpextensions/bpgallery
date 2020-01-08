@@ -33,40 +33,50 @@
 	</update>
 
 	<files folder="site">
-		<folder>controllers</folder>
 		<folder>assets</folder>
-		<folder>views</folder>
 		<folder>helpers</folder>
+		<folder>language</folder>
+		<folder>layouts</folder>
 		<folder>models</folder>
+		<folder>views</folder>
 		<filename>bpgallery.php</filename>
 		<filename>controller.php</filename>
 		<filename>router.php</filename>
 	</files>
 
-    <languages folder="site">
-        <language tag="en-GB">language/en-GB.com_bpgallery.ini</language>
-        <language tag="en-GB">language/en-GB.com_bpgallery.sys.ini</language>
-        <language tag="pl-PL">language/pl-PL.com_bpgallery.ini</language>
-        <language tag="pl-PL">language/pl-PL.com_bpgallery.sys.ini</language>
-    </languages>
-    
+	<media folder="media" destination="com_bpgallery">
+		<folder>js</folder>
+	</media>
+
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.sys.ini</language>
+		<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.ini</language>
+		<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.sys.ini</language>
+	</languages>
+
 	<administration>
-        
+
 		<files folder="admin">
+			<folder>assets</folder>
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>install</folder>
+			<folder>language</folder>
+			<folder>models</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
 			<filename>access.xml</filename>
 			<filename>bpgallery.php</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
-			<folder>controllers</folder>
-			<folder>helpers</folder>
-			<folder>models</folder>
-			<folder>tables</folder>
-			<folder>views</folder>
 		</files>
-        
+
 		<languages folder="admin">
-			<language tag="en-GB">language/en-GB.com_bpgallery.ini</language>
-			<language tag="en-GB">language/en-GB.com_bpgallery.sys.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.sys.ini</language>
+			<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.ini</language>
+			<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.sys.ini</language>
 		</languages>
         
 		<menu img="class:bpgallery">com_bpgallery</menu>
