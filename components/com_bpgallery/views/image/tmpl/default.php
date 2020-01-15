@@ -12,6 +12,7 @@
 //use Joomla\CMS\Language\Text;
 //use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die;
 
@@ -29,6 +30,7 @@ if ($this->params->def('images_lightbox', 1)) {
     $lightbox_options = [
         'type' => 'image',
         'closeBtnInside' => true,
+        'tClose' => Text::_('COM_BPGALLERY_LIGHTBOX_CLOSE'),
         'zoom' => [
             'enabled' => true,
             'duration' => 300,

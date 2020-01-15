@@ -54,8 +54,8 @@ if ($params->def('images_lightbox', 1)) {
             'tCounter' => '<span class="mfp-counter">' . Text::_('COM_BPGALLERY_LIGHTBOX_N_OF_X') . '</span>',
             'tPrev' => Text::_('COM_BPGALLERY_LIGHTBOX_PREV'),
             'tNext' => Text::_('COM_BPGALLERY_LIGHTBOX_NEXT'),
-            'tClose' => Text::_('COM_BPGALLERY_LIGHTBOX_CLOSE'),
         ],
+        'tClose' => Text::_('COM_BPGALLERY_LIGHTBOX_CLOSE'),
         'closeBtnInside' => true,
         'zoom' => [
             'enabled' => true,
