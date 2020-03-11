@@ -17,8 +17,6 @@
 	</files>
 
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.mod_bpgallery.ini</language>
-		<language tag="en-GB">en-GB/en-GB.mod_bpgallery.sys.ini</language>
 		<language tag="pl-PL">pl-PL/pl-PL.mod_bpgallery.ini</language>
 		<language tag="pl-PL">pl-PL/pl-PL.mod_bpgallery.sys.ini</language>
 	</languages>
