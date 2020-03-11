@@ -114,13 +114,45 @@
         <echo msg="Creating component zipfile."/>
         <zip destfile="./.build/com_bpgallery_v${build.version}_${build.release}.zip" basedir="./.build/com_bpgallery"/>
     </target>
-    
+
+    <target name="build:mod_bpgallery">
+        <echo msg="Creating module directory"/>
+        <mkdir dir="./.build/mod_bpgallery"/>
+
+        <echo msg="Building module installer"/>
+        <copy todir="./.build/mod_bpgallery">
+            <fileset dir="./modules/mod_bpgallery">
+                <include name="**/*"/>
+            </fileset>
+            <filterchain>
+                <replacetokens begintoken="${" endtoken="}">
+                    <token key="build.date" value="${build.date}"/>
+                    <token key="build.year" value="${build.year}"/>
+                    <token key="build.version" value="${build.version}"/>
+                    <token key="build.release" value="${build.release}"/>
+                    <token key="copyrights" value="${copyrights}"/>
+                    <token key="license.name" value="${license.name}"/>
+                    <token key="license.url" value="${license.url}"/>
+                    <token key="package" value="${package}"/>
+                    <token key="subpackage" value="${subpackage}"/>
+                    <token key="author.url" value="${author.url}"/>
+                    <token key="author.name" value="${author.name}"/>
+                    <token key="author.email" value="${author.email}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <echo msg="Creating module zipfile."/>
+        <zip destfile="./.build/mod_bpgallery_v${build.version}_${build.release}.zip" basedir="./.build/mod_bpgallery"/>
+    </target>
+
     <target name="build">
-        <echo msg="Creating build directory ./.build" />
-        <mkdir dir="./.build" />
+        <echo msg="Creating build directory ./.build"/>
+        <mkdir dir="./.build"/>
 
         <echo msg="Building each of the extensions"/>
         <phingcall target="build:com_bpgallery"></phingcall>
+        <phingcall target="build:mod_bpgallery"></phingcall>
 
     </target>
 

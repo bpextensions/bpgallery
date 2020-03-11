@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.9" client="site" method="upgrade">
+	<name>mod_bpgallery</name>
+	<author>${author.name}</author>
+	<creationDate>${build.date}</creationDate>
+	<copyright>(C) ${build.year} ${copyrights}. All rights reserved.</copyright>
+	<license>${license.name}; see ${license.url}</license>
+	<authorEmail>${author.email}</authorEmail>
+	<authorUrl>${author.url}</authorUrl>
+	<version>${build.version}</version>
+	<description>MOD_BPGALLERY_XML_DESCRIPTION</description>
+
+	<files>
+		<filename module="mod_bpgallery">mod_bpgallery.php</filename>
+		<folder>tmpl</folder>
+		<filename>helper.php</filename>
+	</files>
+
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.mod_bpgallery.ini</language>
+		<language tag="en-GB">en-GB/en-GB.mod_bpgallery.sys.ini</language>
+		<language tag="pl-PL">pl-PL/pl-PL.mod_bpgallery.ini</language>
+		<language tag="pl-PL">pl-PL/pl-PL.mod_bpgallery.sys.ini</language>
+	</languages>
+
+	<config>
+		<fields name="params">
+
+			<fieldset
+					name="basic"
+					label="MOD_BPGALLERY_FIELD_GROUP_FILTERING_LABEL"
+			>
+
+				<field
+						name="count"
+						type="number"
+						label="MOD_BPGALLERY_FIELD_COUNT_LABEL"
+						description="MOD_BPGALLERY_FIELD_COUNT_DESC"
+						default="0"
+						filter="integer"
+				/>
+
+				<field
+						name="catid"
+						type="category"
+						label="JCATEGORY"
+						description="MOD_BPGALLERY_FIELD_CATEGORY_DESC"
+						extension="com_bpgallery"
+						multiple="true"
+						filter="int_array"
+						class="multipleCategories"
+				/>
+
+				<field
+						name="show_child_category_articles"
+						type="radio"
+						label="MOD_BPGALLERY_FIELD_SHOWCHILDCATEGORYARTICLES_LABEL"
+						description="MOD_BPGALLERY_FIELD_SHOWCHILDCATEGORYARTICLES_DESC"
+						default="0"
+						filter="integer"
+						class="btn-group btn-group-yesno"
+				>
+					<option value="1">MOD_BPGALLERY_OPTION_INCLUDE_VALUE</option>
+					<option value="0">MOD_BPGALLERY_OPTION_EXCLUDE_VALUE</option>
+				</field>
+
+				<field
+						name="levels"
+						type="number"
+						label="MOD_BPGALLERY_FIELD_CATDEPTH_LABEL"
+						description="MOD_BPGALLERY_FIELD_CATDEPTH_DESC"
+						default="1"
+						filter="integer"
+						showon="show_child_category_articles:1"
+				/>
+
+				<field
+						name="excluded_images"
+						type="textarea"
+						label="MOD_BPGALLERY_FIELD_EXCLUDEDIMAGES_LABEL"
+						description="MOD_BPGALLERY_FIELD_EXCLUDEDIMAGES_DESC"
+						cols="10"
+						rows="3"
+				/>
+
+				<field
+						name="filteringspacer5"
+						type="spacer"
+						hr="true"
+				/>
+
+				<field
+						name="date_filtering"
+						type="list"
+						label="MOD_BPGALLERY_FIELD_DATEFILTERING_LABEL"
+						description="MOD_BPGALLERY_FIELD_DATEFILTERING_DESC"
+						default="off"
+						validate="options"
+				>
+					<option value="off">MOD_BPGALLERY_OPTION_OFF_VALUE</option>
+					<option value="range">MOD_BPGALLERY_OPTION_DATERANGE_VALUE</option>
+					<option value="relative">MOD_BPGALLERY_OPTION_RELATIVEDAY_VALUE</option>
+				</field>
+
+				<field
+						name="date_field"
+						type="list"
+						label="MOD_BPGALLERY_FIELD_DATERANGEFIELD_LABEL"
+						description="MOD_BPGALLERY_FIELD_DATERANGEFIELD_DESC"
+						default="a.created"
+						showon="date_filtering!:off"
+						validate="options"
+				>
+					<option value="a.created">MOD_BPGALLERY_OPTION_CREATED_VALUE</option>
+					<option value="a.modified">MOD_BPGALLERY_OPTION_MODIFIED_VALUE</option>
+					<option value="a.publish_up">MOD_BPGALLERY_OPTION_STARTPUBLISHING_VALUE</option>
+				</field>
+
+				<field
+						name="start_date_range"
+						type="calendar"
+						label="MOD_BPGALLERY_FIELD_STARTDATE_LABEL"
+						description="MOD_BPGALLERY_FIELD_STARTDATE_DESC"
+						translateformat="true"
+						showtime="true"
+						size="22"
+						filter="user_utc"
+						showon="date_filtering:range"
+				/>
+
+				<field
+						name="end_date_range"
+						type="calendar"
+						label="MOD_BPGALLERY_FIELD_ENDDATE_LABEL"
+						description="MOD_BPGALLERY_FIELD_ENDDATE_DESC"
+						translateformat="true"
+						showtime="true"
+						size="22"
+						filter="user_utc"
+						showon="date_filtering:range"
+				/>
+
+				<field
+						name="relative_date"
+						type="number"
+						label="MOD_BPGALLERY_FIELD_RELATIVEDATE_LABEL"
+						description="MOD_BPGALLERY_FIELD_RELATIVEDATE_DESC"
+						default="30"
+						filter="integer"
+						showon="date_filtering:relative"
+				/>
+
+			</fieldset>
+
+			<fieldset
+					name="ordering"
+					label="MOD_BPGALLERY_FIELD_GROUP_ORDERING_LABEL"
+			>
+
+				<field
+						name="image_ordering"
+						type="list"
+						label="MOD_BPGALLERY_FIELD_IMAGEORDERING_LABEL"
+						description="MOD_BPGALLERY_FIELD_IMAGEORDERING_DESC"
+						default="a.ordering"
+						validate="options"
+				>
+					<option value="a.ordering">MOD_BPGALLERY_OPTION_ORDERING_VALUE</option>
+					<option value="a.title">JGLOBAL_TITLE</option>
+					<option value="a.id">MOD_BPGALLERY_OPTION_ID_VALUE</option>
+					<option value="a.alias">JFIELD_ALIAS_LABEL</option>
+					<option value="a.created">MOD_BPGALLERY_OPTION_CREATED_VALUE</option>
+					<option value="modified">MOD_BPGALLERY_OPTION_MODIFIED_VALUE</option>
+					<option value="publish_up">MOD_BPGALLERY_OPTION_STARTPUBLISHING_VALUE</option>
+					<option value="a.publish_down">MOD_BPGALLERY_OPTION_FINISHPUBLISHING_VALUE</option>
+					<option value="random">MOD_BPGALLERY_OPTION_RANDOM_VALUE</option>
+				</field>
+
+				<field
+						name="image_ordering_direction"
+						type="list"
+						label="MOD_BPGALLERY_FIELD_IMAGEORDERINGDIR_LABEL"
+						description="MOD_BPGALLERY_FIELD_IMAGEORDERINGDIR_DESC"
+						default="ASC"
+						validate="options"
+				>
+					<option value="DESC">MOD_BPGALLERY_OPTION_DESCENDING_VALUE</option>
+					<option value="ASC">MOD_BPGALLERY_OPTION_ASCENDING_VALUE</option>
+				</field>
+			</fieldset>
+
+			<fieldset
+					name="design"
+					label="MOD_BPGALLERY_FIELDSET_DESIGN_LABEL"
+			>
+
+				<field
+						name="design_common_settings_note"
+						class=""
+						type="spacer"
+						label="MOD_BPGALLERY_FIELDSET_DESIGN_COMMON_DESC"
+				/>
+
+				<field
+						name="images_lightbox"
+						type="list"
+						label="MOD_BPGALLERY_FIELDSET_DESIGN_LIGHTBOX_LABEL"
+						description="MOD_BPGALLERY_FIELDSET_DESIGN_LIGHTBOX_DESC"
+						default="1"
+						class="chzn-color"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+				<field
+						name="category_default_settings_note"
+						class=""
+						type="spacer"
+						label="MOD_BPGALLERY_FIELDSET_CATEGORY_DEFAULT_DESC"
+				/>
+
+				<field
+						name="images_align"
+						type="list"
+						label="MOD_BPGALLERY_FIELDSET_DESIGN_ALIGN_LABEL"
+						description="MOD_BPGALLERY_FIELDSET_DESIGN_ALIGN_DESC"
+						default="center"
+				>
+					<option value="left">JGLOBAL_LEFT</option>
+					<option value="center">JGLOBAL_CENTER</option>
+					<option value="between">MOD_BPGALLERY_FIELDSET_DESIGN_ALIGN_BETWEEN</option>
+					<option value="right">JGLOBAL_RIGHT</option>
+				</field>
+
+				<field
+						name="category_square_settings_note"
+						class=""
+						type="spacer"
+						label="MOD_BPGALLERY_FIELDSET_CATEGORY_SQUARE_DESC"
+				/>
+
+				<field
+						name="category_square_row_length"
+						type="number"
+						label="MOD_BPGALLERY_FIELDSET_CATEGORY_SQUARE_ROW_LENGTH_LABEL"
+						description="MOD_BPGALLERY_FIELDSET_CATEGORY_SQUARE_ROW_LENGTH_DESC"
+						filter="INT"
+						min="1" max="20" step="1"
+						default="4"/>
+
+				<field
+						name="category_masonry_settings_note"
+						class=""
+						type="spacer"
+						label="MOD_BPGALLERY_FIELDSET_CATEGORY_MASONRY_DESC"
+				/>
+
+				<field
+						name="category_masonry_columns"
+						type="number"
+						label="MOD_BPGALLERY_FIELDSET_CATEGORY_MASONRY_COLUMNS_LABEL"
+						description="MOD_BPGALLERY_FIELDSET_CATEGORY_MASONRY_COLUMNS_DESC"
+						filter="INT"
+						min="1" max="20" step="1"
+						default="4"/>
+
+				<field
+						name="category_masonry_gap"
+						type="list"
+						label="MOD_BPGALLERY_FIELDSET_CATEGORY_MASONRY_GAP_LABEL"
+						description="MOD_BPGALLERY_FIELDSET_CATEGORY_MASONRY_GAP_DESC"
+						default="1"
+						filter="INT"
+						class="chzn-color"
+				>
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
+
+			</fieldset>
+
+			<fieldset name="advanced">
+
+				<field
+						name="layout"
+						type="modulelayout"
+						label="JFIELD_ALT_LAYOUT_LABEL"
+						description="JFIELD_ALT_MODULE_LAYOUT_DESC"
+				/>
+
+				<field
+						name="moduleclass_sfx"
+						type="textarea"
+						label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+						description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"
+						rows="3"
+				/>
+
+				<field
+						name="owncache"
+						type="list"
+						label="COM_MODULES_FIELD_CACHING_LABEL"
+						description="COM_MODULES_FIELD_CACHING_DESC"
+						default="1"
+						filter="integer"
+				>
+					<option value="1">JGLOBAL_USE_GLOBAL</option>
+					<option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+				</field>
+
+				<field
+						name="cachemode"
+						type="hidden"
+						default="id">
+					<option
+							value="id"></option>
+				</field>
+
+				<field
+						name="cache_time"
+						type="number"
+						label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+						description="COM_MODULES_FIELD_CACHE_TIME_DESC"
+						default="900"
+						filter="integer"
+				/>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

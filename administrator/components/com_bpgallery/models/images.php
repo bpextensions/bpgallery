@@ -9,6 +9,8 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\Utilities\ArrayHelper;
+
 defined('_JEXEC') or die;
 
 /**
@@ -17,24 +19,23 @@ defined('_JEXEC') or die;
  */
 class BPGalleryModelImages extends JModelList
 {
-	/**
-	 * Constructor.
-	 *
-	 * @param   array  $config  An optional associative array of configuration settings.
-	 *
-	 * @see     JControllerLegacy
-	 */
-	public function __construct($config = array())
-	{
-		if (empty($config['filter_fields']))
-		{
-			$config['filter_fields'] = array(
-				'id', 'a.id',
-				'title', 'a.title',
-				'alias', 'a.alias',
-				'filename', 'a.filename',
-				'state', 'a.state',
-				'ordering', 'a.ordering',
+    /**
+     * Constructor.
+     *
+     * @param array $config An optional associative array of configuration settings.
+     *
+     * @see     JControllerLegacy
+     */
+    public function __construct($config = [])
+    {
+        if (empty($config['filter_fields'])) {
+            $config['filter_fields'] = array(
+                'id', 'a.id',
+                'title', 'a.title',
+                'alias', 'a.alias',
+                'filename', 'a.filename',
+                'state', 'a.state',
+                'ordering', 'a.ordering',
 				'language', 'a.language',
 				'catid', 'a.catid', 'category_title',
 				'checked_out', 'a.checked_out',
@@ -128,20 +129,38 @@ class BPGalleryModelImages extends JModelList
         $published = $this->getState('filter.published');
 
         if (is_numeric($published)) {
-			$query->where($db->quoteName('a.state') . ' = ' . (int) $published);
-		}
-		elseif ($published === '')
-		{
-			$query->where($db->quoteName('a.state') . ' IN (0, 1)');
-		}
+            $query->where($db->quoteName('a.state') . ' = ' . (int)$published);
+        } elseif ($published === '') {
+            $query->where($db->quoteName('a.state') . ' IN (0, 1)');
+        }
 
-		// Filter by category.
-		$categoryId = $this->getState('filter.category_id');
+        // Filter by categories and by level
+        $categoryId = $this->getState('filter.category_id', []);
+        $level = $this->getState('filter.level');
 
-		if (is_numeric($categoryId))
-		{
-			$query->where($db->quoteName('a.catid') . ' = ' . (int) $categoryId);
-		}
+        if (!is_array($categoryId)) {
+            $categoryId = $categoryId ? array($categoryId) : [];
+        }
+
+        // Case: Using both categories filter and by level filter
+        if (count($categoryId)) {
+            $categoryId = ArrayHelper::toInteger($categoryId);
+            $categoryTable = JTable::getInstance('Category', 'JTable');
+            $subCatItemsWhere = [];
+
+            foreach ($categoryId as $filter_catid) {
+                $categoryTable->load($filter_catid);
+                $subCatItemsWhere[] = '(' .
+                    ($level ? 'c.level <= ' . ((int)$level + (int)$categoryTable->level - 1) . ' AND ' : '') .
+                    'c.lft >= ' . (int)$categoryTable->lft . ' AND ' .
+                    'c.rgt <= ' . (int)$categoryTable->rgt . ')';
+            }
+
+            $query->where('(' . implode(' OR ', $subCatItemsWhere) . ')');
+        } // Case: Using only the by level filter
+        elseif ($level) {
+            $query->where('c.level <= ' . (int)$level);
+        }
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
@@ -163,12 +182,6 @@ class BPGalleryModelImages extends JModelList
 		if ($language = $this->getState('filter.language'))
 		{
 			$query->where($db->quoteName('a.language') . ' = ' . $db->quote($language));
-		}
-
-		// Filter on the level.
-		if ($level = $this->getState('filter.level'))
-		{
-			$query->where($db->quoteName('c.level') . ' <= ' . (int) $level);
 		}
 
 		// Add the list ordering clause.
@@ -208,26 +221,26 @@ class BPGalleryModelImages extends JModelList
 		return parent::getStoreId($id);
 	}
 
-	/**
-	 * Returns a reference to the a Table object, always creating it.
-	 *
-	 * @param   string  $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A JTable object
-	 */
-	public function getTable($type = 'Image', $prefix = 'BPGalleryTable', $config = array())
-	{
-		return JTable::getInstance($type, $prefix, $config);
-	}
+    /**
+     * Returns a reference to the a Table object, always creating it.
+     *
+     * @param string $type The table type to instantiate
+     * @param string $prefix A prefix for the table class name. Optional.
+     * @param array $config Configuration array for model. Optional.
+     *
+     * @return  JTable  A JTable object
+     */
+    public function getTable($type = 'Image', $prefix = 'BPGalleryTable', $config = [])
+    {
+        return JTable::getInstance($type, $prefix, $config);
+    }
 
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @param   string  $ordering   An optional ordering field.
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @param string $ordering An optional ordering field.
 	 * @param   string  $direction  An optional direction (asc|desc).
 	 *
 	 * @return  void

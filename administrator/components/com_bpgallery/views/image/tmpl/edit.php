@@ -69,7 +69,7 @@ $tmpl = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=comp
         <?php echo JHtml::_('bootstrap.endTab'); ?>
 
         <?php $this->show_options = $params->get('show_article_options', 1); ?>
-        <?php $this->ignore_fieldsets = ['details', 'metadata', 'item_associations'] ?>
+        <?php $this->ignore_fieldsets = ['details', 'jmetadata', 'item_associations'] ?>
         <?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
         <?php // Do not show the publishing options if the edit form is configured not to. ?>

@@ -12,6 +12,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Single item model for a image
@@ -86,13 +87,6 @@ class BPGalleryModelCategory extends JModelList
 			{
 				$item->params = new Registry($item->params);
 			}
-
-			// Some contexts may not use tags data at all, so we allow callers to disable loading tag data
-			if ($this->getState('load_tags', true))
-			{
-				$this->tags = new JHelperTags;
-				$this->tags->getItemTags('com_bpgallery.image', $item->id);
-			}
 		}
 
 		return $items;
@@ -131,21 +125,26 @@ class BPGalleryModelCategory extends JModelList
 		$case_when1 .= ' ELSE ';
 		$case_when1 .= $c_id . ' END as catslug';
 		$query->select($this->getState('list.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
-		/**
-		 * TODO: we actually should be doing it but it's wrong this way
-		 *	. ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
-		 *	. ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS catslug ');
-		 */
-			->from($db->quoteName('#__bpgallery_images') . ' AS a')
-			->join('LEFT', '#__categories AS c ON c.id = a.catid')
-			->where('a.access IN (' . $groups . ')');
+            /**
+             * TODO: we actually should be doing it but it's wrong this way
+             *    . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
+             *    . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS catslug ');
+             */
+            ->from($db->quoteName('#__bpgallery_images') . ' AS a')
+            ->join('LEFT', '#__categories AS c ON c.id = a.catid')
+            ->where('a.access IN (' . $groups . ')');
 
-		// Filter by category.
-		if ($categoryId = $this->getState('category.id'))
-		{
-			$query->where('a.catid = ' . (int) $categoryId)
-				->where('c.access IN (' . $groups . ')');
-		}
+        // Filter by category.
+        if ($categoryId = $this->getState('filter.category_id')) {
+            if (is_array($categoryId)) {
+                $categoryId = ArrayHelper::toInteger($categoryId);
+                $query->where('a.catid IN (' . implode(',', $categoryId) . ')');
+            } else {
+                $query->where('a.catid = ' . (int)$categoryId);
+            }
+
+            $query->where('c.access IN (' . $groups . ')');
+        }
 
 		// Join over the users for the author and modified_by names.
 		$query->select("CASE WHEN a.created_by_alias > ' ' THEN a.created_by_alias ELSE ua.name END AS author")
@@ -165,39 +164,70 @@ class BPGalleryModelCategory extends JModelList
             $query->where('(a.state IN (0,1,2))');
         }
 
-		// Filter by start and end dates.
-		$nullDate = $db->quote($db->getNullDate());
-		$nowDate = $db->quote(JFactory::getDate()->toSql());
+        // Filter by start and end dates.
+        $nullDate = $db->quote($db->getNullDate());
+        $nowDate = $db->quote(JFactory::getDate()->toSql());
 
-		if ($this->getState('filter.publish_date'))
-		{
-			$query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
-				->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
-		}
+        if ($this->getState('filter.publish_date')) {
+            $query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
+                ->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
+        }
 
-		// Filter by search in title
-		$search = $this->getState('list.filter');
-		if (!empty($search))
-		{
-			$search = $db->quote('%' . $db->escape($search, true) . '%');
-			$query->where('(a.name LIKE ' . $search . ')');
-		}
+        // Filter by Date Range or Relative Date
+        $dateFiltering = $this->getState('filter.date_filtering', 'off');
+        $dateField = $this->getState('filter.date_field', 'a.created');
 
-		// Filter by language
-		if ($this->getState('filter.language'))
-		{
-			$query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
-		}
+        switch ($dateFiltering) {
+            case 'range':
+                $startDateRange = $db->quote($this->getState('filter.start_date_range', $nullDate));
+                $endDateRange = $db->quote($this->getState('filter.end_date_range', $nullDate));
+                $query->where(
+                    '(' . $dateField . ' >= ' . $startDateRange . ' AND ' . $dateField .
+                    ' <= ' . $endDateRange . ')'
+                );
+                break;
 
-		// Set sortname ordering if selected
-		if ($this->getState('list.ordering') === 'sortname')
-		{
-			$query->order($db->escape('a.sortname1') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
-				->order($db->escape('a.sortname2') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
-				->order($db->escape('a.sortname3') . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
-		}
-		else
-		{
+            case 'relative':
+                $relativeDate = (int)$this->getState('filter.relative_date', 0);
+                $query->where(
+                    $dateField . ' >= ' . $query->dateAdd($nowDate, -1 * $relativeDate, 'DAY')
+                );
+                break;
+
+            case 'off':
+            default:
+                break;
+        }
+
+        // Filter by search in title
+        $search = $this->getState('list.filter');
+        if (!empty($search)) {
+            $search = $db->quote('%' . $db->escape($search, true) . '%');
+            $query->where('(a.name LIKE ' . $search . ')');
+        }
+
+        // Filter by language
+        if ($this->getState('filter.language')) {
+            $query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
+        }
+
+        // Filter images ids
+        $filter_image_id = $this->getState('filter.image_id');
+        $filter_image_id = (!is_array($filter_image_id) and $filter_image_id > 0) ? [$filter_image_id] : $filter_image_id;
+        $filter_image_id_include = $this->getState('filter.image_id.include', false);
+
+        if (!empty($filter_image_id) and $filter_image_id_include) {
+            $query->where('a.id IN(' . implode(',', $filter_image_id) . ')');
+        } elseif (!empty($filter_image_id) and !$filter_image_id_include) {
+            $query->where('a.id NOT IN(' . implode(',', $filter_image_id) . ')');
+        }
+
+        // Set sortname ordering if selected
+        if ($this->getState('list.ordering') === 'sortname') {
+            $query->order($db->escape('a.sortname1') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
+                ->order($db->escape('a.sortname2') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
+                ->order($db->escape('a.sortname3') . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+        } else {
 			$query->order($db->escape($this->getState('list.ordering', 'a.ordering')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
 		}
 
@@ -255,20 +285,18 @@ class BPGalleryModelCategory extends JModelList
 
         $listOrder = $app->input->get('filter_order_Dir', 'ASC');
 
-		if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
-		{
-			$listOrder = 'ASC';
-		}
+        if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', ''))) {
+            $listOrder = 'ASC';
+        }
 
-		$this->setState('list.direction', $listOrder);
+        $this->setState('list.direction', $listOrder);
 
-		$id = $app->input->get('id', 0, 'int');
-		$this->setState('category.id', $id);
+        $id = $app->input->get('id', 0, 'int');
+        $this->setState('filter.category_id', $id);
 
-		$user = JFactory::getUser();
+        $user = JFactory::getUser();
 
-		if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery')))
-		{
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery'))) {
             // Limit to published for people who can't edit or edit.state.
             $this->setState('filter.published', 1);
 
@@ -305,7 +333,7 @@ class BPGalleryModelCategory extends JModelList
             $options = array();
             $options['countItems'] = $params->get('show_cat_items', 1) || $params->get('show_empty_categories', 0);
             $categories = JCategories::getInstance('BPGallery', $options);
-            $this->_item = $categories->get($this->getState('category.id', 'root'));
+            $this->_item = $categories->get($this->getState('filter.category_id', 'root'));
             if (is_object($this->_item)) {
                 $this->_children = $this->_item->getChildren();
                 $this->_parent = false;
@@ -409,14 +437,13 @@ class BPGalleryModelCategory extends JModelList
 		$input = JFactory::getApplication()->input;
 		$hitcount = $input->getInt('hitcount', 1);
 
-		if ($hitcount)
-		{
-			$pk = (!empty($pk)) ? $pk : (int) $this->getState('category.id');
+		if ($hitcount) {
+            $pk = (!empty($pk)) ? $pk : (int)$this->getState('filter.category_id');
 
-			$table = JTable::getInstance('Category', 'JTable');
-			$table->load($pk);
-			$table->hit($pk);
-		}
+            $table = JTable::getInstance('Category', 'JTable');
+            $table->load($pk);
+            $table->hit($pk);
+        }
 
 		return true;
 	}

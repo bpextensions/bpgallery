@@ -9,6 +9,7 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die;
@@ -224,6 +225,33 @@ class BPGalleryModelImage extends JModelAdmin
     protected function prepareTable($table)
     {
         $table->title = htmlspecialchars_decode($table->get('title'), ENT_QUOTES);
+
+        $date = Factory::getDate();
+        $user = Factory::getUser();
+
+        if (empty($table->id)) {
+            // Set the values
+            $table->created = $date->toSql();
+            $table->created_by = $user->id;
+
+            // Set ordering to the last item if not set
+            if (empty($table->ordering)) {
+                $db = $this->getDbo();
+                $query = $db->getQuery(true)
+                    ->select('MAX(ordering)')
+                    ->from('#__bpgallery_images');
+
+                $db->setQuery($query);
+                $max = $db->loadResult();
+
+                $table->ordering = $max + 1;
+            }
+        } else {
+            // Set the values
+            $table->modified = $date->toSql();
+            $table->modified_by = $user->id;
+        }
+
     }
 
     /**

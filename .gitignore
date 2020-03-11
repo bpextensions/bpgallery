@@ -16,6 +16,9 @@ components/**
 !components/com_bpgallery
 !components/com_bpgallery/**
 components/com_bpgallery/assets
+!modules
+modules/**
+!modules/mod_bpgallery
 
 !LICENSE
 !README.md
