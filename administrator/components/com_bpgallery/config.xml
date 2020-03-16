@@ -120,6 +120,13 @@
 		/>
 
 		<field
+				name="category_common_settings_note"
+				class=""
+				type="spacer"
+				label="COM_BPGALLERY_FIELDSET_CATEGORY_COMMON_DESC"
+		/>
+
+		<field
 				name="images_limit"
 				type="text"
 				label="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_LABEL"

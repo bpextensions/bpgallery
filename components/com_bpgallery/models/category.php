@@ -76,21 +76,18 @@ class BPGalleryModelCategory extends JModelList
 	 */
 	public function getItems()
 	{
-		// Invoke the parent getItems method to get the main list
-		$items = parent::getItems();
+        // Invoke the parent getItems method to get the main list
+        $items = parent::getItems();
 
-		// Convert the params field into an object, saving original in _params
-		for ($i = 0, $n = count($items); $i < $n; $i++)
-		{
-			$item = &$items[$i];
-			if (!isset($this->_params))
-			{
-				$item->params = new Registry($item->params);
-			}
-		}
+        // Convert the params field into an object, saving original in _params
+        foreach ($items as $item) {
+            if (is_string($item->params)) {
+                $item->params = new Joomla\Registry\Registry($item->params);
+            }
+        }
 
-		return $items;
-	}
+        return $items;
+    }
 
 	/**
 	 * Method to build an SQL query to load the list data.
@@ -135,23 +132,48 @@ class BPGalleryModelCategory extends JModelList
             ->where('a.access IN (' . $groups . ')');
 
         // Filter by category.
-        if ($categoryId = $this->getState('filter.category_id')) {
-            if (is_array($categoryId)) {
-                $categoryId = ArrayHelper::toInteger($categoryId);
-                $query->where('a.catid IN (' . implode(',', $categoryId) . ')');
-            } else {
-                $query->where('a.catid = ' . (int)$categoryId);
-            }
+        $categoryId = $this->getState('filter.category_id');
+        if (is_numeric($categoryId)) {
+            $type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
 
-            $query->where('c.access IN (' . $groups . ')');
+            // Add subcategory check
+            $includeSubcategories = $this->getState('filter.subcategories', false);
+            $categoryEquals = 'a.catid ' . $type . (int)$categoryId;
+
+            if ($includeSubcategories) {
+                $levels = (int)$this->getState('filter.max_category_levels', '1');
+
+                // Create a subquery for the subcategory list
+                $subQuery = $db->getQuery(true)
+                    ->select('sub.id')
+                    ->from('#__categories as sub')
+                    ->join('INNER', '#__categories as this ON sub.lft > this.lft AND sub.rgt < this.rgt')
+                    ->where('this.id = ' . (int)$categoryId);
+
+                if ($levels >= 0) {
+                    $subQuery->where('sub.level <= this.level + ' . $levels);
+                }
+
+                // Add the subquery to the main query
+                $query->where('(' . $categoryEquals . ' OR a.catid IN (' . (string)$subQuery . '))');
+            } else {
+                $query->where($categoryEquals);
+            }
+        } elseif (is_array($categoryId) && (count($categoryId) > 0)) {
+            $categoryId = ArrayHelper::toInteger($categoryId);
+            $categoryId = implode(',', $categoryId);
+
+            if (!empty($categoryId)) {
+                $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
+                $query->where('a.catid ' . $type . ' (' . $categoryId . ')');
+            }
         }
 
-		// Join over the users for the author and modified_by names.
-		$query->select("CASE WHEN a.created_by_alias > ' ' THEN a.created_by_alias ELSE ua.name END AS author")
-			->select('ua.email AS author_email')
-
-			->join('LEFT', '#__users AS ua ON ua.id = a.created_by')
-			->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
+        // Join over the users for the author and modified_by names.
+        $query->select("CASE WHEN a.created_by_alias > ' ' THEN a.created_by_alias ELSE ua.name END AS author")
+            ->select('ua.email AS author_email')
+            ->join('LEFT', '#__users AS ua ON ua.id = a.created_by')
+            ->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
 
 		// Filter by state
 		$state = $this->getState('filter.published');
@@ -291,8 +313,13 @@ class BPGalleryModelCategory extends JModelList
 
         $this->setState('list.direction', $listOrder);
 
+        // Category filter
         $id = $app->input->get('id', 0, 'int');
         $this->setState('filter.category_id', $id);
+
+        // Category level filter
+        $this->setState('filter.max_category_levels', $params->get('maxLevel', 1));
+        $this->setState('filter.subcategories', true);
 
         $user = JFactory::getUser();
 
@@ -331,7 +358,7 @@ class BPGalleryModelCategory extends JModelList
             }
 
             $options = array();
-            $options['countItems'] = $params->get('show_cat_items', 1) || $params->get('show_empty_categories', 0);
+            $options['countItems'] = $params->get('show_cat_items', 0) || $params->get('show_empty_categories', 0);
             $categories = JCategories::getInstance('BPGallery', $options);
             $this->_item = $categories->get($this->getState('filter.category_id', 'root'));
             if (is_object($this->_item)) {
