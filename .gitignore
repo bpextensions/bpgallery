@@ -1,6 +1,7 @@
 /**
 !.dev
 !.dev/**
+
 !administrator
 administrator/*
 !administrator/components
@@ -11,11 +12,18 @@ administrator/components/com_bpgallery/assets
 !administrator/components/com_bpgallery/models/fields
 !administrator/components/com_bpgallery/models/fields/**
 
+!administrator/manifests
+administrator/manifests/*
+!administrator/manifests/packages
+administrator/manifests/packages/*
+!/administrator/manifests/packages/pkg_bpgallery.xml
+
 !components
 components/**
 !components/com_bpgallery
 !components/com_bpgallery/**
 components/com_bpgallery/assets
+
 !modules
 modules/**
 !modules/mod_bpgallery

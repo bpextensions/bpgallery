@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="BPGallery" default="build:clean" basedir="." description="BPGallery build task">
+<project name="BP Gallery" default="build:clean" basedir="." description="BP Gallery build tasks">
 
     <property file="./build.properties"/>
 
     <php expression="date('F Y')" returnProperty="build.date"/>
     <php expression="date('Y')" returnProperty="build.year"/>
+
+    <target name="test:com_bpgallery">
+        <echo msg="Testing com_bpgallery"/>
+        <if>
+            <not>
+                <available
+                        file="./administrator/components/com_bpgallery/install/sql/updates/mysql/${build.version}.sql"/>
+            </not>
+            <then>
+                <fail message="SQL update file in /administrator/com_bpgallery/install/sql/updates/mysql doesn't exists!"/>
+            </then>
+        </if>
+    </target>
+
+    <target name="test">
+        <echo msg="Test each extension before build"/>
+        <phingcall target="test:com_bpgallery"/>
+    </target>
 
     <target name="build:com_bpgallery">
         <echo msg="Creating component directories"/>
@@ -13,7 +31,7 @@
         <mkdir dir="./.build/com_bpgallery/install"/>
 
         <echo msg="Building assets with Webpack"/>
-        <exec command="npm run build" passthru="true" checkreturn="true"/>
+        <exec command="npm run build" checkreturn="true"/>
 
         <echo msg="Building component installer"/>
         <copy todir="./.build/com_bpgallery/admin">
@@ -112,7 +130,7 @@
               overwrite="true"/>
 
         <echo msg="Creating component zipfile."/>
-        <zip destfile="./.build/com_bpgallery_v${build.version}_${build.release}.zip" basedir="./.build/com_bpgallery"/>
+        <zip destfile="./.build/com_bpgallery.zip" basedir="./.build/com_bpgallery"/>
     </target>
 
     <target name="build:mod_bpgallery">
@@ -143,17 +161,53 @@
         </copy>
 
         <echo msg="Creating module zipfile."/>
-        <zip destfile="./.build/mod_bpgallery_v${build.version}_${build.release}.zip" basedir="./.build/mod_bpgallery"/>
+        <zip destfile="./.build/mod_bpgallery.zip" basedir="./.build/mod_bpgallery"/>
+    </target>
+
+    <target name="build:pkg_bpgallery">
+        <echo msg="Creating package directory"/>
+        <mkdir dir="./.build/pkg_bpgallery"/>
+
+        <echo msg="Building extensions package installer"/>
+        <copy file="./.build/com_bpgallery.zip" tofile="./.build/pkg_bpgallery/com_bpgallery.zip" overwrite="true"/>
+        <copy file="./.build/mod_bpgallery.zip" tofile="./.build/pkg_bpgallery/mod_bpgallery.zip" overwrite="true"/>
+
+        <echo msg="Builing package manifest"/>
+        <copy file="./administrator/manifests/packages/pkg_bpgallery.xml" todir="./.build/pkg_bpgallery"
+              overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="${" endtoken="}">
+                    <token key="build.date" value="${build.date}"/>
+                    <token key="build.year" value="${build.year}"/>
+                    <token key="copyrights" value="${copyrights}"/>
+                    <token key="license.name" value="${license.name}"/>
+                    <token key="license.url" value="${license.url}"/>
+                    <token key="build.version" value="${build.version}"/>
+                    <token key="package" value="${package}"/>
+                    <token key="subpackage" value="${subpackage}"/>
+                    <token key="author.url" value="${author.url}"/>
+                    <token key="author.name" value="${author.name}"/>
+                    <token key="author.email" value="${author.email}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <echo msg="Creating package zipfile."/>
+        <zip destfile="./.build/pkg_bpgallery_v${build.version}_${build.release}.zip" basedir="./.build/pkg_bpgallery"/>
     </target>
 
     <target name="build">
+        <phingcall target="test"/>
+
         <echo msg="Creating build directory ./.build"/>
         <mkdir dir="./.build"/>
 
         <echo msg="Building each of the extensions"/>
-        <phingcall target="build:com_bpgallery"></phingcall>
-        <phingcall target="build:mod_bpgallery"></phingcall>
+        <phingcall target="build:com_bpgallery"/>
+        <phingcall target="build:mod_bpgallery"/>
 
+        <echo msg="Building extensions package"/>
+        <phingcall target="build:pkg_bpgallery"/>
     </target>
 
     <target name="clean">
@@ -163,8 +217,8 @@
 
     <target name="build:clean">
         <echo msg="Creating a clean build."/>
-        <phingcall target="clean"></phingcall>
-        <phingcall target="build"></phingcall>
+        <phingcall target="clean"/>
+        <phingcall target="build"/>
     </target>
 
 </project>
