@@ -15,8 +15,8 @@ use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die;
-define('PATH_COM_BPGALLERY', JPATH_SITE . '/components/com_bpgallery/');
-define('PATH_COM_BPGALLERY_ADMIN', JPATH_ADMINISTRATOR . '/components/com_bpgallery/');
+defined('PATH_COM_BPGALLERY') or define('PATH_COM_BPGALLERY', JPATH_SITE . '/components/com_bpgallery/');
+defined('PATH_COM_BPGALLERY_ADMIN') or define('PATH_COM_BPGALLERY_ADMIN', JPATH_ADMINISTRATOR . '/components/com_bpgallery/');
 
 // Include the helper functions only once
 JLoader::register('ModBPGalleryHelper', __DIR__ . '/helper.php');
