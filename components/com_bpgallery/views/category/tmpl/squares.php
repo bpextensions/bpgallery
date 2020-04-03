@@ -88,17 +88,19 @@ $afterDisplayContent = trim(implode("\n", $results));
 ?>
 <section class="bpgallery-category bpgallery-category-square<?php echo $this->pageclass_sfx ?>">
 
-    <?php if ($params->get('show_page_heading')) : ?>
-        <h1>
-            <?php echo $this->escape($params->get('page_heading')); ?>
-        </h1>
-    <?php endif; ?>
+    <div class="page-header">
+        <?php if ($params->get('show_page_heading')) : ?>
+            <h1>
+                <?php echo $this->escape($params->get('page_heading')); ?>
+            </h1>
+        <?php endif; ?>
 
-    <?php if ($params->get('show_category_title', 1)) : ?>
-        <h2>
-            <?php echo JHtml::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
-        </h2>
-    <?php endif; ?>
+        <?php if ($params->get('show_category_title', 1)) : ?>
+            <h2>
+                <?php echo JHtml::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
+            </h2>
+        <?php endif; ?>
+    </div>
 
     <?php echo $afterDisplayTitle; ?>
 
