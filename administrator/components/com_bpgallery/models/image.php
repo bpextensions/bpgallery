@@ -26,20 +26,6 @@ class BPGalleryModelImage extends JModelAdmin
      */
     public $typeAlias = 'com_bpgallery.image';
 
-    /**
-     * Thumbnail generation methods used to translate component settings
-     * to helper constants.
-     *
-     * @var array
-     */
-    private $generationMethods = [
-        BPGalleryHelper::METHOD_FIT => 'fit',
-        BPGalleryHelper::METHOD_FIT_WIDTH => 'fit_width',
-        BPGalleryHelper::METHOD_FIT_HEIGHT => 'fit_height',
-        BPGalleryHelper::METHOD_CROP => 'crop',
-        BPGalleryHelper::METHOD_FILL => 'fill',
-    ];
-
     public function __construct($config = array())
     {
 
@@ -534,7 +520,7 @@ class BPGalleryModelImage extends JModelAdmin
 
         // For each thumbnail size, create a thumbnail
         foreach ($sizes AS $size) {
-            $method = array_search($size->method, $this->generationMethods);
+            $method = array_search($size->method, BPGalleryHelper::$generationMethods, true);
             \BPGalleryHelper::getThumbnail($path, $size->width, $size->height,
                 $method);
         }

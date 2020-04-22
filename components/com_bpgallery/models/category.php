@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -19,63 +21,62 @@ use Joomla\Utilities\ArrayHelper;
  */
 class BPGalleryModelCategory extends JModelList
 {
-	/**
-	 * Category items data
-	 *
-	 * @var array
-	 */
-	protected $_item = null;
+    /**
+     * Category items data
+     *
+     * @var array
+     */
+    protected $_item = null;
 
-	protected $_siblings = null;
+    protected $_siblings = null;
 
-	protected $_children = null;
+    protected $_children = null;
 
-	protected $_parent = null;
+    protected $_parent = null;
 
-	/**
-	 * The category that applies.
-	 *
-	 * @access    protected
-	 * @var        object
-	 */
-	protected $_category = null;
+    /**
+     * The category that applies.
+     *
+     * @access    protected
+     * @var        object
+     */
+    protected $_category = null;
 
-	/**
-	 * The list of other gallery categories.
-	 *
-	 * @access    protected
-	 * @var       array
-	 */
-	protected $_categories = null;
+    /**
+     * The list of other gallery categories.
+     *
+     * @access    protected
+     * @var       array
+     */
+    protected $_categories = null;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param   array  $config  An optional associative array of configuration settings.
-	 *
-	 */
-	public function __construct($config = array())
-	{
-		if (empty($config['filter_fields']))
-		{
-			$config['filter_fields'] = array(
-				'id', 'a.id',
-				'name', 'a.name',
-				'state', 'a.state',
-				'ordering', 'a.ordering'
-			);
-		}
+    /**
+     * Constructor.
+     *
+     * @param array $config An optional associative array of configuration settings.
+     *
+     */
+    public function __construct($config = array())
+    {
+        if (empty($config['filter_fields'])) {
+            $config['filter_fields'] = array(
+                'id', 'a.id',
+                'name', 'a.name',
+                'state', 'a.state',
+                'ordering', 'a.ordering'
+            );
+        }
 
-		parent::__construct($config);
-	}
+        parent::__construct($config);
+    }
 
-	/**
-	 * Method to get a list of items.
-	 *
-	 * @return  mixed  An array of objects on success, false on failure.
-	 */
-	public function getItems()
-	{
+    /**
+     * Method to get a list of items.
+     *
+     * @return  mixed  An array of objects on success, false on failure.
+     */
+    public function getItems()
+    {
         // Invoke the parent getItems method to get the main list
         $items = parent::getItems();
 
@@ -89,39 +90,175 @@ class BPGalleryModelCategory extends JModelList
         return $items;
     }
 
-	/**
-	 * Method to build an SQL query to load the list data.
-	 *
-	 * @return  string    An SQL query
-	 *
-	 */
-	protected function getListQuery()
-	{
-		$user = JFactory::getUser();
-		$groups = implode(',', $user->getAuthorisedViewLevels());
+    /**
+     * Get the parent category.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
+    public function getParent()
+    {
+        if (!is_object($this->_item)) {
+            $this->getCategory();
+        }
 
-		// Create a new query object.
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
+        return $this->_parent;
+    }
 
-		// Select required fields from the categories.
-		// Changes for sqlsrv
-		$case_when = ' CASE WHEN ';
-		$case_when .= $query->charLength('a.alias', '!=', '0');
-		$case_when .= ' THEN ';
-		$a_id = $query->castAsChar('a.id');
-		$case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
-		$case_when .= ' ELSE ';
-		$case_when .= $a_id . ' END as slug';
+    /**
+     * Method to get category data for the current category
+     *
+     * @return  object  The category object
+     *
+     * @throws Exception
+     */
+    public function getCategory()
+    {
+        if (!is_object($this->_item)) {
+            $app = Factory::getApplication();
+            $menu = $app->getMenu();
+            $active = $menu->getActive();
+            $params = new Registry;
 
-		$case_when1 = ' CASE WHEN ';
-		$case_when1 .= $query->charLength('c.alias', '!=', '0');
-		$case_when1 .= ' THEN ';
-		$c_id = $query->castAsChar('c.id');
-		$case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
-		$case_when1 .= ' ELSE ';
-		$case_when1 .= $c_id . ' END as catslug';
-		$query->select($this->getState('list.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
+            if ($active) {
+                $params->loadString($active->params);
+            }
+
+            $options = array();
+            $options['countItems'] = $params->get('show_cat_items', 0) || $params->get('show_empty_categories', 0);
+
+            // User witch change stat have access to both published and unpublished items
+            if (Factory::getUser()->authorise('core.edit.state', $this->option)) {
+                $options['published'] = [0, 1, 2];
+            }
+
+            $categories = Categories::getInstance('BPGallery', $options);
+            $this->_item = $categories->get($this->getState('filter.category_id', 'root'));
+            if (is_object($this->_item)) {
+                $this->_children = $this->_item->getChildren();
+                $this->_parent = false;
+
+                if ($this->_item->getParent()) {
+                    $this->_parent = $this->_item->getParent();
+                }
+
+                $this->_rightsibling = $this->_item->getSibling();
+                $this->_leftsibling = $this->_item->getSibling(false);
+            } else {
+                $this->_children = false;
+                $this->_parent = false;
+            }
+        }
+
+        return $this->_item;
+    }
+
+    /**
+     * Get the sibling (adjacent) categories.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
+    public function &getLeftSibling()
+    {
+        if (!is_object($this->_item)) {
+            $this->getCategory();
+        }
+
+        return $this->_leftsibling;
+    }
+
+    /**
+     * Get the sibling (adjacent) categories.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
+    public function &getRightSibling()
+    {
+        if (!is_object($this->_item)) {
+            $this->getCategory();
+        }
+
+        return $this->_rightsibling;
+    }
+
+    /**
+     * Get the child categories.
+     *
+     * @return  mixed  An array of categories or false if an error occurs.
+     *
+     * @throws Exception
+     */
+    public function &getChildren()
+    {
+        if (!is_object($this->_item)) {
+            $this->getCategory();
+        }
+
+        return $this->_children;
+    }
+
+    /**
+     * Increment the hit counter for the category.
+     *
+     * @param integer $pk Optional primary key of the category to increment.
+     *
+     * @return  boolean  True if successful; false otherwise and internal error set.
+     *
+     * @throws Exception
+     */
+    public function hit($pk = 0)
+    {
+        $input = JFactory::getApplication()->input;
+        $hitcount = $input->getInt('hitcount', 1);
+
+        if ($hitcount) {
+            $pk = (!empty($pk)) ? $pk : (int)$this->getState('filter.category_id');
+
+            $table = JTable::getInstance('Category', 'JTable');
+            $table->load($pk);
+            $table->hit($pk);
+        }
+
+        return true;
+    }
+
+    /**
+     * Method to build an SQL query to load the list data.
+     *
+     * @return  string    An SQL query
+     *
+     */
+    protected function getListQuery()
+    {
+        $user = Factory::getUser();
+        $groups = implode(',', $user->getAuthorisedViewLevels());
+
+        // Create a new query object.
+        $db = $this->getDbo();
+        $query = $db->getQuery(true);
+
+        // Select required fields from the categories.
+        $case_when = ' CASE WHEN ';
+        $case_when .= $query->charLength('a.alias', '!=', '0');
+        $case_when .= ' THEN ';
+        $a_id = $query->castAsChar('a.id');
+        $case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
+        $case_when .= ' ELSE ';
+        $case_when .= $a_id . ' END as slug';
+
+        $case_when1 = ' CASE WHEN ';
+        $case_when1 .= $query->charLength('c.alias', '!=', '0');
+        $case_when1 .= ' THEN ';
+        $c_id = $query->castAsChar('c.id');
+        $case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
+        $case_when1 .= ' ELSE ';
+        $case_when1 .= $c_id . ' END as catslug';
+        $query->select($this->getState('list.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
             /**
              * TODO: we actually should be doing it but it's wrong this way
              *    . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
@@ -150,6 +287,15 @@ class BPGalleryModelCategory extends JModelList
                     ->join('INNER', '#__categories as this ON sub.lft > this.lft AND sub.rgt < this.rgt')
                     ->where('this.id = ' . (int)$categoryId);
 
+                // Show only published categories images
+                if (!Factory::getUser()->authorise('core.edit.state', $this->option)) {
+                    $subQuery->where('sub.published = 1');
+
+                    // User can change state, so show all categories
+                } else {
+                    $subQuery->where('sub.published IN(0,1,2)');
+                }
+
                 if ($levels >= 0) {
                     $subQuery->where('sub.level <= this.level + ' . $levels);
                 }
@@ -175,14 +321,12 @@ class BPGalleryModelCategory extends JModelList
             ->join('LEFT', '#__users AS ua ON ua.id = a.created_by')
             ->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
 
-		// Filter by state
-		$state = $this->getState('filter.published');
+        // Filter by state
+        $state = $this->getState('filter.published');
 
-		if (is_numeric($state))
-		{
+        if (is_numeric($state)) {
             $query->where('a.state = ' . (int)$state);
-        }
-		else {
+        } else {
             $query->where('(a.state IN (0,1,2))');
         }
 
@@ -250,11 +394,11 @@ class BPGalleryModelCategory extends JModelList
                 ->order($db->escape('a.sortname2') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
                 ->order($db->escape('a.sortname3') . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
         } else {
-			$query->order($db->escape($this->getState('list.ordering', 'a.ordering')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
-		}
+            $query->order($db->escape($this->getState('list.ordering', 'a.ordering')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+        }
 
-		return $query;
-	}
+        return $query;
+    }
 
     /**
      * Method to auto-populate the model state.
@@ -268,25 +412,27 @@ class BPGalleryModelCategory extends JModelList
      *
      * @throws Exception
      */
-	protected function populateState($ordering = null, $direction = null)
-	{
-		$app = JFactory::getApplication();
-		$params = JComponentHelper::getParams('com_bpgallery');
+    protected function populateState($ordering = null, $direction = null)
+    {
+        $app = JFactory::getApplication();
+        $params = JComponentHelper::getParams('com_bpgallery');
 
-		// Optional filter text
-		$itemid = $app->input->get('Itemid', 0, 'int');
-		$search = $app->getUserStateFromRequest('com_bpgallery.category.list.' . $itemid . '.filter-search', 'filter-search', '', 'string');
-		$this->setState('list.filter', $search);
+        // Optional filter text
+        $itemid = $app->input->get('Itemid', 0, 'int');
+        $search = $app->getUserStateFromRequest('com_bpgallery.category.list.' . $itemid . '.filter-search', 'filter-search', '', 'string');
+        $this->setState('list.filter', $search);
 
-		// Get list ordering default from the parameters
+        // Prepare parameters
         $menuParams = new Registry;
-
         if ($menu = $app->getMenu()->getActive()) {
             $menuParams->loadString($menu->params);
         }
 
         $mergedParams = clone $params;
         $mergedParams->merge($menuParams);
+
+        // Fix Joomla! issue with useglobal on subform fields
+        $this->mergeThumbnailsParams($params, $menuParams, $mergedParams);
 
         // List state information
         $format = $app->input->getWord('format');
@@ -338,140 +484,27 @@ class BPGalleryModelCategory extends JModelList
     }
 
     /**
-     * Method to get category data for the current category
+     * Merge view dependent thumbnails settings. (Note: Fixes Joomla! issue with useglobal on subform fields)
      *
-     * @return  object  The category object
-     *
-     * @throws Exception
+     * @param Registry $componentsParams Component parameters (defaults)
+     * @param Registry $menuParams Menu parameters.
+     * @param Registry $params Merged parameters.
      */
-	public function getCategory()
-	{
-		if (!is_object($this->_item))
-		{
-			$app = JFactory::getApplication();
-			$menu = $app->getMenu();
-            $active = $menu->getActive();
-            $params = new Registry;
+    protected function mergeThumbnailsParams(Registry $componentsParams, Registry $menuParams, Registry $params)
+    {
+        $groups = ['thumbnails_size_category_default', 'thumbnails_size_category_squares', 'thumbnails_size_category_masonry'];
 
-            if ($active) {
-                $params->loadString($active->params);
-            }
+        foreach ($groups as $name) {
 
-            $options = array();
-            $options['countItems'] = $params->get('show_cat_items', 0) || $params->get('show_empty_categories', 0);
-            $categories = JCategories::getInstance('BPGallery', $options);
-            $this->_item = $categories->get($this->getState('filter.category_id', 'root'));
-            if (is_object($this->_item)) {
-                $this->_children = $this->_item->getChildren();
-                $this->_parent = false;
+            // Component param
+            $cparam = (new Registry())->loadArray((array)$componentsParams->get($name));
 
-                if ($this->_item->getParent()) {
-                    $this->_parent = $this->_item->getParent();
-                }
+            // Menu param
+            $mparam = (new Registry())->loadArray((array)$menuParams->get($name));
 
-				$this->_rightsibling = $this->_item->getSibling();
-				$this->_leftsibling = $this->_item->getSibling(false);
-			}
-			else
-			{
-				$this->_children = false;
-				$this->_parent = false;
-			}
-		}
-
-		return $this->_item;
-	}
-
-    /**
-     * Get the parent category.
-     *
-     * @return  mixed  An array of categories or false if an error occurs.
-     *
-     * @throws Exception
-     */
-	public function getParent()
-	{
-		if (!is_object($this->_item))
-		{
-			$this->getCategory();
-		}
-
-		return $this->_parent;
-	}
-
-    /**
-     * Get the sibling (adjacent) categories.
-     *
-     * @return  mixed  An array of categories or false if an error occurs.
-     *
-     * @throws Exception
-     */
-	public function &getLeftSibling()
-	{
-		if (!is_object($this->_item))
-		{
-			$this->getCategory();
-		}
-
-		return $this->_leftsibling;
-	}
-
-    /**
-     * Get the sibling (adjacent) categories.
-     *
-     * @return  mixed  An array of categories or false if an error occurs.
-     *
-     * @throws Exception
-     */
-	public function &getRightSibling()
-	{
-		if (!is_object($this->_item))
-		{
-			$this->getCategory();
-		}
-
-		return $this->_rightsibling;
-	}
-
-    /**
-     * Get the child categories.
-     *
-     * @return  mixed  An array of categories or false if an error occurs.
-     *
-     * @throws Exception
-     */
-	public function &getChildren()
-	{
-		if (!is_object($this->_item))
-		{
-			$this->getCategory();
-		}
-
-		return $this->_children;
-	}
-
-    /**
-     * Increment the hit counter for the category.
-     *
-     * @param integer $pk Optional primary key of the category to increment.
-     *
-     * @return  boolean  True if successful; false otherwise and internal error set.
-     *
-     * @throws Exception
-     */
-	public function hit($pk = 0)
-	{
-		$input = JFactory::getApplication()->input;
-		$hitcount = $input->getInt('hitcount', 1);
-
-		if ($hitcount) {
-            $pk = (!empty($pk)) ? $pk : (int)$this->getState('filter.category_id');
-
-            $table = JTable::getInstance('Category', 'JTable');
-            $table->load($pk);
-            $table->hit($pk);
+            // Merge parameters
+            $merged = $cparam->merge($mparam);
+            $params->set($name, $merged->toObject());
         }
-
-		return true;
-	}
+    }
 }

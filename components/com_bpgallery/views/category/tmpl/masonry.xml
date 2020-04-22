@@ -235,6 +235,16 @@
                 <option value="1">JYES</option>
             </field>
 
+            <field
+                    name="thumbnails_size_category_masonry"
+                    type="subform"
+                    label="COM_BPGALLERY_FIELDSET_IMAGE_THUMBNAIL_SIZE_LABEL"
+                    description="COM_BPGALLERY_FIELDSET_IMAGE_THUMBNAIL_SIZE_DESC"
+                    layout="joomla.form.field.subform.repeatable-table"
+                    useglobal="1"
+                    formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes_global.xml"
+            />
+
         </fieldset>
 
         <fieldset name="advanced">

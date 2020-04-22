@@ -39,6 +39,7 @@ $this->document->addStyleDeclaration("
     }
 ");
 
+list($thumbnail_width, $thumbnail_height, $thumbnail_method) = BPGalleryHelperLayout::getThumbnailSettingsFromParams($this->params, 'thumbnails_size_category_squares');
 ?>
 <?php if (empty($this->items)) : ?>
     <p> <?php echo JText::_('COM_BPGALLERY_NO_IMAGES'); ?>     </p>
@@ -46,8 +47,7 @@ $this->document->addStyleDeclaration("
 
     <ul class="items">
         <?php foreach ($this->items as $i => $item) :
-            $url_thumbnail = BPGalleryHelper::getThumbnail($item, 200, 200, BPGalleryHelper::METHOD_CROP);
-            $url_medium = BPGalleryHelper::getThumbnail($item, 600, 600, BPGalleryHelper::METHOD_CROP);
+            $url_thumbnail = BPGalleryHelper::getThumbnail($item, $thumbnail_width, $thumbnail_height, $thumbnail_method);
             $url_full = BPGalleryHelper::getThumbnail($item, 1920, 1080, BPGalleryHelper::METHOD_FIT);
             $url = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
             $alt = empty($item->alt) ? $item->title : $item->alt;
@@ -57,11 +57,7 @@ $this->document->addStyleDeclaration("
                title="<?php echo $item->title ?>">
                 <span class="inner">
                     <span class="overlay"></span>
-                    <img
-                            src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image"
-                            srcset="<?php echo $url_thumbnail ?> 200w, <?php echo $url_medium ?> 600w, <?php echo $url_full ?> 1920w"
-                            sizes="(max-width: 800px) 600px, (min-width:801px) 200px, 1920px"
-                    >
+                    <img src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image">
                 </span>
             </a>
         <?php endforeach; ?>

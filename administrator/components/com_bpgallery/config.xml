@@ -263,6 +263,13 @@
 		/>
 
 		<field
+				name="quality" default="85" type="number" min="0" max="100"
+				label="COM_BPGALLERY_FIELDSET_IMAGES_QUALITY_LABEL"
+				description="COM_BPGALLERY_FIELDSET_IMAGES_QUALITY_DESC"
+				required="true"
+		/>
+
+		<field
 				name="images_path" default="/images/gallery"
 				label="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_LABEL"
 				description="COM_BPGALLERY_FIELDSET_IMAGES_IMAGES_PATH_DESC"
@@ -278,6 +285,42 @@
 				multiple="true"
 				layout="joomla.form.field.subform.repeatable-table"
 				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
+		/>
+
+		<field
+				name="view_thumbnails_note"
+				type="spacer" class="muted"
+				label="COM_BPGALLERY_FIELDSET_CONFIG_VIEW_THUMBNAILS_NOTE_LABEL"
+		/>
+
+		<field
+				name="thumbnails_size_category_default"
+				type="subform"
+				default="{'width':'0','height':'100','method':'fit_height'}"
+				label="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_DEFAULT_LABEL"
+				description="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_DEFAULT_DESC"
+				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
+				layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+		<field
+				name="thumbnails_size_category_squares"
+				type="subform"
+				default="{'width':'200','height':'200','method':'crop'}"
+				label="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_SQUARES_LABEL"
+				description="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_SQUARES_DESC"
+				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
+				layout="joomla.form.field.subform.repeatable-table"
+		/>
+
+		<field
+				name="thumbnails_size_category_masonry"
+				type="subform"
+				default="{'width':'200','height':'0','method':'fit_width'}"
+				label="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_MASONRY_LABEL"
+				description="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_MASONRY_DESC"
+				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
+				layout="joomla.form.field.subform.repeatable-table"
 		/>
 
 	</fieldset>

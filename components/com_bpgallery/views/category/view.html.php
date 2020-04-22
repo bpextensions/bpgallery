@@ -47,29 +47,35 @@ class BPGalleryViewCategory extends JViewCategory
 	 */
 	public function display($tpl = null)
 	{
-		parent::commonCategoryDisplay();
+        $this->commonCategoryDisplay();
 
-		// Prepare the data.
-		// Compute the image slug.
-		foreach ($this->items as $item)
-		{
-			$item->slug = $item->alias ? ($item->id . ':' . $item->alias) : $item->id;
-			$temp       = $item->params;
-			$item->params = clone $this->params;
-			$item->params->merge($temp);
-		}
+        // Prepare the data.
+        // Compute the image slug.
+        foreach ($this->items as $item) {
+            $item->slug = $item->alias ? ($item->id . ':' . $item->alias) : $item->id;
+            $temp = $item->params;
+            $item->params = clone $this->params;
+            $item->params->merge($temp);
+        }
 
-		return parent::display($tpl);
-	}
+        return parent::display($tpl);
+    }
 
-	/**
-	 * Prepares the document
-	 *
-	 * @return  void
-	 */
-	protected function prepareDocument()
-	{
-		parent::prepareDocument();
+    public function commonCategoryDisplay()
+    {
+        parent::commonCategoryDisplay();
+
+        $this->params->merge($this->getModel()->getState('params'));
+    }
+
+    /**
+     * Prepares the document
+     *
+     * @return  void
+     */
+    protected function prepareDocument()
+    {
+        parent::prepareDocument();
 
 		$menu = $this->menu;
 		$id = (int) @$menu->query['id'];

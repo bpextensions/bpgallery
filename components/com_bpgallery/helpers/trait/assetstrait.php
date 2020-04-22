@@ -33,7 +33,7 @@ Trait AssetsTrait
         $public_url = $url;
         $manifest = static::getManifest();
         $relativeUrl = ltrim($url, '/');
-        if (key_exists($relativeUrl, $manifest)) {
+        if (array_key_exists($relativeUrl, $manifest)) {
             $public_url = $manifest[$relativeUrl];
         }
 
@@ -79,12 +79,12 @@ Trait AssetsTrait
         $jsFilePath = self::$assets_root . '/' . $name . '.js';
 
         // If css asset exists
-        if (key_exists($cssFilePath, $manifest)) {
+        if (array_key_exists($cssFilePath, $manifest)) {
             Factory::getDocument()->addStyleSheet($manifest[$cssFilePath], ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
         }
 
         // If js asset exists
-        if (key_exists($jsFilePath, $manifest)) {
+        if (array_key_exists($jsFilePath, $manifest)) {
             Factory::getDocument()->addScript($manifest[$jsFilePath], ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
         }
     }
