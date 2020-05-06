@@ -278,6 +278,10 @@ class BPGalleryModelImage extends JModelAdmin
             $createCategory = !CategoriesHelper::validateCategoryId($data['catid'], 'com_bpgallery');
         }
 
+        // Set default image state
+        $defaultImageState = (int)$this->params->get('default_image_state', 1);
+        $data['state'] = $defaultImageState;
+
         // Save New Category
         if ($createCategory && $this->canCreateCategory()) {
             $table = array();
