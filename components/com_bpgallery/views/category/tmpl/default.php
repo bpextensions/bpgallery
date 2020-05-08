@@ -34,6 +34,7 @@ if ($params->def('images_lightbox', 1)) {
 
     $lightbox_options = [
         'type' => 'image',
+        'image' => (object)[],
         'gallery' => [
             'enabled' => true,
             'tCounter' => '<span class="mfp-counter">' . Text::_('COM_BPGALLERY_LIGHTBOX_N_OF_X') . '</span>',
@@ -50,16 +51,30 @@ if ($params->def('images_lightbox', 1)) {
     ];
     $lightbox_options = json_encode($lightbox_options);
 
+    // Enable or disable image title in a lightbox
+    $titleSrc = '"title"';
+    if (!$params->get('images_lightbox_title', 1)) {
+        $titleSrc = "function(){return ''}";
+    }
+
+    // Disable lightbox below given screen width
+    $disableOn = '';
+    $images_lightbox_min_res = $params->get('images_lightbox_min_res', 0);
+    if ($images_lightbox_min_res) {
+        $disableOn = "lightbox_options.disableOn = function(){
+                if( $(window).width() < $images_lightbox_min_res ) {
+                    return false;
+                }
+                return true;
+            }";
+    }
+
     $this->document->addScriptDeclaration("
         // Run lightbox for BP Gallery
         jQuery(function($){
             var lightbox_options = $lightbox_options;
-            lightbox_options.disableOn = function(){
-                if( $(window).width() < 600 ) {
-                    return false;
-                }
-                return true;
-            }
+            $disableOn
+            lightbox_options.image.titleSrc = $titleSrc;
             lightbox_options.zoom.opener = function(openerElement) {
                 return openerElement.is('img') ? openerElement : openerElement.find('img');
             }

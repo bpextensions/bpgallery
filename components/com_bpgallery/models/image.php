@@ -216,9 +216,8 @@ class BPGalleryModelImage extends JModelForm
         $app = JFactory::getApplication();
         $params = JComponentHelper::getParams('com_bpgallery');
 
-        // Get list ordering default from the parameters
+        // Prepare parameters
         $menuParams = new Registry;
-
         if ($menu = $app->getMenu()->getActive()) {
             $menuParams->loadString($menu->params);
         }
@@ -227,7 +226,7 @@ class BPGalleryModelImage extends JModelForm
         $mergedParams->merge($menuParams);
 
         $this->setState('image.id', $app->input->getInt('id'));
-        $this->setState('params', $menuParams);
+        $this->setState('params', $mergedParams);
 
         $user = JFactory::getUser();
 

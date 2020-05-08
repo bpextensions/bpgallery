@@ -226,6 +226,28 @@
             </field>
 
             <field
+                    name="images_lightbox_title"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_TITLE_LABEL"
+                    description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_TITLE_DESC"
+                    class="chzn-color"
+                    useglobal="1"
+            >
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+
+            <field
+                    name="images_lightbox_min_res"
+                    type="number"
+                    label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_MIN_RES_LABEL"
+                    description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_MIN_RES_DESC"
+                    filter="INT"
+                    min="0" step="100"
+                    useglobal="1"
+            />
+
+            <field
                     name="thumbnails_size_category_default"
                     type="subform"
                     label="COM_BPGALLERY_FIELDSET_IMAGE_THUMBNAIL_SIZE_LABEL"

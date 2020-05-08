@@ -247,6 +247,27 @@
 		</field>
 
 		<field
+				name="images_lightbox_title"
+				type="list"
+				label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_TITLE_LABEL"
+				description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_TITLE_DESC"
+				class="chzn-color"
+				default="1"
+		>
+			<option value="0">JHIDE</option>
+			<option value="1">JSHOW</option>
+		</field>
+
+		<field
+				name="images_lightbox_min_res"
+				type="number"
+				label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_MIN_RES_LABEL"
+				description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_MIN_RES_DESC"
+				filter="INT"
+				min="0" step="100"
+				default="0"/>
+
+		<field
 				name="default_image_state"
 				type="list"
 				label="COM_BPGALLERY_CONFIG_DEFAULT_IMAGE_STATE_LABEL"
