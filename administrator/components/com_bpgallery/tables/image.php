@@ -81,16 +81,19 @@ class BPGalleryTableImage extends JTable
 
 		if (empty($this->publish_up))
 		{
-			$this->publish_up = $this->getDbo()->getNullDate();
-		}
+            $this->publish_up = $this->getDbo()->getNullDate();
+        }
 
-		if (empty($this->publish_down))
-		{
-			$this->publish_down = $this->getDbo()->getNullDate();
+        if (empty($this->publish_down)) {
+            $this->publish_down = $this->getDbo()->getNullDate();
         }
 
         if (empty($this->modified)) {
             $this->modified = $this->getDbo()->getNullDate();
+        }
+
+        if (empty($this->language)) {
+            $this->language = '*';
         }
 
         return true;
