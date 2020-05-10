@@ -122,9 +122,10 @@ class BPGalleryViewImages extends JViewLegacy
 
 		if (($canDo->get('core.edit')))
 		{
-			JToolbarHelper::editList('image.edit');
-			JToolBarHelper::custom('image.recreate', 'loop.png', 'loop_f2.png', 'COM_BPGALLERY_TOOLBAR_RECREATE', true);
-		}
+            JToolbarHelper::editList('image.edit');
+            JToolBarHelper::custom('images.recreate', 'loop.png', 'loop_f2.png', 'COM_BPGALLERY_TOOLBAR_RECREATE',
+                true);
+        }
 
 		if ($canDo->get('core.edit.state'))
 		{

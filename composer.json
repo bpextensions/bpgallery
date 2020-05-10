@@ -5,5 +5,8 @@
     },
     "require-dev": {
         "phing/phing": "2.*"
+    },
+    "require": {
+        "ext-json": "*"
     }
 }

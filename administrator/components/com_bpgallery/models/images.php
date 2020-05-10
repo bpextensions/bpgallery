@@ -30,80 +30,108 @@ class BPGalleryModelImages extends JModelList
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'id', 'a.id',
-                'title', 'a.title',
-                'alias', 'a.alias',
-                'filename', 'a.filename',
-                'state', 'a.state',
-                'ordering', 'a.ordering',
-				'language', 'a.language',
-				'catid', 'a.catid', 'category_title',
-				'checked_out', 'a.checked_out',
-				'checked_out_time', 'a.checked_out_time',
-				'created', 'a.created',
-				'publish_up', 'a.publish_up',
-				'publish_down', 'a.publish_down',
-				'category_id',
-				'published',
-				'level', 'c.level',
-			);
-		}
+                'id',
+                'a.id',
+                'title',
+                'a.title',
+                'alias',
+                'a.alias',
+                'filename',
+                'a.filename',
+                'state',
+                'a.state',
+                'ordering',
+                'a.ordering',
+                'language',
+                'a.language',
+                'catid',
+                'a.catid',
+                'category_title',
+                'checked_out',
+                'a.checked_out',
+                'checked_out_time',
+                'a.checked_out_time',
+                'created',
+                'a.created',
+                'publish_up',
+                'a.publish_up',
+                'publish_down',
+                'a.publish_down',
+                'category_id',
+                'published',
+                'level',
+                'c.level',
+            );
+        }
 
-		parent::__construct($config);
-	}
+        parent::__construct($config);
+    }
 
-	/**
-	 * Method to get the maximum ordering value for each category.
-	 *
-	 * @return  array
-	 */
-	public function &getCategoryOrders()
-	{
-		if (!isset($this->cache['categoryorders']))
-		{
-			$db = $this->getDbo();
-			$query = $db->getQuery(true)
-				->select('MAX(ordering) as ' . $db->quoteName('max') . ', catid')
-				->select('catid')
-				->from('#__bpgallery_images')
-				->group('catid');
-			$db->setQuery($query);
-			$this->cache['categoryorders'] = $db->loadAssocList('catid', 0);
-		}
+    /**
+     * Method to get the maximum ordering value for each category.
+     *
+     * @return  array
+     */
+    public function &getCategoryOrders()
+    {
+        if (!isset($this->cache['categoryorders'])) {
+            $db    = $this->getDbo();
+            $query = $db->getQuery(true)
+                ->select('MAX(ordering) as ' . $db->quoteName('max') . ', catid')
+                ->select('catid')
+                ->from('#__bpgallery_images')
+                ->group('catid');
+            $db->setQuery($query);
+            $this->cache['categoryorders'] = $db->loadAssocList('catid', 0);
+        }
 
-		return $this->cache['categoryorders'];
-	}
+        return $this->cache['categoryorders'];
+    }
 
-	/**
-	 * Build an SQL query to load the list data.
-	 *
-	 * @return  JDatabaseQuery
-	 *
-	 * @since   1.6
-	 */
-	protected function getListQuery()
-	{
-		$db = $this->getDbo();
-		$query = $db->getQuery(true);
+    /**
+     * Returns a reference to the a Table object, always creating it.
+     *
+     * @param   string  $type    The table type to instantiate
+     * @param   string  $prefix  A prefix for the table class name. Optional.
+     * @param   array   $config  Configuration array for model. Optional.
+     *
+     * @return  JTable  A JTable object
+     */
+    public function getTable($type = 'Image', $prefix = 'BPGalleryTable', $config = [])
+    {
+        return JTable::getInstance($type, $prefix, $config);
+    }
 
-		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select',
-				'a.id AS id,'
-				. 'a.title AS title,'
-				. 'a.alias AS alias,'
-				. 'a.filename AS filename,'
-				. 'a.checked_out AS checked_out,'
-				. 'a.checked_out_time AS checked_out_time,'
-				. 'a.catid AS catid,'
-				. 'a.state AS state,'
-				. 'a.ordering AS ordering,'
-				. 'a.language,'
-				. 'a.publish_up,'
-				. 'a.publish_down'
-			)
-		);
+    /**
+     * Build an SQL query to load the list data.
+     *
+     * @return  JDatabaseQuery
+     *
+     * @since   1.6
+     */
+    protected function getListQuery()
+    {
+        $db    = $this->getDbo();
+        $query = $db->getQuery(true);
+
+        // Select the required fields from the table.
+        $query->select(
+            $this->getState(
+                'list.select',
+                'a.id AS id,'
+                . 'a.title AS title,'
+                . 'a.alias AS alias,'
+                . 'a.filename AS filename,'
+                . 'a.checked_out AS checked_out,'
+                . 'a.checked_out_time AS checked_out_time,'
+                . 'a.catid AS catid,'
+                . 'a.state AS state,'
+                . 'a.ordering AS ordering,'
+                . 'a.language,'
+                . 'a.publish_up,'
+                . 'a.publish_down'
+            )
+        );
         $query->from($db->quoteName('#__bpgallery_images', 'a'));
 
         // Join over the language
@@ -162,77 +190,57 @@ class BPGalleryModelImages extends JModelList
             $query->where('c.level <= ' . (int)$level);
         }
 
-		// Filter by search in title
-		$search = $this->getState('filter.search');
+        // Filter by search in title
+        $search = $this->getState('filter.search');
 
-		if (!empty($search))
-		{
-			if (stripos($search, 'id:') === 0)
-			{
-				$query->where($db->quoteName('a.id') . ' = ' . (int) substr($search, 3));
-			}
-			else
-			{
-				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
-				$query->where('(a.title LIKE ' . $search . ' OR a.alias LIKE ' . $search . ')');
-			}
-		}
+        if (!empty($search)) {
+            if (stripos($search, 'id:') === 0) {
+                $query->where($db->quoteName('a.id') . ' = ' . (int)substr($search, 3));
+            } else {
+                $search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
+                $query->where('(a.title LIKE ' . $search . ' OR a.alias LIKE ' . $search . ')');
+            }
+        }
 
-		// Filter on the language.
-		if ($language = $this->getState('filter.language'))
-		{
-			$query->where($db->quoteName('a.language') . ' = ' . $db->quote($language));
-		}
+        // Filter on the language.
+        if ($language = $this->getState('filter.language')) {
+            $query->where($db->quoteName('a.language') . ' = ' . $db->quote($language));
+        }
 
-		// Add the list ordering clause.
-		$orderCol  = $this->state->get('list.ordering', 'a.id');
-		$orderDirn = $this->state->get('list.direction', 'DESC');
+        // Add the list ordering clause.
+        $orderCol  = $this->state->get('list.ordering', 'a.id');
+        $orderDirn = $this->state->get('list.direction', 'DESC');
 
-		if ($orderCol == 'a.ordering' || $orderCol == 'category_title')
-		{
-			$orderCol = 'c.title ' . $orderDirn . ', a.ordering';
-		}
+        if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
+            $orderCol = 'c.title ' . $orderDirn . ', a.ordering';
+        }
 
-		$query->order($db->escape($orderCol . ' ' . $orderDirn));
+        $query->order($db->escape($orderCol . ' ' . $orderDirn));
 
-		return $query;
-	}
-
-	/**
-	 * Method to get a store id based on model configuration state.
-	 *
-	 * This is necessary because the model is used by the component and
-	 * different modules that might need different sets of data or different
-	 * ordering requirements.
-	 *
-	 * @param   string  $id  A prefix for the store id.
-	 *
-	 * @return  string  A store id.
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id .= ':' . $this->getState('filter.search');
-		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.category_id');
-		$id .= ':' . $this->getState('filter.language');
-		$id .= ':' . $this->getState('filter.level');
-
-		return parent::getStoreId($id);
-	}
+        return $query;
+    }
 
     /**
-     * Returns a reference to the a Table object, always creating it.
+     * Method to get a store id based on model configuration state.
      *
-     * @param string $type The table type to instantiate
-     * @param string $prefix A prefix for the table class name. Optional.
-     * @param array $config Configuration array for model. Optional.
+     * This is necessary because the model is used by the component and
+     * different modules that might need different sets of data or different
+     * ordering requirements.
      *
-     * @return  JTable  A JTable object
+     * @param   string  $id  A prefix for the store id.
+     *
+     * @return  string  A store id.
      */
-    public function getTable($type = 'Image', $prefix = 'BPGalleryTable', $config = [])
+    protected function getStoreId($id = '')
     {
-        return JTable::getInstance($type, $prefix, $config);
+        // Compile the store id.
+        $id .= ':' . $this->getState('filter.search');
+        $id .= ':' . $this->getState('filter.published');
+        $id .= ':' . $this->getState('filter.category_id');
+        $id .= ':' . $this->getState('filter.language');
+        $id .= ':' . $this->getState('filter.level');
+
+        return parent::getStoreId($id);
     }
 
     /**
@@ -240,24 +248,29 @@ class BPGalleryModelImages extends JModelList
      *
      * Note. Calling getState in this method will result in recursion.
      *
-     * @param string $ordering An optional ordering field.
-	 * @param   string  $direction  An optional direction (asc|desc).
-	 *
-	 * @return  void
-	 */
-	protected function populateState($ordering = 'a.id', $direction = 'desc')
-	{
-		// Load the filter state.
-		$this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string'));
-		$this->setState('filter.published', $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '', 'string'));
-		$this->setState('filter.category_id', $this->getUserStateFromRequest($this->context . '.filter.category_id', 'filter_category_id', '', 'cmd'));
-		$this->setState('filter.language', $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '', 'string'));
-		$this->setState('filter.level', $this->getUserStateFromRequest($this->context . '.filter.level', 'filter_level', '', 'cmd'));
+     * @param   string  $ordering   An optional ordering field.
+     * @param   string  $direction  An optional direction (asc|desc).
+     *
+     * @return  void
+     */
+    protected function populateState($ordering = 'a.id', $direction = 'desc')
+    {
+        // Load the filter state.
+        $this->setState('filter.search',
+            $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string'));
+        $this->setState('filter.published',
+            $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '', 'string'));
+        $this->setState('filter.category_id',
+            $this->getUserStateFromRequest($this->context . '.filter.category_id', 'filter_category_id', '', 'cmd'));
+        $this->setState('filter.language',
+            $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '', 'string'));
+        $this->setState('filter.level',
+            $this->getUserStateFromRequest($this->context . '.filter.level', 'filter_level', '', 'cmd'));
 
-		// Load the parameters.
-		$this->setState('params', JComponentHelper::getParams('com_bpgallery'));
+        // Load the parameters.
+        $this->setState('params', JComponentHelper::getParams('com_bpgallery'));
 
-		// List state information.
-		parent::populateState($ordering, $direction);
-	}
+        // List state information.
+        parent::populateState($ordering, $direction);
+    }
 }

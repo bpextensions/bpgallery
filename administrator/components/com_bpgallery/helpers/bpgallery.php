@@ -1,13 +1,15 @@
 <?php
 
 /**
- * @author        ${author.name} (${author.email})
- * @website        ${author.url}
- * @copyright    ${copyrights}
- * @license        ${license.url} ${license.name}
- * @package        ${package}
+ * @author            ${author.name} (${author.email})
+ * @website           ${author.url}
+ * @copyright         ${copyrights}
+ * @license           ${license.url} ${license.name}
+ * @package           ${package}
  * @subpackage        ${subpackage}
  */
+
+use Joomla\Image\Image;
 
 defined('_JEXEC') or die;
 
@@ -214,9 +216,9 @@ final class BPGalleryHelper extends JHelperContent
         $original_relative = $relative_base_path . '/original/' . $filename;
         $original_path = $absolute_base_path . '/original/' . $filename;
 
-        $directory = 'thumbs_' . (int)$width . 'x' . (int)$height . '-' . $method;
+        $directory = (int)$width . 'x' . (int)$height . '-' . $method;
 
-        $output_base = $relative_base_path . '/' . $directory;
+        $output_base     = $relative_base_path . '/thumbs/' . $directory;
         $output_relative = $output_base . '/' . $filename;
         $output_absolute = JPATH_ROOT . $output_relative;
 
@@ -248,32 +250,32 @@ final class BPGalleryHelper extends JHelperContent
                 }
 
                 // Image handle
-                $output_image = new JImage($original_path);
+                $output_image = new Image($original_path);
 
                 // Create a proper image:
                 // Crop the image/fill the dimensions
                 if (in_array($method, [self::METHOD_CROP, self::METHOD_FILL])) {
                     $output_image->resize($width, $height, false,
-                        JImage::SCALE_OUTSIDE);
+                        Image::SCALE_OUTSIDE);
                     $output_image = $output_image->crop($width, $height, null,
                         null, true);
 
                     // Fit the image inside box
                 } elseif ($method === self::METHOD_FIT) {
                     $output_image->resize($width, $height, null,
-                        JImage::SCALE_INSIDE);
+                        Image::SCALE_INSIDE);
 
                     // Fit image inside box width
                 } elseif ($method === self::METHOD_FIT_WIDTH) {
                     $height = 1;
                     $output_image->resize($width, $height, false,
-                        JImage::SCALE_OUTSIDE);
+                        Image::SCALE_OUTSIDE);
 
                     // Fit image inside box height
                 } elseif ($method === self::METHOD_FIT_HEIGHT) {
                     $width = 1;
                     $output_image->resize($width, $height, false,
-                        JImage::SCALE_OUTSIDE);
+                        Image::SCALE_OUTSIDE);
                 }
 
                 // Get image type
@@ -363,7 +365,7 @@ final class BPGalleryHelper extends JHelperContent
      */
     public static function getImageType($file_path)
     {
-        $properties = JImage::getImageFileProperties($file_path);
+        $properties = Image::getImageFileProperties($file_path);
 
         switch ($properties->mime) {
             case 'image/jpeg':
@@ -419,7 +421,7 @@ final class BPGalleryHelper extends JHelperContent
 
         return [
             'src' => $src,
-            'srcset' => $src . ' ' . JImage::getImageFileProperties($output_absolute)->width . 'w'
+            'srcset' => $src . ' ' . Image::getImageFileProperties($output_absolute)->width . 'w'
         ];
     }
 

@@ -94,12 +94,25 @@
 				com_bpgallery_images
 			</menu>
 			<menu
-				link="option=com_categories&amp;extension=com_bpgallery"
-				view="categories"
-				img="class:bpgallery-cat"
-				alt="BPGallery/Categories"
-				>
+					link="option=com_categories&amp;extension=com_bpgallery"
+					view="categories"
+					img="class:bpgallery-cat"
+					alt="BPGallery/Categories"
+			>
 				com_bpgallery_categories
+			</menu>
+			<menu
+					link="option=com_fields&amp;context=com_bpgallery.image"
+					alt="BPGallery/Fields"
+			>
+				JGLOBAL_FIELDS
+			</menu>
+			<menu
+					link="option=com_fields&amp;context=com_bpgallery.image"
+					view="groups"
+					alt="BPGallery/Fields"
+			>
+				JGLOBAL_FIELD_GROUPS
 			</menu>
 		</submenu>
         
