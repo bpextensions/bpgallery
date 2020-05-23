@@ -43,13 +43,13 @@ $.fn.BPGalleryUpload = function (settings) {
     this.drawDropContainerIntro = function () {
 
         // Create contents
-        var $contents = $(
+        let $contents = $(
             '<i class="icon-upload"></i><p>' + Joomla.Text._('COM_BPGALLERY_IMAGES_UPLOAD_TIP') + '</p>' +
             '<button class="btn btn-success" id="bpgallery_upload_field_button"><i class="icon-search"></i> ' + Joomla.Text._('COM_BPGALLERY_IMAGES_BROWSE_BUTTON') + '</button>'
         );
 
         // Get drop container element
-        var $container = $('#bpgallery_upload_container');
+        let $container = $('#bpgallery_upload_container');
 
         // Draw a drag&drop message
         $container.text('').append($contents);
@@ -67,18 +67,18 @@ $.fn.BPGalleryUpload = function (settings) {
     this.prepareFilesList = function () {
 
         // Get upload container
-        var $container = $("#bpgallery_upload_container");
+        let $container = $("#bpgallery_upload_container");
         $container.addClass('hasFiles');
 
         // Create the files table
-        var $list = $('#bpgallery_upload_container ul');
+        let $list = $('#bpgallery_upload_container ul');
 
         // If queue table doesnt exists
         if (!$list.length) {
 
             // Clear container and create files table
             $container.text('');
-            $list = $('<ul class="images"></ul>');
+            $list = $('<ul class="queue"></ul>');
             $container.append($list);
         }
 
@@ -88,13 +88,13 @@ $.fn.BPGalleryUpload = function (settings) {
     /**
      * Check if selected file exists in files queue.
      *
-     * @param {File}    file    File object to search for.
+     * @var {File}    file    File object to search for.
      * @returns {Boolean}
      */
     this.fileExistsInQueue = function (file) {
 
         // Check queue list for a selected file
-        for (var i = 0, ic = this.queue.length; i < ic; i++) {
+        for (let i = 0, ic = this.queue.length; i < ic; i++) {
 
             // Check if file exists
             if (
@@ -113,21 +113,24 @@ $.fn.BPGalleryUpload = function (settings) {
     /**
      * Add new files to the list
      *
-     * @param   Array   files   A list of File objects to add into table
-     * @returns Null
+     * @var   Array   files   A list of File objects to add into table
+     *
+     * @returns void
      */
     this.addFiles = function (files) {
 
         // Make sure we have the queue table
-        var $list = this.prepareFilesList();
+        // let $list = this.prepareFilesList();
 
         files = Array.from(files);
 
+        let newFiles = [];
+
         // Check each file for adding
-        for (var i = 0, ic = files.length, file = files[0]; i < ic; i++, file = files[i]) {
+        for (let i = 0, ic = files.length, file = files[0]; i < ic; i++, file = files[i]) {
 
             // Check for this file position in queue
-            var position = this.fileExistsInQueue(file);
+            let position = this.fileExistsInQueue(file);
 
             // If file exists in queue
             if (position !== false) {
@@ -142,36 +145,19 @@ $.fn.BPGalleryUpload = function (settings) {
 
                 // Add file to the queue array
                 this.queue.push(file);
-
-                // Create a row
-                var $row = $('<li class="thumbnail pull-left">\n\
-                        <span class="image disabled"></span>\n\
-                        <span class="name">' + file.name + '</span>\n\
-                        <span class="progress"><span></span></span>\n\
-                        <a href="#" class="btn-remove"><i class="icon-trash"></i></a>\n\
-                    </li>');
-
-                // Prepare file remove action
-                $row.find('.btn-remove').click($.proxy(this.removeFileAction, this));
-
-                // Get preview element
-                file.$preview = $row.find('.image');
-
-                // Load preview image
-                file.$preview.reader = new FileReader();
-                $(file.$preview.reader).on('load', $.proxy(function (e) {
-                    this.css('background-image', 'url(' + e.target.result + ')');
-                    this.removeClass('disabled');
-                }, file.$preview));
-                file.$preview.reader.readAsDataURL(file);
-
-                // Append a row
-                $list.append($row);
+                newFiles.push(file);
             }
         }
 
         // There are files in the queue
-        if (this.queue.length > 0) {
+        if (newFiles.length > 0) {
+
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Render queue and canUpload()');
+            }
+
+            // Render added images
+            this.renderQueue(newFiles);
 
             // We have files so check if we can enable upload button
             this.canUpload();
@@ -182,16 +168,107 @@ $.fn.BPGalleryUpload = function (settings) {
     };
 
     /**
+     * Render current list of files
+     *
+     * @param files List of files to add. If none provided we'll use the full queue.
+     *
+     * @returns Null
+     */
+    this.renderQueue = function (files = []) {
+
+        // Make sure we have the queue table
+        let $list = this.prepareFilesList();
+
+        // Find the "Add" button in the queue
+        let $uploadButton = $list.find('.upload-button');
+
+        // Render each image
+        for (let idx in files) {
+
+            let $image = this.createImageElement(files[idx]);
+
+            // Append the image
+            if ($uploadButton.length) {
+                $image.insertBefore($uploadButton);
+            } else {
+                $list.append($image);
+            }
+        }
+
+        // Add the upload button
+        if (!$uploadButton.length) {
+            $list.append(this.createUploadButton());
+        }
+    };
+
+    /**
+     * Create "Add" button that will be added at the end of the queue.
+     *
+     * @returns {jQuery|HTMLElement}
+     */
+    this.createUploadButton = function () {
+
+        // Create button
+        let $btn = $('<li class="queue-entry upload-button pull-left">\n\
+                    <a href="#" class="btn-upload">\n\
+                        <span class="wrapper">\n\
+                            <i class="icon-new"></i>\n\
+                            <span>' + Joomla.Text._('COM_BPGALLERY_IMAGES_BTN_ADD_LABEL') + '</span>\n\
+                        </span>\n\
+                    </a>\n\
+                </li>');
+
+        // Bind browse event
+        $btn.click($.proxy(this.showBrowseWindow, this));
+
+        return $btn;
+    };
+
+    /**
+     * Create queue image element.
+     *
+     * @param file
+     *
+     * @returns {jQuery|HTMLElement}
+     */
+    this.createImageElement = function (file) {
+
+        // Create a row
+        let $row = $('<li class="queue-entry pull-left">\n\
+                        <span class="image disabled"></span>\n\
+                        <span class="name">' + file.name + '</span>\n\
+                        <span class="progress"><span></span></span>\n\
+                        <a href="#" class="btn-remove"><i class="icon-trash"></i></a>\n\
+                    </li>');
+
+        // Prepare file remove action
+        $row.find('.btn-remove').click($.proxy(this.removeFileAction, this));
+
+        // Get preview element
+        file.$preview = $row.find('.image');
+
+        // Load preview image
+        file.$preview.reader = new FileReader();
+        $(file.$preview.reader).on('load', $.proxy(function (e) {
+            this.css('background-image', 'url(' + e.target.result + ')');
+            this.removeClass('disabled');
+        }, file.$preview));
+        file.$preview.reader.readAsDataURL(file);
+
+        return $row;
+    };
+
+    /**
      * Remove single file from upload queue and queue table.
      *
-     * @param Event e
+     * @var Event e
      */
     this.removeFileAction = function (e) {
 
         // Get remove button element
-        var $target = $(e.target);
-        var $row = $target.closest('li');
-        var index = $row.parent().children().index($row);
+        let $target = $(e.target);
+        let $row = $target.closest('li');
+        let index = $row.parent().children().index($row);
 
         // Remove file from queue list
         this.queue.splice(index, 1);
@@ -224,7 +301,7 @@ $.fn.BPGalleryUpload = function (settings) {
     this.setupDragAndDrop = function () {
 
         // Get files upload container element
-        var $container = $("#bpgallery_upload_container");
+        let $container = $("#bpgallery_upload_container");
 
         // Handle drop in the box
         $container.on('dragenter', function (e) {
@@ -245,7 +322,7 @@ $.fn.BPGalleryUpload = function (settings) {
             e.preventDefault();
 
             // Create FileList object
-            var files = e.originalEvent.dataTransfer.files;
+            let files = e.originalEvent.dataTransfer.files;
 
             // Add selected files to queue table
             this.addFiles(files);
@@ -277,9 +354,9 @@ $.fn.BPGalleryUpload = function (settings) {
         // Browse button action
         $('#bpgallery_upload_field_button').click($.proxy(function () {
 
-
             // Fire click event on files browse input
-            $('#bpgallery_upload_field_input').click();
+            // $('#bpgallery_upload_field_input').click();
+            this.showBrowseWindow();
 
         }, this));
 
@@ -293,6 +370,15 @@ $.fn.BPGalleryUpload = function (settings) {
     };
 
     /**
+     * Show files browse window.
+     */
+    this.showBrowseWindow = function () {
+
+        // Fire click event on files browse input
+        $('#bpgallery_upload_field_input').click();
+    }
+
+    /**
      * Binds upload button action.
      */
     this.setupUploadButtonAction = function () {
@@ -304,16 +390,19 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns {boolean}
      */
-    this.canUpload = function (event) {
+    this.canUpload = function () {
 
-        var category_id = $('#category_id').val();
-        var $btn = $('#bpgallery_upload_form .modal-footer .btn.btn-primary');
+        let category_id = $('#category_id').val();
+        let $btn = $('#bpgallery_upload_form .modal-footer .btn.btn-primary');
+        let $warning = $('#bpgallery_upload_missing_params_warning');
 
         // If user did not selected files or category
+
         if (this.queue.length < 1 || (category_id !== '' && parseInt(category_id) < 1)) {
 
             // Disable upload button
             $btn.attr('disabled', '');
+            $warning.show();
 
             return false;
 
@@ -322,6 +411,7 @@ $.fn.BPGalleryUpload = function (settings) {
 
             // Enable upload button
             $btn.removeAttr('disabled');
+            $warning.hide();
 
             return true;
 
@@ -337,17 +427,25 @@ $.fn.BPGalleryUpload = function (settings) {
         if (this.canUpload()) {
 
 
+            // First file in queue
             this.currentUploadFile = this.queue[0];
-            var category_id = $('#category_id').val();
 
-            this.currentUploadThumbnail = $('#bpgallery_upload_container .images .thumbnail').first();
+            // Selected category ID
+            let category_id = $('#category_id').val();
+
+            // Entry thumbnail
+            this.currentUploadThumbnail = $('#bpgallery_upload_container .queue .queue-entry').first();
+
+            // Entry progress bar
             this.currentUploadProgressBar = this.currentUploadThumbnail.find('.progress span');
             this.currentUploadProgressBar.parent().addClass('uploading');
 
-            var fd = new FormData();
+            let fd = new FormData();
             fd.append('image', this.currentUploadFile);
 
-            console.log('Performing upload of ', this.currentUploadFile.name);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('Performing upload of ', this.currentUploadFile.name);
+            }
 
             $.ajax({
                 // Your server script to process the upload
@@ -365,11 +463,11 @@ $.fn.BPGalleryUpload = function (settings) {
 
                 // Custom XMLHttpRequest
                 xhr: $.proxy(function () {
-                    var myXhr = $.ajaxSettings.xhr();
-                    if (myXhr.upload) {
+                    let request = $.ajaxSettings.xhr();
+                    if (request.upload) {
 
                         // For handling the progress of the upload
-                        myXhr.upload.addEventListener('progress', $.proxy(function (e) {
+                        request.upload.addEventListener('progress', $.proxy(function (e) {
 
                             if (e.lengthComputable) {
                                 this.currentUploadProgressBar.css({
@@ -379,15 +477,17 @@ $.fn.BPGalleryUpload = function (settings) {
 
                         }, this), false);
                     }
-                    return myXhr;
+                    return request;
                 }, this),
 
                 success: $.proxy(function () {
 
-                    console.log('Done.');
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log('Done.');
+                    }
 
                     // Remove element
-                    var e = {
+                    let e = {
                         target: this.currentUploadThumbnail[0]
                     };
 
@@ -415,14 +515,14 @@ $.fn.BPGalleryUpload = function (settings) {
     this.bindCategorySelectAction = function () {
 
         // Get input element
-        var $element = $('#category_id');
+        let $element = $('#category_id');
 
         // Dirty workaround for lack of onChange event on disabled/readonly/hidden fields
-        var val_old, val_new = $element.val();
+        let val_old, val_new = $element.val();
 
         // Check category id every 0.1sec
         setInterval(function () {
-            // Get curretn field value
+            // Get current field value
             val_new = $element.val();
 
             // if value changed
@@ -434,7 +534,7 @@ $.fn.BPGalleryUpload = function (settings) {
                 // Fix field value
                 if (val_new === '') $element.val('0');
 
-                // Trigget change
+                // Trigger change
                 $element.trigger('change');
             }
         }, 100);

@@ -20,6 +20,7 @@ JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR . '/components
 
 Text::script('COM_BPGALLERY_IMAGES_UPLOAD_TIP');
 Text::script('COM_BPGALLERY_IMAGES_BROWSE_BUTTON');
+Text::script('COM_BPGALLERY_IMAGES_BTN_ADD_LABEL');
 
 $doc->addScriptVersion('/administrator/components/com_bpgallery/assets/component.js', ['version' => 'auto']);
 $doc->addScriptDeclaration('
@@ -30,7 +31,7 @@ $doc->addScriptDeclaration('
         });
 	});
 ');
-$doc->addStyleSheetVersion('/administrator/components/com_bpgallery/assets/component.css', ['version' => 'auto']);
+$doc->addStyleSheet('/administrator/components/com_bpgallery/assets/component.css', ['version' => 'auto']);
 ?>
 <!-- Modal -->
 <div id="bpgallery_upload_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="bpgallery_upload_form" aria-hidden="true">
@@ -50,15 +51,26 @@ $doc->addStyleSheetVersion('/administrator/components/com_bpgallery/assets/compo
         $field = new JFormFieldModal_Category();
         $xml   = new SimpleXMLElement('<field name="category" type="modal_category" extension="com_bpgallery" new="true" select="true" />');
         $field->setup($xml, '');
-        $field->setValue($this->state->get('filter.category_id',''));
+        $field->setValue($this->state->get('filter.category_id', ''));
         ?>
         <div class="pull-left category-selection">
-            <?php echo str_ireplace('type="hidden"','type="text" class="hidden"',$field->renderField(array('hiddenLabel' => true))) ?>
+            <?php echo str_ireplace('type="hidden"', 'type="text" class="hidden"',
+                $field->renderField(array('hiddenLabel' => true))) ?>
         </div>
-        <input name="bpgallery_upload_field_input" type="file" id="bpgallery_upload_field_input" multiple class="hidden"/>
-        <div class="btn-group">
-            <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo JText::_('JCANCEL') ?></button>
-            <button class="btn btn-primary" disabled><i class="icon-upload"></i> <?php echo JText::_('COM_BPGALLERY_IMAGES_UPLOAD_BUTTON') ?></button>
+        <input name="bpgallery_upload_field_input" type="file" id="bpgallery_upload_field_input" multiple
+               class="hidden"/>
+        <div class="pull-right d-flex align-items-center">
+            <div class="mr-2" id="bpgallery_upload_missing_params_warning">
+                <p class="m-0"><i class="icon-warning mr-2"
+                                  aria-hidden="true"></i> <?php echo Text::_('COM_BPGALLERY_UPLOAD_MISSING_PARAMS_WARNING') ?>
+                </p>
+            </div>
+            <div class="btn-group">
+                <button class="btn" data-dismiss="modal" aria-hidden="true"><?php echo JText::_('JCANCEL') ?></button>
+                <button class="btn btn-primary" disabled><i
+                            class="icon-upload"></i> <?php echo JText::_('COM_BPGALLERY_IMAGES_UPLOAD_BUTTON') ?>
+                </button>
+            </div>
         </div>
     </div>
 </div>
