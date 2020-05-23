@@ -2,7 +2,7 @@
 
 use Joomla\Registry\Registry;
 
-JLoader::register('AssetsTrait', __DIR__ . '/trait/assetstrait.php');
+JLoader::register('AssetsTrait', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/trait/AssetsTrait.php');
 
 abstract class BPGalleryHelperLayout
 {

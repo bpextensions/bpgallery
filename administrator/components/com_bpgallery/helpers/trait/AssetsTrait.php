@@ -1,13 +1,14 @@
 <?php
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Helper trait allowing to include webpack.encore generated assets using manifest.json
  *
  * Note: Requires self::$assets_root declared on a class using this trait (Example value components/com_bpgallery/assets)
  */
-Trait AssetsTrait
+trait AssetsTrait
 {
 
     /**
@@ -52,7 +53,8 @@ Trait AssetsTrait
     public static function getManifest(): array
     {
         if (is_null(static::$manifestCache)) {
-            $manifest_path = JPATH_SITE . '/' . self::$assets_root . '/manifest.json';
+
+            $manifest_path = JPATH_SITE . '/' . trim(self::$assets_root, '/') . '/manifest.json';
 
             static::$manifestCache = [];
             if (file_exists($manifest_path)) {
@@ -70,22 +72,27 @@ Trait AssetsTrait
      *
      * @throws Exception
      */
-    public static function includeEntryPointAssets(string $name)
+    public static function includeEntryPointAssets(string $name): void
     {
         $manifest = static::getManifest();
+        $doc      = Factory::getDocument();
 
         // Assets files
         $cssFilePath = self::$assets_root . '/' . $name . '.css';
-        $jsFilePath = self::$assets_root . '/' . $name . '.js';
+        $jsFilePath  = self::$assets_root . '/' . $name . '.js';
 
         // If css asset exists
+        $uri_base = trim(Uri::root(true), '/');
+        $uri_base = empty($uri_base) ? '/' : '/' . $uri_base . '/';
         if (array_key_exists($cssFilePath, $manifest)) {
-            Factory::getDocument()->addStyleSheet($manifest[$cssFilePath], ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
+            $url = $uri_base . ltrim($manifest[$cssFilePath], '/');
+            $doc->addStyleSheet($url, ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
         }
 
         // If js asset exists
         if (array_key_exists($jsFilePath, $manifest)) {
-            Factory::getDocument()->addScript($manifest[$jsFilePath], ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
+            $url = $uri_base . ltrim($manifest[$jsFilePath], '/');
+            $doc->addScript($url, ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
         }
     }
 

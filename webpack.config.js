@@ -8,7 +8,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 // Module build configuration
 Encore
     .setOutputPath('administrator/components/com_bpgallery/assets')
-    .setPublicPath('/administrator/components/com_bpgallery/assets')
+    .setPublicPath('administrator/components/com_bpgallery/assets/')
     .cleanupOutputBeforeBuild()
     .enableBuildNotifications()
     .enableSassLoader()

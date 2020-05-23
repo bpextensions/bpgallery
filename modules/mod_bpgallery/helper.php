@@ -34,12 +34,14 @@ final class ModBPGalleryHelper
      * @var Registry
      */
     protected $params;
+
     /**
      * Module instance.
      *
      * @var stdClass
      */
     protected $module;
+
     /**
      * Cache key.
      *
@@ -50,19 +52,19 @@ final class ModBPGalleryHelper
     /**
      * ModBPGallery constructor.
      *
-     * @param stdClass $module Module instance to work on.
+     * @param   stdClass  $module  Module instance to work on.
      */
     public function __construct($module, Registry $params)
     {
-        $this->module = $module;
-        $this->params = $params;
+        $this->module    = $module;
+        $this->params    = $params;
         $this->cache_key = 'mod_bpgallery_' . crc32($module->params . '_' . $module->id);
     }
 
     /**
      * Get a list of images from a specific category
      *
-     * @param \Joomla\Registry\Registry  &$params object holding the models parameters
+     * @param   \Joomla\Registry\Registry  &$params  object holding the models parameters
      *
      * @return  mixed
      * @throws Exception
@@ -75,7 +77,7 @@ final class ModBPGalleryHelper
          * @var OutputController $cache
          */
         $cache = Cache::getInstance('output');
-        $data = $cache->get($this->cache_key, static::CACHE_GROUP);
+        $data  = $cache->get($this->cache_key, static::CACHE_GROUP);
         if ($data === false) {
             $data = $this->getItems();
             $cache->store($data, $this->cache_key, static::CACHE_GROUP);
@@ -98,13 +100,14 @@ final class ModBPGalleryHelper
         $model = ListModel::getInstance('Category', 'BPGalleryModel', array('ignore_request' => true));
 
         // Set application parameters in model
-        $app = Factory::getApplication();
+        $app       = Factory::getApplication();
         $appParams = $app->getParams();
-        $user = Factory::getUser();
+        $user      = Factory::getUser();
         $model->setState('params', $appParams);
 
         $model->setState('list.start', 0);
-        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery'))) {
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit',
+                'com_bpgallery'))) {
             $model->setState('filter.published', 1);
         }
 
@@ -112,7 +115,7 @@ final class ModBPGalleryHelper
         $model->setState('list.limit', (int)$this->params->get('count', 0));
 
         // Access filter
-        $access = !ComponentHelper::getParams('com_bpgallery')->get('show_noauth');
+        $access     = !ComponentHelper::getParams('com_bpgallery')->get('show_noauth');
         $authorised = Access::getAuthorisedViewLevels(JFactory::getUser()->get('id'));
         $model->setState('filter.access', $access);
 
@@ -165,15 +168,15 @@ final class ModBPGalleryHelper
         $items = $model->getItems();
 
         // Display options
-        $show_date = $this->params->get('show_date', 0);
-        $show_date_field = $this->params->get('show_date_field', 'created');
+        $show_date        = $this->params->get('show_date', 0);
+        $show_date_field  = $this->params->get('show_date_field', 'created');
         $show_date_format = $this->params->get('show_date_format', 'Y-m-d H:i:s');
-        $show_category = $this->params->get('show_category', 0);
-        $show_author = $this->params->get('show_author', 0);
+        $show_category    = $this->params->get('show_category', 0);
+        $show_author      = $this->params->get('show_author', 0);
 
         // Prepare data for display using display options
         foreach ($items as &$item) {
-            $item->slug = $item->id . ':' . $item->alias;
+            $item->slug    = $item->id . ':' . $item->alias;
             $item->catslug = $item->catid . ':' . $item->catslug;
 
 
@@ -181,7 +184,7 @@ final class ModBPGalleryHelper
                 // We know that user has the privilege to view the article
                 $item->link = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
             } else {
-                $menu = $app->getMenu();
+                $menu      = $app->getMenu();
                 $menuitems = $menu->getItems('link', 'index.php?option=com_users&view=login');
 
                 if (isset($menuitems[0])) {
@@ -201,7 +204,7 @@ final class ModBPGalleryHelper
             }
 
             if ($item->catid) {
-                $item->displayCategoryLink = Route::_(BPGalleryHelperRoute::getCategoryRoute($item->catid));
+                $item->displayCategoryLink  = Route::_(BPGalleryHelperRoute::getCategoryRoute($item->catid));
                 $item->displayCategoryTitle = $show_category ? '<a href="' . $item->displayCategoryLink . '">' . $item->category_title . '</a>' : '';
             } else {
                 $item->displayCategoryTitle = $show_category ? $item->category_title : '';
@@ -216,6 +219,14 @@ final class ModBPGalleryHelper
     }
 
 
+    /**
+     * Get all subcategories for the selected categories.
+     *
+     * @param   array  $selected_categories  Selected categories IDs
+     * @param   int    $access               Categories access filter.
+     *
+     * @return array
+     */
     protected function getSubcategories(array $selected_categories, int $access): array
     {
         $ids = $selected_categories;

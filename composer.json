@@ -7,6 +7,7 @@
         "phing/phing": "2.*"
     },
     "require": {
-        "ext-json": "*"
+        "ext-json": "*",
+        "php": "^7.2"
     }
 }

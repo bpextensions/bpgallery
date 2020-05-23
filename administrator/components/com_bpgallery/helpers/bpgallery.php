@@ -9,15 +9,28 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\CMS\Uri\Uri;
 use Joomla\Image\Image;
 
 defined('_JEXEC') or die;
 
+JLoader::register('AssetsTrait', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/trait/AssetsTrait.php');
+
 /**
  * BP Gallery component helper.
  */
-final class BPGalleryHelper extends JHelperContent
+abstract class BPGalleryHelper extends JHelperContent
 {
+
+    use AssetsTrait;
+
+    /**
+     * Root url for assets directory relative to website root URL.
+     *
+     * @var string
+     */
+    protected static $assets_root = 'administrator/components/com_bpgallery/assets';
+
     /**
      * Fit the image inside given dimentions.
      */
@@ -183,7 +196,13 @@ final class BPGalleryHelper extends JHelperContent
 
 
         if ($url) {
-            return $relative ? $output_relative . '?' . $mtime : JURI::base() . $output_relative . '?' . $mtime;
+
+            // Prepare relative base
+            $uri_base = trim(Uri::root(true), '/');
+            $uri_base = empty($uri_base) ? '/' : '/' . $uri_base . '/';
+
+            return $relative ? $uri_base . ltrim($output_relative,
+                    '/') . '?' . $mtime : Uri::root() . ltrim($output_relative, '/') . '?' . $mtime;
 
             // App requests PATH
         } else {

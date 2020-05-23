@@ -69,7 +69,6 @@ if ($params->def('images_lightbox', 1)) {
         <ul class="items <?php echo 'images-align-' . $images_align ?>">
             <?php foreach ($list as $i => $item) :
                 $url_thumbnail = BPGalleryHelper::getThumbnail($item, 0, 100, BPGalleryHelper::METHOD_FIT_HEIGHT);
-                $url_medium = BPGalleryHelper::getThumbnail($item, 600, 0, BPGalleryHelper::METHOD_FIT_WIDTH);
                 $url_full = BPGalleryHelper::getThumbnail($item, 1920, 1080, BPGalleryHelper::METHOD_FIT);
                 $url = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
                 $alt = empty($item->alt) ? $item->title : $item->alt;
@@ -78,11 +77,7 @@ if ($params->def('images_lightbox', 1)) {
                    <?php if ($image_lightbox): ?>target="_blank"<?php endif ?> class="image-link"
                    title="<?php echo $item->title ?>">
                     <span class="overlay"></span>
-                    <img
-                            src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image"
-                            srcset="<?php echo $url_thumbnail ?> 100w, <?php echo $url_medium ?> 400w, <?php echo $url_full ?> 1080w"
-                            sizes="100%"
-                    >
+                    <img src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image"/>
                 </a>
             <?php endforeach; ?>
         </ul>

@@ -8,15 +8,7 @@
 
     <target name="test:com_bpgallery">
         <echo msg="Testing com_bpgallery"/>
-        <if>
-            <not>
-                <available
-                        file="./administrator/components/com_bpgallery/install/sql/updates/mysql/${build.version}.sql"/>
-            </not>
-            <then>
-                <fail message="SQL update file in /administrator/com_bpgallery/install/sql/updates/mysql doesn't exists!"/>
-            </then>
-        </if>
+        <echo msg="No tests yet."/>
     </target>
 
     <target name="test">

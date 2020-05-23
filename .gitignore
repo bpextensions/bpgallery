@@ -40,3 +40,4 @@ modules/**
 !package.json
 !package-lock.json
 !composer.lock
+build.properties

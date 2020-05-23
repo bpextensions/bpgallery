@@ -16,13 +16,15 @@ defined('_JEXEC') or die;
 
 $doc = Factory::getDocument();
 
-JLoader::register('JFormFieldModal_Category', JPATH_ADMINISTRATOR . '/components/com_categories/models/fields/modal/category.php');
+JLoader::register('JFormFieldModal_Category',
+    JPATH_ADMINISTRATOR . '/components/com_categories/models/fields/modal/category.php');
 
 Text::script('COM_BPGALLERY_IMAGES_UPLOAD_TIP');
 Text::script('COM_BPGALLERY_IMAGES_BROWSE_BUTTON');
 Text::script('COM_BPGALLERY_IMAGES_BTN_ADD_LABEL');
 
-$doc->addScriptVersion('/administrator/components/com_bpgallery/assets/component.js', ['version' => 'auto']);
+BPGalleryHelper::includeEntryPointAssets('component');
+
 $doc->addScriptDeclaration('
 	jQuery(document).ready(function($){
 		$("#toolbar-new button").attr("onclick","jQuery(\"#bpgallery_upload_form\").modal(\"show\")");
@@ -31,7 +33,6 @@ $doc->addScriptDeclaration('
         });
 	});
 ');
-$doc->addStyleSheet('/administrator/components/com_bpgallery/assets/component.css', ['version' => 'auto']);
 ?>
 <!-- Modal -->
 <div id="bpgallery_upload_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="bpgallery_upload_form" aria-hidden="true">
