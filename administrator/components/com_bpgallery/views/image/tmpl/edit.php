@@ -19,14 +19,15 @@ JHtml::_('formbehavior.chosen', 'select');
 
 $this->ignore_fieldsets = array('jmetadata', 'item_associations');
 
-$app = Factory::getApplication();
+$app   = Factory::getApplication();
 $input = $app->input;
 
 // Create shortcut to parameters.
 $params = clone $this->state->get('params');
 //$params->merge(new Registry($this->item->attribs));
 
-JFactory::getDocument()->addScriptDeclaration('
+BPGalleryHelper::includeEntryPointAssets('component');
+Factory::getDocument()->addScriptDeclaration('
 	Joomla.submitbutton = function(task)
 	{
 		if (task == "image.cancel" || document.formvalidator.isValid(document.getElementById("image-form")))

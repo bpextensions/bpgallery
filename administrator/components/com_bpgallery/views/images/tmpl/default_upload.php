@@ -23,7 +23,7 @@ Text::script('COM_BPGALLERY_IMAGES_UPLOAD_TIP');
 Text::script('COM_BPGALLERY_IMAGES_BROWSE_BUTTON');
 Text::script('COM_BPGALLERY_IMAGES_BTN_ADD_LABEL');
 
-BPGalleryHelper::includeEntryPointAssets('component');
+BPGalleryHelper::includeEntryPointAssets('uploader');
 
 $doc->addScriptDeclaration('
 	jQuery(document).ready(function($){

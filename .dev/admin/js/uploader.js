@@ -9,12 +9,12 @@ import $ from 'jquery';
 import Joomla from 'joomla';
 
 
-$.fn.BPGalleryUpload = function (settings) {
+$.fn.BPGalleryUpload = function (options) {
 
     // Holds upload settings
     this.settings = $.extend({
         'upload_url': 'index.php?option=com_bpgallery&task=image.upload&format=json'
-    }, settings);
+    }, options);
 
     // Upload files list (queue)
     this.queue = [];
@@ -22,7 +22,7 @@ $.fn.BPGalleryUpload = function (settings) {
     /**
      * Initialize upload function
      */
-    this.init = function () {
+    this.init = () => {
 
         // Bind files drag & drop actions
         this.setupDragAndDrop();
@@ -35,12 +35,15 @@ $.fn.BPGalleryUpload = function (settings) {
 
         // Category selection action
         this.bindCategorySelectAction();
+
+        // Bind category modals events (preventing closing both upload and category modal when one is closed)
+        this.bindCategoryModalsEvents();
     };
 
     /**
      * No more files in the queue, so draw a proper message
      */
-    this.drawDropContainerIntro = function () {
+    this.drawDropContainerIntro = () => {
 
         // Create contents
         let $contents = $(
@@ -64,7 +67,7 @@ $.fn.BPGalleryUpload = function (settings) {
     };
 
     // Takes care of creating table with upload queue and progress bar
-    this.prepareFilesList = function () {
+    this.prepareFilesList = () => {
 
         // Get upload container
         let $container = $("#bpgallery_upload_container");
@@ -91,7 +94,7 @@ $.fn.BPGalleryUpload = function (settings) {
      * @var {File}    file    File object to search for.
      * @returns {Boolean}
      */
-    this.fileExistsInQueue = function (file) {
+    this.fileExistsInQueue = (file) => {
 
         // Check queue list for a selected file
         for (let i = 0, ic = this.queue.length; i < ic; i++) {
@@ -117,7 +120,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns void
      */
-    this.addFiles = function (files) {
+    this.addFiles = (files) => {
 
         // Make sure we have the queue table
         // let $list = this.prepareFilesList();
@@ -174,7 +177,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns Null
      */
-    this.renderQueue = function (files = []) {
+    this.renderQueue = (files = []) => {
 
         // Make sure we have the queue table
         let $list = this.prepareFilesList();
@@ -206,7 +209,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns {jQuery|HTMLElement}
      */
-    this.createUploadButton = function () {
+    this.createUploadButton = () => {
 
         // Create button
         let $btn = $('<li class="queue-entry upload-button pull-left">\n\
@@ -231,7 +234,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns {jQuery|HTMLElement}
      */
-    this.createImageElement = function (file) {
+    this.createImageElement = (file) => {
 
         // Create a row
         let $row = $('<li class="queue-entry pull-left">\n\
@@ -263,7 +266,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @var Event e
      */
-    this.removeFileAction = function (e) {
+    this.removeFileAction = (e) => {
 
         // Get remove button element
         let $target = $(e.target);
@@ -298,7 +301,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns Null
      */
-    this.setupDragAndDrop = function () {
+    this.setupDragAndDrop = () => {
 
         // Get files upload container element
         let $container = $("#bpgallery_upload_container");
@@ -349,7 +352,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns Null
      */
-    this.setupBrowseButtonAction = function () {
+    this.setupBrowseButtonAction = () => {
 
         // Browse button action
         $('#bpgallery_upload_field_button').click($.proxy(function () {
@@ -372,7 +375,7 @@ $.fn.BPGalleryUpload = function (settings) {
     /**
      * Show files browse window.
      */
-    this.showBrowseWindow = function () {
+    this.showBrowseWindow = () => {
 
         // Fire click event on files browse input
         $('#bpgallery_upload_field_input').click();
@@ -390,7 +393,7 @@ $.fn.BPGalleryUpload = function (settings) {
      *
      * @returns {boolean}
      */
-    this.canUpload = function () {
+    this.canUpload = () => {
 
         let category_id = $('#category_id').val();
         let $btn = $('#bpgallery_upload_form .modal-footer .btn.btn-primary');
@@ -421,7 +424,7 @@ $.fn.BPGalleryUpload = function (settings) {
     /**
      * Performs Java Script upload.
      */
-    this.uploadAction = function () {
+    this.uploadAction = () => {
 
         // If there is anything to upload
         if (this.canUpload()) {
@@ -449,7 +452,8 @@ $.fn.BPGalleryUpload = function (settings) {
 
             $.ajax({
                 // Your server script to process the upload
-                url: 'index.php?option=com_bpgallery&task=image.upload&category_id=' + category_id + '&format=json',
+                url: settings.upload_url + '&category_id=' + category_id,
+                // url: 'index.php?option=com_bpgallery&task=image.upload&category_id=' + category_id + '&format=json',
                 type: 'POST',
 
                 // Form data
@@ -512,7 +516,7 @@ $.fn.BPGalleryUpload = function (settings) {
     /**
      * Bind category select actions
      */
-    this.bindCategorySelectAction = function () {
+    this.bindCategorySelectAction = () => {
 
         // Get input element
         let $element = $('#category_id');
@@ -543,6 +547,25 @@ $.fn.BPGalleryUpload = function (settings) {
         // Enable upload button if there is a category selected
         $element.change($.proxy(this.canUpload, this));
     };
+
+    /**
+     *
+     */
+    this.bindCategoryModalsEvents = () => {
+
+        let $modalSelect = $('#ModalSelectCategory_category');
+        let $modalNew = $('#ModalNewCategory_category');
+
+        $modalSelect.find('button[data-dismiss="modal"]').click(function (e) {
+            e.stopPropagation();
+            $modalSelect.modal('hide');
+        });
+
+        $modalNew.find('button[data-dismiss="modal"]').click(function (e) {
+            e.stopPropagation();
+            $modalNew.modal('hide');
+        });
+    }
 
     // Initialize uploader
     this.init();

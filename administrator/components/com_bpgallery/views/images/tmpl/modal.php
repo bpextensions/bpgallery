@@ -30,24 +30,25 @@ JHtml::_('script', 'com_bpgallery/modal_image.js', array('version' => 'auto', 'r
 $searchFilterDesc = $this->filterForm->getFieldAttribute('search', 'description', null, 'filter');
 JHtml::_('bootstrap.tooltip', '#filter_search', array('title' => JText::_($searchFilterDesc), 'placement' => 'bottom'));
 
-$function = $app->input->getCmd('function', 'jSelectBPGalleryImage');
-$editor = $app->input->getCmd('editor', '');
+$function  = $app->input->getCmd('function', 'jSelectBPGalleryImage');
+$editor    = $app->input->getCmd('editor', '');
 $listOrder = $this->escape($this->state->get('list.ordering'));
-$listDirn = $this->escape($this->state->get('list.direction'));
-$onclick = $this->escape($function);
+$listDirn  = $this->escape($this->state->get('list.direction'));
+$onclick   = $this->escape($function);
 
 if (!empty($editor)) {
     // This view is used also in com_menus. Load the xtd script only if the editor is set!
 //	JFactory::getDocument()->addScriptOptions('xtd-bpgalleryimage', array('editor' => $editor));
     $onclick = "jSelectBPGalleryImage";
 }
-$this->document->addStyleSheetVersion('/administrator/components/com_bpgallery/assets/component.css', ['version' => 'auto']);
+
+BPGalleryHelper::includeEntryPointAssets('component');
 ?>
 <div class="container-popup">
 
     <form
-        action="<?php echo JRoute::_('index.php?option=com_bpgallery&view=images&layout=modal&tmpl=component&editor=' . $editor . '&function=' . $function . '&' . JSession::getFormToken() . '=1'); ?>"
-        method="post" name="adminForm" id="adminForm" class="form-inline">
+            action="<?php echo JRoute::_('index.php?option=com_bpgallery&view=images&layout=modal&tmpl=component&editor=' . $editor . '&function=' . $function . '&' . JSession::getFormToken() . '=1'); ?>"
+            method="post" name="adminForm" id="adminForm" class="form-inline">
 
         <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 

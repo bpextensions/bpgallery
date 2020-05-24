@@ -24,15 +24,17 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
 $canOrder  = $user->authorise('core.edit.state', 'com_bpgallery.category');
 $saveOrder = $listOrder == 'a.ordering';
 
-if ($saveOrder)
-{
-	$saveOrderingUrl = 'index.php?option=com_bpgallery&task=images.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'imageList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
+BPGalleryHelper::includeEntryPointAssets('component');
+
+if ($saveOrder) {
+    $saveOrderingUrl = 'index.php?option=com_bpgallery&task=images.saveOrderAjax&tmpl=component';
+    JHtml::_('sortablelist.sortable', 'imageList', 'adminForm', strtolower($listDirn), $saveOrderingUrl);
 }
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_bpgallery&view=images'); ?>" method="post" name="adminForm" id="adminForm">
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
+    <form action="<?php echo JRoute::_('index.php?option=com_bpgallery&view=images'); ?>" method="post" name="adminForm"
+          id="adminForm">
+        <div id="j-sidebar-container" class="span2">
+            <?php echo $this->sidebar; ?>
 	</div>
 	<div id="j-main-container" class="span10">
 		<?php

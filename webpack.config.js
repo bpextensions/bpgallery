@@ -23,9 +23,12 @@ Encore
         jquery: 'jQuery',
         joomla: 'Joomla',
     })
-    .addEntry('component', [
-        './.dev/admin/js/uploader.js',
+    .addStyleEntry('component', [
         './.dev/admin/scss/component.scss',
+    ])
+    .addEntry('uploader', [
+        './.dev/admin/js/uploader.js',
+        './.dev/admin/scss/uploader.scss',
     ])
     .copyFiles({
         from: './.dev/admin/images',
@@ -95,8 +98,11 @@ Encore
     .disableSingleRuntimeChunk()
     .enableVersioning(false)
     .enableSourceMaps(!Encore.isProduction())
-    .configureBabel(function (babelConfig) {
-    }, {})
+    .configureBabel(() => {
+    }, {
+        useBuiltIns: 'usage',
+        corejs: 3
+    })
     .addExternals({
         jquery: 'jQuery',
         joomla: 'Joomla',
