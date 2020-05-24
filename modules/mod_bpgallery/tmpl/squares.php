@@ -58,7 +58,7 @@ if ($params->def('images_lightbox', 1)) {
         });
     ");
 }
-$image_width = round(floor(100 / $square_row_length), 2);
+$image_width = round(floor(100 / $category_square_row_length), 2);
 $doc->addStyleDeclaration("
     @media screen and (max-width: 360px) {
         .bpgallery-category-square .items .image-link {

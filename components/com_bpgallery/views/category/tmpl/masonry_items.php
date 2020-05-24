@@ -9,61 +9,40 @@
  * @subpackage        ${subpackage}
  */
 
-use Joomla\CMS\Router\Route;
-
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.core');
 
 $listOrder = $this->escape($this->state->get('list.ordering'));
-$listDirn = $this->escape($this->state->get('list.direction'));
+$listDirn  = $this->escape($this->state->get('list.direction'));
 
-$image_lightbox = $this->params->def('images_lightbox', 1);
+$image_lightbox           = $this->params->def('images_lightbox', 1);
 $category_masonry_columns = $this->params->def('category_masonry_columns', 4);
-$image_width = round(floor(100 / $category_masonry_columns), 2);
-$this->document->addStyleDeclaration("
-    @media screen and (max-width: 360px) {
-        .bpgallery-category-masonry .items .image-link {
-            width: 100%
-        }
-    }
-    @media screen and (min-width:361px) and (max-width: 800px) {
-        .bpgallery-category-masonry .items .image-link {
-            width: 50%
-        }
-    }
-    @media screen and (min-width:361px) and (min-width: 801px) {
-        .bpgallery-category-masonry .items .image-link {
-            width: {$image_width}%
-        }
-    }
-");
 
 $gap = (bool)$this->params->get('category_masonry_gap', 1);
-list($thumbnail_width, $thumbnail_height, $thumbnail_method) = BPGalleryHelperLayout::getThumbnailSettingsFromParams($this->params, 'thumbnails_size_category_masonry');
+list($thumbnail_width, $thumbnail_height, $thumbnail_method) = BPGalleryHelperLayout::getThumbnailSettingsFromParams($this->params,
+    'thumbnails_size_category_masonry');
+
+$layoutOptions = [
+    'items'                    => $this->items,
+    'params'                   => $this->params,
+    'thumbnail_width'          => $thumbnail_width,
+    'thumbnail_height'         => $thumbnail_height,
+    'thumbnail_method'         => $thumbnail_method,
+    'gap'                      => $gap,
+    'image_lightbox'           => $this->params->get('images_lightbox', 1),
+    'layoutThumbnail'          => $this->layoutThumbnail,
+    'category'                 => $this->get('category'),
+    'category_masonry_columns' => $category_masonry_columns,
+];
 
 ?>
 <?php if (empty($this->items)) : ?>
     <p><?php echo JText::_('COM_BPGALLERY_NO_IMAGES'); ?></p>
 <?php else : ?>
 
-    <ul class="items<?php echo($gap ? '' : ' nogap') ?>">
-        <?php foreach ($this->items as $i => $item) :
-            $url_thumbnail = BPGalleryHelper::getThumbnail($item, $thumbnail_width, $thumbnail_height, $thumbnail_method);
-            $url_full = BPGalleryHelper::getThumbnail($item, 1920, 1080, BPGalleryHelper::METHOD_FIT_WIDTH);
-            $url = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
-            $alt = empty($item->alt) ? $item->title : $item->alt;
-            ?>
-            <a href="<?php echo $image_lightbox ? $url_full : $url ?>"
-               <?php if ($image_lightbox): ?>target="_blank"<?php endif ?> class="image-link"
-               title="<?php echo $item->title ?>">
-                <span class="inner">
-                    <span class="overlay"></span>
-                    <img src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image">
-                </span>
-            </a>
-        <?php endforeach; ?>
-    </ul>
+    <?php // Render category items using default category layout ?>
+    <?php echo $this->layoutCategory->render($layoutOptions) ?>
 
     <?php if ($this->params->get('show_pagination', 2)) : ?>
         <div class="pagination">

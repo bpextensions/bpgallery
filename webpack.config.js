@@ -3,6 +3,7 @@ var Encore = require('@symfony/webpack-encore');
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
+
 // ADMIN CONFIGURATION ---------------------------------------
 
 // Module build configuration
@@ -72,6 +73,9 @@ Encore
     ])
     .addStyleEntry('category-default', [
         './.dev/site/scss/themes/category/default.scss',
+    ])
+    .addStyleEntry('image-default', [
+        './.dev/site/scss/themes/image/default.scss',
     ])
     .addEntry('lightbox', [
         './.dev/site/js/lightbox.js',

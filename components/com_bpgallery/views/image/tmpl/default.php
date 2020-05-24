@@ -11,8 +11,7 @@
 
 //use Joomla\CMS\Language\Text;
 //use Joomla\CMS\Router\Route;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 
 defined('_JEXEC') or die;
 
@@ -24,53 +23,11 @@ if ($this->params->def('include_theme_assets', 1)) {
     BPGalleryHelperLayout::includeEntryPointAssets('image-default');
 }
 if ($this->params->def('images_lightbox', 1)) {
-    HTMLHelper::_('jquery.framework');
-    BPGalleryHelperLayout::includeEntryPointAssets('lightbox');
-
-    $lightbox_options = [
-        'type' => 'image',
-        'image' => (object)[],
-        'closeBtnInside' => true,
-        'tClose' => Text::_('COM_BPGALLERY_LIGHTBOX_CLOSE'),
-        'zoom' => [
-            'enabled' => true,
-            'duration' => 300,
-            'easing' => 'ease-in-out'
-        ]
+    $lightboxLayoutData = [
+        'params'         => $this->params,
+        'lightbox_query' => '.bpgallery-image-page'
     ];
-
-    $lightbox_options = json_encode($lightbox_options);
-
-    // Enable or disable image title in a lightbox
-    $titleSrc = '"title"';
-    if (!$this->params->get('images_lightbox_title', 1)) {
-        $titleSrc = "function(){return ''}";
-    }
-
-    // Disable lightbox below given screen width
-    $disableOn = '';
-    $images_lightbox_min_res = $this->params->get('images_lightbox_min_res', 0);
-    if ($images_lightbox_min_res) {
-        $disableOn = "lightbox_options.disableOn = function(){
-                if( $(window).width() < $images_lightbox_min_res ) {
-                    return false;
-                }
-                return true;
-            }";
-    }
-
-    $this->document->addScriptDeclaration("
-        // Run lightbox for BP Gallery
-        jQuery(function($){
-            var lightbox_options = $lightbox_options;
-            $disableOn
-            lightbox_options.image.titleSrc = $titleSrc;
-            lightbox_options.zoom.opener = function(openerElement) {
-                return openerElement.is('img') ? openerElement : openerElement.find('img');
-            }
-            $('.bpgallery-image-page .image-link').magnificPopup(lightbox_options);
-        });
-    ");
+    (new FileLayout('components.com_bpgallery.layouts.lightbox', JPATH_ROOT))->render($lightboxLayoutData);
 }
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers');
