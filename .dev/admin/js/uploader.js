@@ -549,7 +549,7 @@ $.fn.BPGalleryUpload = function (options) {
     };
 
     /**
-     *
+     * Bind category modals events (to prevent closing both category modal and upload modal).
      */
     this.bindCategoryModalsEvents = () => {
 
