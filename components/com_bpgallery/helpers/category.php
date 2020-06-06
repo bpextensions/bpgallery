@@ -26,6 +26,7 @@ class BPGalleryCategories extends JCategories
         $options['table'] = '#__bpgallery_images';
         $options['extension'] = 'com_bpgallery';
         $options['statefield'] = 'state';
+
         parent::__construct($options);
     }
 }

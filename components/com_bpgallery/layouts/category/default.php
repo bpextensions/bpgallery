@@ -7,7 +7,7 @@ defined('JPATH_BASE') or die;
 
 /**
  * @var array      $displayData      Layout data.
- * @var object     $category         Category instance.
+ * @var int        $category_id      Category instance.
  * @var Registry   $params           Parameters to use on this layout.
  * @var array      $items            Images to display.
  * @var int        $thumbnail_width  Thumbnail width.
@@ -29,7 +29,7 @@ if ($params->def('include_theme_assets', 1)) {
 }
 
 // If lightbox is enabled
-$container_id = 'com_bpgallery_category_default_' . $category->id;
+$container_id = 'com_bpgallery_category_default_' . $category_id;
 if ($params->def('images_lightbox', 1)) {
     $lightboxLayoutData = [
         'params'         => $params,

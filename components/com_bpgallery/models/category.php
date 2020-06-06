@@ -258,7 +258,8 @@ class BPGalleryModelCategory extends JModelList
         $case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
         $case_when1 .= ' ELSE ';
         $case_when1 .= $c_id . ' END as catslug';
-        $query->select($this->getState('list.select', 'a.*') . ',' . $case_when . ',' . $case_when1)
+        $query->select($this->getState('list.select',
+                'a.*,c.title AS `catname`') . ',' . $case_when . ',' . $case_when1)
             /**
              * TODO: we actually should be doing it but it's wrong this way
              *    . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
@@ -268,6 +269,11 @@ class BPGalleryModelCategory extends JModelList
             ->join('LEFT', '#__categories AS c ON c.id = a.catid')
             ->where('a.access IN (' . $groups . ')');
 
+        // We need to group images to add lft data
+        if ($this->getState('list.group')) {
+            $query->select('c.lft as `catlft`');
+        }
+
         // Filter by category.
         $categoryId = $this->getState('filter.category_id');
         if (is_numeric($categoryId)) {
@@ -275,7 +281,7 @@ class BPGalleryModelCategory extends JModelList
 
             // Add subcategory check
             $includeSubcategories = $this->getState('filter.subcategories', false);
-            $categoryEquals = 'a.catid ' . $type . (int)$categoryId;
+            $categoryEquals       = 'a.catid ' . $type . (int)$categoryId;
 
             if ($includeSubcategories) {
                 $levels = (int)$this->getState('filter.max_category_levels', '1');
@@ -463,13 +469,17 @@ class BPGalleryModelCategory extends JModelList
         $id = $app->input->get('id', 0, 'int');
         $this->setState('filter.category_id', $id);
 
+        // Group images by category (add lft data)
+        $this->setState('list.group', $params->get('group_images', 0));
+
         // Category level filter
         $this->setState('filter.max_category_levels', $params->get('maxLevel', 1));
         $this->setState('filter.subcategories', true);
 
         $user = JFactory::getUser();
 
-        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery'))) {
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit',
+                'com_bpgallery'))) {
             // Limit to published for people who can't edit or edit.state.
             $this->setState('filter.published', 1);
 

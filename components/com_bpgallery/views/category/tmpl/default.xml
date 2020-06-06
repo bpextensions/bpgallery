@@ -159,6 +159,18 @@
                     useglobal="true"/>
 
             <field
+                    name="group_images"
+                    type="list"
+                    label="COM_BPGALLERY_CONFIG_GROUP_IMAGES_LABEL"
+                    description="COM_BPGALLERY_CONFIG_GROUP_IMAGES_DESC"
+                    class="chzn-color"
+                    useglobal="true"
+            >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field
                     name="category_default_settings_note"
                     class=""
                     type="spacer"

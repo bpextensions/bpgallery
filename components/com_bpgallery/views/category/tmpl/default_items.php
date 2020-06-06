@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @author        ${author.name} (${author.email})
- * @website        ${author.url}
- * @copyright    ${copyrights}
- * @license        ${license.url} ${license.name}
- * @package        ${package}
+ * @author            ${author.name} (${author.email})
+ * @website           ${author.url}
+ * @copyright         ${copyrights}
+ * @license           ${license.url} ${license.name}
+ * @package           ${package}
  * @subpackage        ${subpackage}
  */
 
@@ -19,6 +19,11 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
 list($thumbnail_width, $thumbnail_height, $thumbnail_method) = BPGalleryHelperLayout::getThumbnailSettingsFromParams($this->params,
     'thumbnails_size_category_default');
 
+// Group items if required
+if ($this->params->get('group_images')) {
+    $groups = BPGalleryHelperLayout::groupItemsByCategory($this->items);
+}
+
 $layoutOptions = [
     'items'            => $this->items,
     'params'           => $this->params,
@@ -28,7 +33,7 @@ $layoutOptions = [
     'images_align'     => $this->params->def('images_align', 'center'),
     'image_lightbox'   => $this->params->get('images_lightbox', 1),
     'layoutThumbnail'  => $this->layoutThumbnail,
-    'category'         => $this->get('category'),
+    'category_id'      => $this->get('category')->id,
 ];
 
 ?>
@@ -37,7 +42,20 @@ $layoutOptions = [
 <?php else : ?>
 
     <?php // Render category items using default category layout ?>
-    <?php echo $this->layoutCategory->render($layoutOptions) ?>
+    <?php if (!$this->params->get('group_images')): ?>
+        <?php echo $this->layoutCategory->render($layoutOptions) ?>
+    <?php else: ?>
+        <?php foreach ($groups as $group):
+            $groupOptions = $layoutOptions;
+            $groupOptions['items'] = $group->items;
+            $groupOptions['category_id'] = $group->id;
+            ?>
+            <h2 class="category-name">
+                <?php echo $group->title ?>
+            </h2>
+            <?php echo $this->layoutCategory->render($groupOptions) ?>
+        <?php endforeach ?>
+    <?php endif; ?>
 
     <?php if ($this->params->get('show_pagination', 2)) : ?>
         <div class="pagination">

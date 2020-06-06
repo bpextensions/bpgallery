@@ -33,4 +33,35 @@ abstract class BPGalleryHelperLayout
         ];
     }
 
+    /**
+     * Group provided items by a category.
+     *
+     * @param   array  $items
+     *
+     * @return array
+     */
+    public static function groupItemsByCategory(array $items): array
+    {
+        $groups = [];
+
+        foreach ($items as $item) {
+
+            // If there is no info about this category, create it
+            if (!array_key_exists($item->catlft, $groups)) {
+                $category              = [
+                    'title' => $item->catname,
+                    'id'    => (int)$item->catid,
+                    'slug'  => $item->catslug,
+                    'items' => []
+                ];
+                $groups[$item->catlft] = (object)json_decode(json_encode($category));
+            }
+
+            // Add item to the category group
+            $groups[$item->catlft]->items[] = $item;
+        }
+
+        return $groups;
+    }
+
 }
