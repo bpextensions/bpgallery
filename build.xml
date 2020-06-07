@@ -6,14 +6,20 @@
     <php expression="date('F Y')" returnProperty="build.date"/>
     <php expression="date('Y')" returnProperty="build.year"/>
 
+    <target name="test">
+        <echo msg="Test each extension before build"/>
+        <phingcall target="test:com_bpgallery"/>
+        <phingcall target="test:mod_bpgallery"/>
+    </target>
+
     <target name="test:com_bpgallery">
         <echo msg="Testing com_bpgallery"/>
         <echo msg="No tests yet."/>
     </target>
 
-    <target name="test">
-        <echo msg="Test each extension before build"/>
-        <phingcall target="test:com_bpgallery"/>
+    <target name="test:mod_bpgallery">
+        <echo msg="Testing mod_bpgallery"/>
+        <echo msg="No tests yet."/>
     </target>
 
     <target name="build:com_bpgallery">
