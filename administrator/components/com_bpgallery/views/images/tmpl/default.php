@@ -81,25 +81,29 @@ if ($saveOrder) {
 				</tfoot>
 				<tbody>
 					<?php foreach ($this->items as $i => $item) :
-						$ordering  = ($listOrder == 'ordering');
-						$item->cat_link = JRoute::_('index.php?option=com_categories&extension=com_bpgallery&task=edit&type=other&cid[]=' . $item->catid);
-						$item->item_link = JRoute::_('index.php?option=com_bpgallery&task=image.edit&id=' . (int) $item->id);
-						$item->thumbnail = BPGalleryHelper::getThumbnail($item, 64, 64, BPGalleryHelper::METHOD_CROP);
-						$item->thumbnail_preview = BPGalleryHelper::getThumbnail($item, 320, 320, BPGalleryHelper::METHOD_FIT);
-						$canCreate  = $user->authorise('core.create',     'com_bpgallery.category.' . $item->catid);
-						$canEdit    = $user->authorise('core.edit',       'com_bpgallery.category.' . $item->catid);
-						$canCheckin = $user->authorise('core.manage',     'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-						$canChange  = $user->authorise('core.edit.state', 'com_bpgallery.category.' . $item->catid) && $canCheckin;
-						?>
-						<tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $item->catid; ?>">
-							<td class="order nowrap center hidden-phone">
-								<?php
-								$iconClass = '';
+						$ordering = ($listOrder == 'ordering');
+                        $item->cat_link = JRoute::_('index.php?option=com_categories&extension=com_bpgallery&task=edit&type=other&cid[]=' . $item->catid);
+                        $item->item_link = JRoute::_('index.php?option=com_bpgallery&task=image.edit&id=' . (int)$item->id);
+                        $item->thumbnail = BPGalleryHelper::getThumbnail($item, 64, 64, BPGalleryHelper::METHOD_CROP);
+                        $item->thumbnail_preview = BPGalleryHelper::getThumbnail($item, 320, 320,
+                            BPGalleryHelper::METHOD_FIT);
+                        $canCreate = $user->authorise('core.create', 'com_bpgallery.category.' . $item->catid);
+                        $canEdit = $user->authorise('core.edit', 'com_bpgallery.category.' . $item->catid);
+                        $canCheckin = $user->authorise('core.manage',
+                                'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
+                        $canChange = $user->authorise('core.edit.state',
+                                'com_bpgallery.category.' . $item->catid) && $canCheckin;
+                        $title = JHtmlString::truncate($item->title, 55, false);
+                        $alias = JHtmlString::truncate($item->alias, 55, false);
+                        ?>
+                        <tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $item->catid; ?>">
+                            <td class="order nowrap center hidden-phone">
+                                <?php
+                                $iconClass = '';
 
-								if (!$canChange)
-								{
-									$iconClass = ' inactive';
-								}
+                                if (!$canChange) {
+                                    $iconClass = ' inactive';
+                                }
 								elseif (!$saveOrder)
 								{
 									$iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::tooltipText('JORDERINGDISABLED');
@@ -132,27 +136,35 @@ if ($saveOrder) {
 							<td class="nowrap has-context">
 								<div class="pull-left">
 									<?php if( $canEdit ): ?>
-										<a href="<?php echo $item->item_link ?>" class="thumbnail hasPopover" data-placement="right" data-content="<img src='<?php echo $item->thumbnail_preview ?>' />" data-original-title="<?php echo $this->escape($item->title) ?>">
-											<img src="<?php echo $item->thumbnail ?>" alt="<?php echo $this->escape($item->title) ?>" />
-										</a>
-									<?php else: ?>
-										<span class="thumbnail hasPopover" data-placement="right" data-content="<img src='<?php echo $item->thumbnail_preview ?>' />" data-original-title="<?php echo $this->escape($item->title) ?>">
-											<img src="<?php echo $item->thumbnail ?>" alt="<?php echo $this->escape($item->title) ?>" />
+                                        <a href="<?php echo $item->item_link ?>" class="thumbnail hasPopover"
+                                           data-placement="right"
+                                           data-content="<img src='<?php echo $item->thumbnail_preview ?>' />"
+                                           data-original-title="<?php echo $this->escape($title) ?>">
+                                            <img src="<?php echo $item->thumbnail ?>"
+                                                 alt="<?php echo $this->escape($title) ?>"/>
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="thumbnail hasPopover" data-placement="right"
+                                              data-content="<img src='<?php echo $item->thumbnail_preview ?>' />"
+                                              data-original-title="<?php echo $this->escape($title) ?>">
+											<img src="<?php echo $item->thumbnail ?>"
+                                                 alt="<?php echo $this->escape($title) ?>"/>
 										</span>
-									<?php endif ?>
+                                    <?php endif ?>
 								</div>
 								<div class="pull-left">
-									<?php if ($item->checked_out) : ?>
-										<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'images.', $canCheckin); ?>
-									<?php endif; ?>
-									<?php if ($canEdit) : ?>
-										<a href="<?php echo $item->item_link ?>">
-											<?php echo $this->escape($item->title); ?></a>
-									<?php else : ?>
-                                        <?php echo $this->escape($item->title); ?>
+                                    <?php if ($item->checked_out) : ?>
+                                        <?php echo JHtml::_('jgrid.checkedout', $i, $item->editor,
+                                            $item->checked_out_time, 'images.', $canCheckin); ?>
+                                    <?php endif; ?>
+                                    <?php if ($canEdit) : ?>
+                                        <a href="<?php echo $item->item_link ?>">
+                                            <?php echo $this->escape($title); ?></a>
+                                    <?php else : ?>
+                                        <?php echo $this->escape($title); ?>
                                     <?php endif; ?>
                                     <span class="small">
-										<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>
+										<?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($alias)); ?>
 									</span>
                                     <div class="small">
                                         <?php echo JText::_('JCATEGORY') . ': ' . $this->escape($item->category_title); ?>

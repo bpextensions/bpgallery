@@ -151,7 +151,7 @@
 				type="list"
 				label="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_LABEL"
 				description="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_DESC"
-				default="center"
+				default="left"
 		>
 			<option value="left">JGLOBAL_LEFT</option>
 			<option value="center">JGLOBAL_CENTER</option>
@@ -316,7 +316,7 @@
 
 		<field
 				name="sizes"
-				default="{'sizes1':{'width':'200','height':'200','method':'crop'},'sizes2':{'width':'1920','height':'1080','method':'fit'}}"
+				default="{&quot;sizes1&quot;:{&quot;width&quot;:&quot;200&quot;,&quot;height&quot;:&quot;200&quot;,&quot;method&quot;:&quot;crop&quot;},&quot;sizes2&quot;:{&quot;width&quot;:&quot;1920&quot;,&quot;height&quot;:&quot;1080&quot;,&quot;method&quot;:&quot;fit&quot;}}"
 				type="subform"
 				label="COM_BPGALLERY_FIELDSET_IMAGES_SIZES_LABEL"
 				description="COM_BPGALLERY_FIELDSET_IMAGES_SIZES_DESC"
@@ -334,7 +334,7 @@
 		<field
 				name="thumbnails_size_category_default"
 				type="subform"
-				default="{'width':'0','height':'100','method':'fit_height'}"
+				default="{&quot;width&quot;:&quot;0&quot;,&quot;height&quot;:&quot;100&quot;,&quot;method&quot;:&quot;fit_height&quot;}"
 				label="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_DEFAULT_LABEL"
 				description="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_DEFAULT_DESC"
 				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
@@ -344,7 +344,7 @@
 		<field
 				name="thumbnails_size_category_squares"
 				type="subform"
-				default="{'width':'200','height':'200','method':'crop'}"
+				default="{&quot;width&quot;:&quot;200&quot;,&quot;height&quot;:&quot;200&quot;,&quot;method&quot;:&quot;crop&quot;}"
 				label="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_SQUARES_LABEL"
 				description="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_SQUARES_DESC"
 				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"
@@ -354,7 +354,7 @@
 		<field
 				name="thumbnails_size_category_masonry"
 				type="subform"
-				default="{'width':'200','height':'0','method':'fit_width'}"
+				default="{&quot;width&quot;:&quot;200&quot;,&quot;height&quot;:&quot;0&quot;,&quot;method&quot;:&quot;fit_width&quot;}"
 				label="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_MASONRY_LABEL"
 				description="COM_BPGALLERY_FIELDSET_THUMBNAILS_SIZE_CATEGORY_MASONRY_DESC"
 				formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes.xml"

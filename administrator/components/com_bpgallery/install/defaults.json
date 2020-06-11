@@ -1,0 +1,55 @@
+{
+    "show_category_title": "1",
+    "show_description": "1",
+    "show_description_image": "1",
+    "maxLevel": "-1",
+    "show_empty_categories": "0",
+    "show_subcat_desc": "0",
+    "show_cat_num_images": 1,
+    "images_limit": 25,
+    "group_images": "0",
+    "images_align": "left",
+    "category_square_row_length": 4,
+    "category_masonry_columns": 4,
+    "category_masonry_gap": 1,
+    "show_image_title": "1",
+    "show_image_intro": "1",
+    "images_lightbox": "1",
+    "images_lightbox_title": "1",
+    "images_lightbox_min_res": 0,
+    "default_image_state": "1",
+    "quality": "85",
+    "images_path": "\/images\/gallery",
+    "sizes": {
+        "sizes0": {
+            "width": 200,
+            "height": 200,
+            "method": "crop"
+        },
+        "sizes1": {
+            "width": 1920,
+            "height": 1080,
+            "method": "fit"
+        }
+    },
+    "thumbnails_size_category_default": {
+        "width": 0,
+        "height": 100,
+        "method": "fit_height"
+    },
+    "thumbnails_size_category_squares": {
+        "width": 200,
+        "height": 200,
+        "method": "crop"
+    },
+    "thumbnails_size_category_masonry": {
+        "width": 200,
+        "height": 0,
+        "method": "fit_width"
+    },
+    "include_component_assets": "1",
+    "include_theme_assets": "1",
+    "sef_advanced": 1,
+    "sef_ids": 1,
+    "custom_fields_enable": "1"
+}

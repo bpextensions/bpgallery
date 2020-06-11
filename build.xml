@@ -106,6 +106,7 @@
         <copy todir="./.build/com_bpgallery/install">
             <fileset dir="./administrator/components/com_bpgallery/install/">
                 <include name="upgrade.php"/>
+                <include name="defaults.json"/>
             </fileset>
             <filterchain>
                 <replacetokens begintoken="${" endtoken="}">

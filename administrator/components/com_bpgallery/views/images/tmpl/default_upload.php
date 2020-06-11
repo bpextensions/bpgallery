@@ -11,6 +11,7 @@
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die;
 
@@ -24,15 +25,25 @@ Text::script('COM_BPGALLERY_IMAGES_BROWSE_BUTTON');
 Text::script('COM_BPGALLERY_IMAGES_BTN_ADD_LABEL');
 
 BPGalleryHelper::includeEntryPointAssets('uploader');
-
-$doc->addScriptDeclaration('
+$options = [
+    'url' => Route::_('index.php?option=com_bpgallery&task=image.upload&format=json'),
+];
+$options = json_encode($options);
+$doc->addScriptDeclaration("
 	jQuery(document).ready(function($){
-		$("#toolbar-new button").attr("onclick","jQuery(\"#bpgallery_upload_form\").modal(\"show\")");
-		$(document).BPGalleryUpload({
-            upload_url:"' . JRoute::_('index.php?option=com_bpgallery&task=image.upload&format=json') . '"
-        });
+	
+	    // Show upload window
+	    var showUploadWindow = function(e){
+	        e.stopPropagation();
+	        $('#bpgallery_upload_form').modal('show');
+	    };
+	
+	    // Bind New button click event
+		$('#toolbar-new button').removeAttr('onclick').click(showUploadWindow);
+		
+		$(document).BPGalleryUpload($options);
 	});
-');
+");
 ?>
 <!-- Modal -->
 <div id="bpgallery_upload_form" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="bpgallery_upload_form" aria-hidden="true">

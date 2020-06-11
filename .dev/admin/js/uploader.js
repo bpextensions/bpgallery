@@ -1,8 +1,8 @@
 /**
- * @author        ${author.name} (${author.email})
- * @website        ${author.url}
+ * @author       ${author.name} (${author.email})
+ * @website      ${author.url}
  * @copyright    ${copyrights}
- * @license        ${license.url} ${license.name}
+ * @license      ${license.url} ${license.name}
  */
 
 import $ from 'jquery';
@@ -13,7 +13,7 @@ $.fn.BPGalleryUpload = function (options) {
 
     // Holds upload settings
     this.settings = $.extend({
-        'upload_url': 'index.php?option=com_bpgallery&task=image.upload&format=json'
+        upload_url: 'index.php?option=com_bpgallery&task=image.upload&format=json',
     }, options);
 
     // Upload files list (queue)
@@ -452,8 +452,7 @@ $.fn.BPGalleryUpload = function (options) {
 
             $.ajax({
                 // Your server script to process the upload
-                url: settings.upload_url + '&category_id=' + category_id,
-                // url: 'index.php?option=com_bpgallery&task=image.upload&category_id=' + category_id + '&format=json',
+                url: this.settings.upload_url + '&category_id=' + category_id,
                 type: 'POST',
 
                 // Form data

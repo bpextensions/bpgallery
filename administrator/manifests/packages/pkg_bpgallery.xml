@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <extension type="package" version="3.9" method="upgrade">
 	<name>BP Gallery Package</name>
-	<packagename>pkg_bpgallery</packagename>
+	<packagename>bpgallery</packagename>
 	<version>${build.version}</version>
 	<creationDate>${build.date}</creationDate>
 	<author>${author.name}</author>

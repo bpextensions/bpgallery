@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  joomla:
+    image: joomla
+    restart: unless-stopped
+    links:
+      - mariadb:3306
+    ports:
+      - 8080:80
+    depends_on:
+      - mariadb
+    environment:
+      JOOMLA_DB_HOST: mariadb
+      JOOMLA_DB_USER: joomla
+      JOOMLA_DB_PASSWORD: joomla
+      JOOMLA_DB_NAME: joomla
+
+  mariadb:
+    image: mariadb
+    restart: unless-stopped
+    ports:
+      - 3306
+    environment:
+      MYSQL_DATABASE: joomla
+      MYSQL_USER: joomla
+      MYSQL_PASSWORD: joomla
+      MYSQL_ROOT_PASSWORD: root
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    links:
+      - mariadb:3306
+    ports:
+      - 8081:80
+    depends_on:
+      - mariadb
+    environment:
+      MYSQL_USER: joomla
+      MYSQL_PASSWORD: joomla
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mariadb
+      PMA_USER: joomla
+      PMA_PASSWORD: joomla

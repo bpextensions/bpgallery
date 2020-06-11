@@ -1,7 +1,9 @@
 {
     "scripts": {
         "build": "phing",
-        "clean": "phing clean"
+        "clean": "phing clean",
+        "test:server:start": "docker-compose up -d",
+        "test:server:cleanup": "docker-compose down -v"
     },
     "require-dev": {
         "phing/phing": "2.*"

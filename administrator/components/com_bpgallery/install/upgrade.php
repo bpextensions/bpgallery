@@ -13,6 +13,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Table\Table;
 
 defined('_JEXEC') or die;
 
@@ -130,6 +131,37 @@ class com_bpgalleryInstallerScript
      */
     function postflight($type, InstallerAdapter $parent)
     {
-//        Factory::getApplication()->enqueueMessage('Postflight: '.$type);
+
+        // Post installation tasks
+        if (in_array($type, ['install', 'discover_install'])) {
+
+            $app = Factory::getApplication();
+
+            // Load default component parameters
+            $extension = Table::getInstance('Extension');
+            if ($extension->load(['element' => 'com_bpgallery'])) {
+                $buff = file_get_contents(__DIR__ . '/defaults.json');
+                if (!$extension->bind(['params' => $buff]) || !$extension->check() || !$extension->store()) {
+                    $app->enqueueMessage('Failed to store default component parameters.', 'error');
+                }
+            }
+
+            // Create default category
+            JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_categories/models', 'CategoriesModel');
+            JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_categories/tables');
+            $model = JModelLegacy::getInstance('Category', 'CategoriesModel');
+            $data  = [
+                'title'       => Text::_('COM_BPGALLERY_UNCATEGORISED'),
+                'extension'   => 'com_bpgallery',
+                'published'   => 1,
+                'language'    => '*',
+                'description' => '',
+                'params'      => '{}'
+            ];
+            if (!$model->save($data)) {
+                $app->enqueueMessage('Failed to create default gallery category.', 'error');
+            }
+        }
+
     }
 }
