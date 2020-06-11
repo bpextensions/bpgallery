@@ -270,7 +270,7 @@ class BPGalleryModelCategory extends JModelList
             ->where('a.access IN (' . $groups . ')');
 
         // We need to group images to add lft data
-        if ($this->getState('list.group')) {
+        if ($this->getState('list.group', 0)) {
             $query->select('c.lft as `catlft`');
         }
 
@@ -470,10 +470,10 @@ class BPGalleryModelCategory extends JModelList
         $this->setState('filter.category_id', $id);
 
         // Group images by category (add lft data)
-        $this->setState('list.group', $params->get('group_images', 0));
+        $this->setState('list.group', $mergedParams->get('group_images', 0));
 
         // Category level filter
-        $this->setState('filter.max_category_levels', $params->get('maxLevel', 1));
+        $this->setState('filter.max_category_levels', $mergedParams->get('maxLevel', 1));
         $this->setState('filter.subcategories', true);
 
         $user = JFactory::getUser();
