@@ -47,12 +47,6 @@ if ($params->def('images_lightbox', 1)) {
         // Run lightbox for BP Gallery Module
         jQuery(function($){
             var lightbox_options = $lightbox_options;
-            lightbox_options.disableOn = function(){
-                if( $(window).width() < 600 ) {
-                    return false;
-                }
-                return true;
-            }
             lightbox_options.zoom.opener = function(openerElement) {
                 return openerElement.is('img') ? openerElement : openerElement.find('img');
             }

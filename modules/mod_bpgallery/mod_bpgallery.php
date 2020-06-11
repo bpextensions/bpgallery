@@ -41,15 +41,16 @@ $helper = new ModBPGalleryHelper($module, $params);
 $list = $helper->getList();
 
 if (!empty($list)) {
-    $doc = Factory::getDocument();
-    $layout = $params->get('layout', 'default');
-    $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');
-    $images_align = $params->def('images_align', 'center');
-    $image_lightbox = $params->get('images_lightbox', 1);
-    $square_row_length = $params->def('category_square_row_length', 4);
-    $category_masonry_columns = $params->def('category_masonry_columns', 4);
-    $category_masonry_gap = (bool)$params->get('category_masonry_gap', 1);
-    $module_id = 'mod_bpgallery_' . $module->id;
+    $doc                        = Factory::getDocument();
+    $layout                     = $params->get('layout', 'default');
+    $moduleclass_sfx            = htmlspecialchars($params->get('moduleclass_sfx'), ENT_COMPAT, 'UTF-8');
+    $images_align               = $params->def('images_align', 'center');
+    $image_lightbox             = (int)$params->get('images_lightbox', 1);
+    $square_row_length          = (int)$params->def('category_square_row_length', 4);
+    $category_masonry_columns   = (int)$params->def('category_masonry_columns', 4);
+    $category_masonry_gap       = (bool)$params->get('category_masonry_gap', 1);
+    $category_square_row_length = (int)$params->get('category_square_row_length', 4);
+    $module_id                  = 'mod_bpgallery_' . $module->id;
 
     require ModuleHelper::getLayoutPath('mod_bpgallery', $layout);
 }

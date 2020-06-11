@@ -45,12 +45,6 @@ if ($params->def('images_lightbox', 1)) {
         // Run lightbox for BP Gallery Module
         jQuery(function($){
             var lightbox_options = $lightbox_options;
-            lightbox_options.disableOn = function(){
-                if( $(window).width() < 600 ) {
-                    return false;
-                }
-                return true;
-            }
             lightbox_options.zoom.opener = function(openerElement) {
                 return openerElement.is('img') ? openerElement : openerElement.find('img');
             }
@@ -58,7 +52,7 @@ if ($params->def('images_lightbox', 1)) {
         });
     ");
 }
-$image_width = round(floor(100 / $category_square_row_length), 2);
+$image_width = round(floor(100 / (int)$category_square_row_length), 2);
 $doc->addStyleDeclaration("
     @media screen and (max-width: 360px) {
         .bpgallery-category-square .items .image-link {
