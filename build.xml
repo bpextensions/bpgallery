@@ -38,20 +38,7 @@
                 <exclude name="install/upgrade.php"/>
             </fileset>
             <filterchain>
-                <replacetokens begintoken="${" endtoken="}">
-                    <token key="build.date" value="${build.date}"/>
-                    <token key="build.year" value="${build.year}"/>
-                    <token key="build.version" value="${build.version}"/>
-                    <token key="build.release" value="${build.release}"/>
-                    <token key="copyrights" value="${copyrights}"/>
-                    <token key="license.name" value="${license.name}"/>
-                    <token key="license.url" value="${license.url}"/>
-                    <token key="package" value="${package}"/>
-                    <token key="subpackage" value="${subpackage}"/>
-                    <token key="author.url" value="${author.url}"/>
-                    <token key="author.name" value="${author.name}"/>
-                    <token key="author.email" value="${author.email}"/>
-                </replacetokens>
+                <expandproperties/>
             </filterchain>
         </copy>
 
@@ -60,20 +47,7 @@
                 <include name="**/*"/>
             </fileset>
             <filterchain>
-                <replacetokens begintoken="${" endtoken="}">
-                    <token key="build.date" value="${build.date}"/>
-                    <token key="build.year" value="${build.year}"/>
-                    <token key="build.version" value="${build.version}"/>
-                    <token key="build.release" value="${build.release}"/>
-                    <token key="copyrights" value="${copyrights}"/>
-                    <token key="license.name" value="${license.name}"/>
-                    <token key="license.url" value="${license.url}"/>
-                    <token key="package" value="${package}"/>
-                    <token key="subpackage" value="${subpackage}"/>
-                    <token key="author.url" value="${author.url}"/>
-                    <token key="author.name" value="${author.name}"/>
-                    <token key="author.email" value="${author.email}"/>
-                </replacetokens>
+                <expandproperties/>
             </filterchain>
         </copy>
 
@@ -85,20 +59,7 @@
                 <exclude name="entrypoints.json"/>
             </fileset>
             <filterchain>
-                <replacetokens begintoken="${" endtoken="}">
-                    <token key="build.date" value="${build.date}"/>
-                    <token key="build.year" value="${build.year}"/>
-                    <token key="build.version" value="${build.version}"/>
-                    <token key="build.release" value="${build.release}"/>
-                    <token key="copyrights" value="${copyrights}"/>
-                    <token key="license.name" value="${license.name}"/>
-                    <token key="license.url" value="${license.url}"/>
-                    <token key="package" value="${package}"/>
-                    <token key="subpackage" value="${subpackage}"/>
-                    <token key="author.url" value="${author.url}"/>
-                    <token key="author.name" value="${author.name}"/>
-                    <token key="author.email" value="${author.email}"/>
-                </replacetokens>
+                <expandproperties/>
             </filterchain>
         </copy>
 
@@ -109,19 +70,7 @@
                 <include name="defaults.json"/>
             </fileset>
             <filterchain>
-                <replacetokens begintoken="${" endtoken="}">
-                    <token key="build.date" value="${build.date}"/>
-                    <token key="build.year" value="${build.year}"/>
-                    <token key="copyrights" value="${copyrights}"/>
-                    <token key="license.name" value="${license.name}"/>
-                    <token key="license.url" value="${license.url}"/>
-                    <token key="build.version" value="${build.version}"/>
-                    <token key="package" value="${package}"/>
-                    <token key="subpackage" value="${subpackage}"/>
-                    <token key="author.url" value="${author.url}"/>
-                    <token key="author.name" value="${author.name}"/>
-                    <token key="author.email" value="${author.email}"/>
-                </replacetokens>
+                <expandproperties/>
             </filterchain>
         </copy>
 
@@ -142,20 +91,7 @@
                 <include name="**/*"/>
             </fileset>
             <filterchain>
-                <replacetokens begintoken="${" endtoken="}">
-                    <token key="build.date" value="${build.date}"/>
-                    <token key="build.year" value="${build.year}"/>
-                    <token key="build.version" value="${build.version}"/>
-                    <token key="build.release" value="${build.release}"/>
-                    <token key="copyrights" value="${copyrights}"/>
-                    <token key="license.name" value="${license.name}"/>
-                    <token key="license.url" value="${license.url}"/>
-                    <token key="package" value="${package}"/>
-                    <token key="subpackage" value="${subpackage}"/>
-                    <token key="author.url" value="${author.url}"/>
-                    <token key="author.name" value="${author.name}"/>
-                    <token key="author.email" value="${author.email}"/>
-                </replacetokens>
+                <expandproperties/>
             </filterchain>
         </copy>
 
@@ -175,19 +111,7 @@
         <copy file="./administrator/manifests/packages/pkg_bpgallery.xml" todir="./.build/pkg_bpgallery"
               overwrite="true">
             <filterchain>
-                <replacetokens begintoken="${" endtoken="}">
-                    <token key="build.date" value="${build.date}"/>
-                    <token key="build.year" value="${build.year}"/>
-                    <token key="copyrights" value="${copyrights}"/>
-                    <token key="license.name" value="${license.name}"/>
-                    <token key="license.url" value="${license.url}"/>
-                    <token key="build.version" value="${build.version}"/>
-                    <token key="package" value="${package}"/>
-                    <token key="subpackage" value="${subpackage}"/>
-                    <token key="author.url" value="${author.url}"/>
-                    <token key="author.name" value="${author.name}"/>
-                    <token key="author.email" value="${author.email}"/>
-                </replacetokens>
+                <expandproperties/>
             </filterchain>
         </copy>
 

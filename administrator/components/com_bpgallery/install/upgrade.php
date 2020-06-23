@@ -28,7 +28,7 @@ final class com_bpgalleryInstallerScript
      *
      * @param   InstallerAdapter  $parent  Manifest file instance
      */
-    public function install(InstallerAdapter $parent): void
+    public function install(InstallerAdapter $parent)
     {
         $parent->getParent()->setRedirectURL('index.php?option=com_bpgallery');
     }
@@ -40,7 +40,7 @@ final class com_bpgalleryInstallerScript
      *
      * @throws Exception
      */
-    public function uninstall(InstallerAdapter $parent): void
+    public function uninstall(InstallerAdapter $parent)
     {
         $params = ComponentHelper::getParams('com_bpgallery');
         $path   = JPATH_SITE . $params->get('images_path', '/images/gallery');
@@ -65,16 +65,20 @@ final class com_bpgalleryInstallerScript
      *
      * @return int Number of files removed.
      */
-    protected function rmdir(string $path): int
+    protected function rmdir(string $path)
     {
         $count = 1;
         foreach (new DirectoryIterator($path) as $f) {
-            if ($f->isDot()) continue;
+            if ($f->isDot()) {
+                continue;
+            }
             if ($f->isFile()) {
                 unlink($f->getPathname());
                 $count++;
-            } else if ($f->isDir()) {
-                $count += $this->rmdir($f->getPathname());
+            } else {
+                if ($f->isDir()) {
+                    $count += $this->rmdir($f->getPathname());
+                }
             }
         }
 
@@ -88,7 +92,7 @@ final class com_bpgalleryInstallerScript
      *
      * @param InstallerAdapter $parent Manifest file instance
      */
-    public function update(InstallerAdapter $parent): void
+    public function update(InstallerAdapter $parent)
     {
     }
 
@@ -100,7 +104,7 @@ final class com_bpgalleryInstallerScript
      *
      * @throws Exception
      */
-    public function preflight($type, InstallerAdapter $parent): void
+    public function preflight($type, InstallerAdapter $parent)
     {
         if (PHP_VERSION_ID < 70200) {
             throw new RuntimeException(Text::_('COM_BPGALLERY_UNSUPPORTED_PHP_VERION'), 500);
@@ -115,7 +119,7 @@ final class com_bpgalleryInstallerScript
      *
      * @throws Exception
      */
-    public function postflight($type, InstallerAdapter $parent): void
+    public function postflight($type, InstallerAdapter $parent)
     {
 
         // Post installation tasks
