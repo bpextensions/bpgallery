@@ -20,31 +20,16 @@ defined('_JEXEC') or die;
 /**
  * BP Gallery installation tasks class.
  */
-class com_bpgalleryInstallerScript
+final class com_bpgalleryInstallerScript
 {
-
-    /**
-     * Images parent directory.
-     *
-     * @var string|null
-     */
-    protected $images_path;
-
-    /**
-     * Images removed message.
-     *
-     * @var string|null
-     */
-    protected $msg_uninstall_images;
 
     /**
      * Method to install the component
      *
-     * @param InstallerAdapter $parent Manifest file instance
+     * @param   InstallerAdapter  $parent  Manifest file instance
      */
-    function install(InstallerAdapter $parent)
+    public function install(InstallerAdapter $parent): void
     {
-//        Factory::getApplication()->enqueueMessage('Post install');
         $parent->getParent()->setRedirectURL('index.php?option=com_bpgallery');
     }
 
@@ -55,12 +40,10 @@ class com_bpgalleryInstallerScript
      *
      * @throws Exception
      */
-    function uninstall(InstallerAdapter $parent)
+    public function uninstall(InstallerAdapter $parent): void
     {
-//        Factory::getApplication()->enqueueMessage('Post uninstall');
-
         $params = ComponentHelper::getParams('com_bpgallery');
-        $path = JPATH_SITE . $params->get('images_path', '/images/gallery');
+        $path   = JPATH_SITE . $params->get('images_path', '/images/gallery');
 
         // Remove images directory
         if (is_dir($path)) {
@@ -105,9 +88,8 @@ class com_bpgalleryInstallerScript
      *
      * @param InstallerAdapter $parent Manifest file instance
      */
-    function update(InstallerAdapter $parent)
+    public function update(InstallerAdapter $parent): void
     {
-//        Factory::getApplication()->enqueueMessage('Update');
     }
 
     /**
@@ -118,18 +100,22 @@ class com_bpgalleryInstallerScript
      *
      * @throws Exception
      */
-    function preflight($type, InstallerAdapter $parent)
+    public function preflight($type, InstallerAdapter $parent): void
     {
-//        Factory::getApplication()->enqueueMessage('Preflight: '.$type);
+        if (PHP_VERSION_ID < 70200) {
+            throw new RuntimeException(Text::_('COM_BPGALLERY_UNSUPPORTED_PHP_VERION'), 500);
+        }
     }
 
     /**
      * Method to run after an install/update/uninstall method
      *
-     * @param String $type Name of actions (update,install,uninstall,discover_install)
-     * @param InstallerAdapter $parent Manifest file instance
+     * @param   String            $type    Name of actions (update,install,uninstall,discover_install)
+     * @param   InstallerAdapter  $parent  Manifest file instance
+     *
+     * @throws Exception
      */
-    function postflight($type, InstallerAdapter $parent)
+    public function postflight($type, InstallerAdapter $parent): void
     {
 
         // Post installation tasks
