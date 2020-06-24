@@ -108,9 +108,8 @@
 				JGLOBAL_FIELDS
 			</menu>
 			<menu
-					link="option=com_fields&amp;context=com_bpgallery.image"
-					view="groups"
-					alt="BPGallery/Fields"
+					link="option=com_fields&amp;view=groups&amp;context=com_bpgallery.image"
+					alt="BPGallery/FieldsGroups"
 			>
 				JGLOBAL_FIELD_GROUPS
 			</menu>
