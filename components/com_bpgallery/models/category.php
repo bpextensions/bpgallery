@@ -259,7 +259,7 @@ class BPGalleryModelCategory extends JModelList
         $case_when1 .= ' ELSE ';
         $case_when1 .= $c_id . ' END as catslug';
         $query->select($this->getState('list.select',
-                'a.*,c.title AS `catname`') . ',' . $case_when . ',' . $case_when1)
+                'a.*,c.title AS catname') . ',' . $case_when . ',' . $case_when1)
             /**
              * TODO: we actually should be doing it but it's wrong this way
              *    . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
@@ -271,7 +271,7 @@ class BPGalleryModelCategory extends JModelList
 
         // We need to group images to add lft data
         if ($this->getState('list.group', 0)) {
-            $query->select('c.lft as `catlft`');
+            $query->select('c.lft as catlft');
         }
 
         // Filter by category.

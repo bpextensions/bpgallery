@@ -1,9 +1,19 @@
 <?php
+/**
+ * @package     ${package}
+ * @subpackage  ${subpackage}
+ *
+ * @copyright   Copyright (C) ${build.year} ${copyrights},  All rights reserved.
+ * @license     ${license.name}; see ${license.url}
+ * @author      ${author.name}
+ */
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
+
+defined('JPATH_BASE') or die;
 
 /**
  * @var array    $displayData    Layout data.

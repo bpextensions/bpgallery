@@ -1,6 +1,16 @@
 <?php
+/**
+ * @package     ${package}
+ * @subpackage  ${subpackage}
+ *
+ * @copyright   Copyright (C) ${build.year} ${copyrights},  All rights reserved.
+ * @license     ${license.name}; see ${license.url}
+ * @author      ${author.name}
+ */
 
 use Joomla\Registry\Registry;
+
+defined('_JEXEC') or die;
 
 JLoader::register('AssetsTrait', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/trait/AssetsTrait.php');
 
