@@ -41,7 +41,7 @@ When you want to reset the image just run `composer test:server:cleanup`. This w
 
 ## Changelog
 
-### v1.0.1
+### v1.0.2
 - Stable release.
 
 ### v1.0.1-beta2
