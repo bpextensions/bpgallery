@@ -14,10 +14,12 @@
 	<packagerurl>${author.url}</packagerurl>
 	<description>BP Gallery extensions package.</description>
 	<blockChildUninstall>true</blockChildUninstall>
+
 	<files>
 		<folder type="component" id="com_bpgallery">com_bpgallery.zip</folder>
 		<folder type="module" client="site" id="mod_bpgallery">mod_bpgallery.zip</folder>
 	</files>
+
 	<updateservers>
 		<server type="extension" priority="1" name="BP Gallery">
 			https://free.updates.bpextensions.com/pkg_bpgallery.xml
