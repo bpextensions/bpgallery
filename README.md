@@ -41,6 +41,9 @@ When you want to reset the image just run `composer test:server:cleanup`. This w
 
 ## Changelog
 
+### v1.0.1
+- Stable release.
+
 ### v1.0.1-beta2
 - Added ability to group images by a category.
 - Fixed subdirectory issue.
