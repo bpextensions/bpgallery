@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code sniffer
-        uses: "pipeline-components/php-codesniffer"
+        uses: pipelinecomponents/php-codesniffer
 
       - name: PSR2 Code style test
         run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
