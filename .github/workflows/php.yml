@@ -36,7 +36,6 @@ jobs:
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
           options: -s -p --colors --extensions=php --standard=PSR2 .
-      #        run: app/phpcs -s -p --colors --extensions=php --standard=PSR2 .
 
       - name: code-sniffer-php72
         uses: pipeline-components/php-codesniffer@v0.12.3
@@ -46,9 +45,30 @@ jobs:
             --standard=PHPCompatibility
             --extensions=php
             --runtime-set testVersion 7.2 .
-#        run: >-
-#          app/phpcs -s -p --colors
-#          --standard=PHPCompatibility
-#          --extensions=php
-#          --runtime-set testVersion 7.2 .
-#        run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
+
+      - name: code-sniffer-php73
+        uses: pipeline-components/php-codesniffer@v0.12.3
+        with:
+          options: |
+            -s -p --colors
+            --standard=PHPCompatibility
+            --extensions=php
+            --runtime-set testVersion 7.3 .
+
+      - name: code-sniffer-php74
+        uses: pipeline-components/php-codesniffer@v0.12.3
+        with:
+          options: |
+            -s -p --colors
+            --standard=PHPCompatibility
+            --extensions=php
+            --runtime-set testVersion 7.4 .
+
+      - name: code-sniffer-php78
+        uses: pipeline-components/php-codesniffer@v0.12.3
+        with:
+          options: |
+            -s -p --colors
+            --standard=PHPCompatibility
+            --extensions=php
+            --runtime-set testVersion 8.0 .
