@@ -33,6 +33,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Composer Installation
+        uses: php-actions/composer@v5
+
       - name: PHP 7.2+ Compatibility
         uses: php-actions/composer@v5
         with:
