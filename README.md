@@ -1,7 +1,11 @@
 # BP Gallery
+
+![PHP 7.2](https://github.com/bpextensions/bpgallery/workflows/PHP%207.2-8.0/badge.svg)
+
 A Joomla! 3 Gallery component.
 
 ## Requirements
+
 - PHP 7.2
 - Joomla! 3.9.x
 
