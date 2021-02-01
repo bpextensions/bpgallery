@@ -106,8 +106,10 @@ final class ModBPGalleryHelper
         $model->setState('params', $appParams);
 
         $model->setState('list.start', 0);
-        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit',
-                'com_bpgallery'))) {
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise(
+                'core.edit',
+                'com_bpgallery'
+            ))) {
             $model->setState('filter.published', 1);
         }
 
@@ -232,8 +234,6 @@ final class ModBPGalleryHelper
         $ids = $selected_categories;
 
         if ($this->params->get('show_child_category_articles', 0) && (int)$this->params->get('levels', 0) > 0) {
-
-
             // Get an instance of the generic categories model
             $categories = ListModel::getInstance('Categories', 'BPGalleryModel', array('ignore_request' => true));
             $categories->setState('params', $this->params);
@@ -263,5 +263,4 @@ final class ModBPGalleryHelper
 
         return $ids;
     }
-
 }

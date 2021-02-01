@@ -45,7 +45,6 @@ class BPGalleryModelImage extends JModelForm
 
     public function getForm($data = array(), $loadData = true)
     {
-
     }
 
     /**

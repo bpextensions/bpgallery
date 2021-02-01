@@ -35,7 +35,6 @@ abstract class BPGalleryHelperDonate
         // Show popup if needed
         $session = Factory::getSession();
         if (!$session->get(static::SESSION_VAR_NAME)) {
-
             // Make a notice
             Factory::getApplication()->enqueueMessage(static::getDonateMessage(
                 Text::_('BPEXTENSIONS_DONATE_INTRO_TEXT'),
@@ -68,5 +67,4 @@ abstract class BPGalleryHelperDonate
             </a>
         </span>";
     }
-
 }

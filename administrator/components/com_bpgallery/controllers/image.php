@@ -69,8 +69,10 @@ class BPGalleryControllerImage extends JControllerForm
 
         if ($categoryId) {
             // The category has been set. Check the category permissions.
-            return JFactory::getUser()->authorise('core.edit',
-                    $this->option.'.category.'.$categoryId);
+            return JFactory::getUser()->authorise(
+                'core.edit',
+                $this->option . '.category.' . $categoryId
+            );
         }
 
         // Since there is no asset tracking, revert to the component permissions.
@@ -78,22 +80,23 @@ class BPGalleryControllerImage extends JControllerForm
     }
 
     /**
-	 * Method to run batch operations.
-	 *
-	 * @param   string  $model  The model
-	 *
-	 * @return  boolean  True on success.
-	 */
-	public function batch($model = null)
-	{
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+     * Method to run batch operations.
+     *
+     * @param   string  $model  The model
+     *
+     * @return  boolean  True on success.
+     */
+    public function batch($model = null)
+    {
+        JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		// Set the model
-		$model = $this->getModel('Image', '', array());
+        // Set the model
+        $model = $this->getModel('Image', '', array());
 
-		// Preset the redirect
-		$this->setRedirect(JRoute::_('index.php?option=com_bpgallery&view=images' . $this->getRedirectToListAppend(), false));
+        // Preset the redirect
+        $this->setRedirect(JRoute::_('index.php?option=com_bpgallery&view=images' . $this->getRedirectToListAppend(),
+            false));
 
-		return parent::batch($model);
-	}
+        return parent::batch($model);
+    }
 }

@@ -5,14 +5,16 @@
     "scripts": {
         "build": "phing",
         "clean": "phing clean",
-        "test:style": "phpcs --standard=.phpcs/psr2.xml .",
-        "test:style:fix": "phpcbf --standard=.phpcs/psr2.xml .",
+        "test:compatibility:php72": "phpcs --standard=.phpcs/compatibility/php72.xml .",
+        "test:compatibility:php80": "phpcs --standard=.phpcs/compatibility/php80.xml .",
         "test:server:start": "docker-compose up -d",
         "test:server:cleanup": "docker-compose down -v"
     },
     "require-dev": {
         "phing/phing": "2.*",
-        "squizlabs/php_codesniffer": "^3.5"
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1"
     },
     "require": {
         "ext-json": "*",

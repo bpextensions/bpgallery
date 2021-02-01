@@ -18,8 +18,10 @@ use Joomla\CMS\Table\Table;
 defined('_JEXEC') or die;
 
 if (PHP_VERSION_ID < 70200) {
-    Factory::getApplication()->enqueueMessage('Your PHP version (' . PHP_VERSION . ') is lower then the minimum required by this component (7.2)',
-        'error');
+    Factory::getApplication()->enqueueMessage(
+        'Your PHP version (' . PHP_VERSION . ') is lower then the minimum required by this component (7.2)',
+        'error'
+    );
 
     return;
 }
@@ -61,7 +63,6 @@ final class com_bpgalleryInstallerScript
             if ($count > 0) {
                 Factory::getApplication()->enqueueMessage(Text::sprintf('COM_BPGALLERY_MSG_UNINSTALL_IMAGES_S', $count));
             }
-
         }
     }
 
@@ -131,7 +132,6 @@ final class com_bpgalleryInstallerScript
 
         // Post installation tasks
         if (in_array($type, ['install', 'discover_install'])) {
-
             $app = Factory::getApplication();
 
             // Load default component parameters
@@ -159,6 +159,5 @@ final class com_bpgalleryInstallerScript
                 $app->enqueueMessage('Failed to create default gallery category.', 'error');
             }
         }
-
     }
 }

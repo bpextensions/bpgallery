@@ -87,7 +87,10 @@ $doc->addStyleDeclaration("
                 $alt = empty($item->alt) ? $item->title : $item->alt;
                 ?>
                 <a href="<?php echo $image_lightbox ? $url_full : $url ?>"
-                   <?php if ($image_lightbox): ?>target="_blank"<?php endif ?> class="image-link"
+                    <?php if ($image_lightbox): ?>
+                        target="_blank"
+                    <?php endif ?>
+                   class="image-link"
                    title="<?php echo $item->title ?>">
                 <span class="inner">
                     <span class="overlay"></span>

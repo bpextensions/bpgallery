@@ -37,12 +37,11 @@ abstract class BPGalleryHelperRoute
             $link .= '&catid=' . $catid;
         }
 
-        if ($language && $language !== '*' && JLanguageMultilang::isEnabled())
-		{
-			$link .= '&lang=' . $language;
-		}
+        if ($language && $language !== '*' && JLanguageMultilang::isEnabled()) {
+            $link .= '&lang=' . $language;
+        }
 
-		return $link;
+        return $link;
     }
 
     /**
@@ -61,21 +60,17 @@ abstract class BPGalleryHelperRoute
             $id = (int)$catid;
         }
 
-		if ($id < 1)
-		{
-			$link = '';
-		}
-		else
-		{
-			// Create the link
-			$link = 'index.php?option=com_bpgallery&view=category&id=' . $id;
+        if ($id < 1) {
+            $link = '';
+        } else {
+            // Create the link
+            $link = 'index.php?option=com_bpgallery&view=category&id=' . $id;
 
-			if ($language && $language !== '*' && JLanguageMultilang::isEnabled())
-			{
-				$link .= '&lang=' . $language;
-			}
-		}
+            if ($language && $language !== '*' && JLanguageMultilang::isEnabled()) {
+                $link .= '&lang=' . $language;
+            }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 }

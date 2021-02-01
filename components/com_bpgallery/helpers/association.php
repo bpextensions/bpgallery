@@ -37,12 +37,12 @@ abstract class BPGalleryHelperAssociation extends CategoryHelperAssociation
 
         if ($view === 'image') {
             if ($id) {
-				$associations = JLanguageAssociations::getAssociations('com_bpgallery', '#__bpgallery_images', 'com_bpgallery.item', $id);
+                $associations = JLanguageAssociations::getAssociations('com_bpgallery', '#__bpgallery_images',
+                    'com_bpgallery.item', $id);
 
-				foreach ($associations as $tag => $item)
-				{
-					$return[$tag] = BPGalleryHelperRoute::getImageRoute($item->id, (int) $item->catid, $item->language);
-				}
+                foreach ($associations as $tag => $item) {
+                    $return[$tag] = BPGalleryHelperRoute::getImageRoute($item->id, (int)$item->catid, $item->language);
+                }
 
                 return $return;
             }
@@ -53,6 +53,5 @@ abstract class BPGalleryHelperAssociation extends CategoryHelperAssociation
         }
 
         return $return;
-
     }
 }

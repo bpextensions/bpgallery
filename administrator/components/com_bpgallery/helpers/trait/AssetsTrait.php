@@ -63,7 +63,6 @@ trait AssetsTrait
     public static function getManifest(): array
     {
         if (is_null(static::$manifestCache)) {
-
             $manifest_path = JPATH_SITE . '/' . trim(self::$assets_root, '/') . '/manifest.json';
 
             static::$manifestCache = [];
@@ -105,5 +104,4 @@ trait AssetsTrait
             $doc->addScript($url, ['version' => 'auto'], ['id' => 'entry-css-' . $name]);
         }
     }
-
 }

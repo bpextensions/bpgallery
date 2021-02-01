@@ -40,18 +40,21 @@ class BPGalleryControllerImage extends JControllerAdmin
         $app->mimeType = 'application/json';
 
         // Set content type
-        $app->setHeader('Content-Type',
-            $app->mimeType . '; charset=' . $app->charSet);
+        $app->setHeader(
+            'Content-Type',
+            $app->mimeType . '; charset=' . $app->charSet
+        );
 
         // Get uploaded file info
         $file = $this->input->files->get('image');
 
         // Check content type
         $permitted_types = array(
-            'image/jpeg', 'image/png', 'image/gif'
+            'image/jpeg',
+            'image/png',
+            'image/gif'
         );
         if (!in_array($file['type'], $permitted_types)) {
-
             // Useful debug message
             if ($debugMode) {
                 echo json_encode(['error' => JText::sprintf('COM_BPGALLERY_ERROR_UNSUPPORTED_FILE_S', $file['type'])]);
@@ -70,7 +73,6 @@ class BPGalleryControllerImage extends JControllerAdmin
 
         // Access check.
         if (!$this->allowAdd($data)) {
-
             // Useful debug message
             if ($debugMode) {
                 echo json_encode(['error' => JText::_('COM_BPGALLERY_ERROR_MISSING_ADD_PERMISSION')]);
@@ -89,7 +91,6 @@ class BPGalleryControllerImage extends JControllerAdmin
 
         // If save process succesed
         if ($model->save($data)) {
-
             // Useful debug message
             if ($debugMode) {
                 $response = array_merge($response, [
@@ -103,7 +104,6 @@ class BPGalleryControllerImage extends JControllerAdmin
 
             // save process failed
         } else {
-
             // Useful debug message
             if ($debugMode) {
                 $response = array_merge($response, [
@@ -160,17 +160,19 @@ class BPGalleryControllerImage extends JControllerAdmin
     /**
      * Method to get a model object, loading it if required.
      *
-     * @param string $name The model name. Optional.
-     * @param string $prefix The class prefix. Optional.
-     * @param array $config Configuration array for model. Optional.
+     * @param   string  $name    The model name. Optional.
+     * @param   string  $prefix  The class prefix. Optional.
+     * @param   array   $config  Configuration array for model. Optional.
      *
      * @return  JModelLegacy  The model.
      *
      * @since   1.6
      */
-    public function getModel($name = 'Image', $prefix = 'BPGalleryModel',
-                             $config = array('ignore_request' => true))
-    {
+    public function getModel(
+        $name = 'Image',
+        $prefix = 'BPGalleryModel',
+        $config = array('ignore_request' => true)
+    ) {
         return parent::getModel($name, $prefix, $config);
     }
 }

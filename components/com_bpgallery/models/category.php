@@ -246,7 +246,7 @@ class BPGalleryModelCategory extends JModelList
         $case_when = ' CASE WHEN ';
         $case_when .= $query->charLength('a.alias', '!=', '0');
         $case_when .= ' THEN ';
-        $a_id = $query->castAsChar('a.id');
+        $a_id      = $query->castAsChar('a.id');
         $case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
         $case_when .= ' ELSE ';
         $case_when .= $a_id . ' END as slug';
@@ -254,12 +254,14 @@ class BPGalleryModelCategory extends JModelList
         $case_when1 = ' CASE WHEN ';
         $case_when1 .= $query->charLength('c.alias', '!=', '0');
         $case_when1 .= ' THEN ';
-        $c_id = $query->castAsChar('c.id');
+        $c_id       = $query->castAsChar('c.id');
         $case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
         $case_when1 .= ' ELSE ';
         $case_when1 .= $c_id . ' END as catslug';
-        $query->select($this->getState('list.select',
-                'a.*,c.title AS catname') . ',' . $case_when . ',' . $case_when1)
+        $query->select($this->getState(
+                'list.select',
+                'a.*,c.title AS catname'
+            ) . ',' . $case_when . ',' . $case_when1)
             /**
              * TODO: we actually should be doing it but it's wrong this way
              *    . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
@@ -478,8 +480,10 @@ class BPGalleryModelCategory extends JModelList
 
         $user = JFactory::getUser();
 
-        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit',
-                'com_bpgallery'))) {
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise(
+                'core.edit',
+                'com_bpgallery'
+            ))) {
             // Limit to published for people who can't edit or edit.state.
             $this->setState('filter.published', 1);
 
@@ -505,7 +509,6 @@ class BPGalleryModelCategory extends JModelList
         $groups = ['thumbnails_size_category_default', 'thumbnails_size_category_squares', 'thumbnails_size_category_masonry'];
 
         foreach ($groups as $name) {
-
             // Component param
             $cparam = (new Registry())->loadArray((array)$componentsParams->get($name));
 

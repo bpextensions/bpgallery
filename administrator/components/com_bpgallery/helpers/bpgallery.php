@@ -96,7 +96,8 @@ abstract class BPGalleryHelper extends JHelperContent
     {
         JHtmlSidebar::addEntry(
             JText::_('COM_BPGALLERY_SUBMENU_IMAGES'),
-            'index.php?option=com_bpgallery&view=images', $vName == 'images'
+            'index.php?option=com_bpgallery&view=images',
+            $vName == 'images'
         );
 
         JHtmlSidebar::addEntry(
@@ -118,7 +119,6 @@ abstract class BPGalleryHelper extends JHelperContent
                 $vName == 'fields.groups'
             );
         }
-
     }
 
     /**
@@ -174,25 +174,29 @@ abstract class BPGalleryHelper extends JHelperContent
     /**
      * Get url/path of a thumbnail.
      *
-     * @param JObject $image Image object.
-     * @param int $width Required image width.
-     * @param int $height Required image height.
-     * @param int $method Thumbnail generation method (default: self::METHOD_CROP)
-     * @param bool $url Should method return URL (true) or PATH (false)
-     * @param bool $relative Should method return relative or absolute url/path
+     * @param JObject  $image     Image object.
+     * @param   int    $width     Required image width.
+     * @param   int    $height    Required image height.
+     * @param   int    $method    Thumbnail generation method (default: self::METHOD_CROP)
+     * @param   bool   $url       Should method return URL (true) or PATH (false)
+     * @param   bool   $relative  Should method return relative or absolute url/path
      *
      * @return  string
      *
      * @throws Exception
      */
-    public static function getThumbnail($image, $width, $height,
-                                        $method = self::METHOD_CROP,
-                                        $url = true, $relative = true)
-    {
+    public static function getThumbnail(
+        $image,
+        $width,
+        $height,
+        $method = self::METHOD_CROP,
+        $url = true,
+        $relative = true
+    ) {
         /**
          * @var bool $output_relative Relative thumbnail URL.
          * @var bool $output_absolute Absolute thumbnail URL.
-         * @var int $mtime Thumbnail file modify time.
+         * @var int  $mtime           Thumbnail file modify time.
          */
 
         $details = static::getThumbnailDetails(...func_get_args());
@@ -200,14 +204,14 @@ abstract class BPGalleryHelper extends JHelperContent
 
 
         if ($url) {
-
             // Prepare relative base
             $uri_base = trim(Uri::root(true), '/');
             $uri_base = empty($uri_base) ? '/' : '/' . $uri_base . '/';
 
-            return $relative ? $uri_base . ltrim($output_relative,
-                    '/') . '?' . $mtime : Uri::root() . ltrim($output_relative, '/') . '?' . $mtime;
-
+            return $relative ? $uri_base . ltrim(
+                    $output_relative,
+                    '/'
+                ) . '?' . $mtime : Uri::root() . ltrim($output_relative, '/') . '?' . $mtime;
         }
 
         // App requests PATH
@@ -217,27 +221,31 @@ abstract class BPGalleryHelper extends JHelperContent
     /**
      * Get thumbnail details for a provided image object (and generate thumbnail if required).
      *
-     * @param JObject $image Image object.
-     * @param int $width Required image width.
-     * @param int $height Required image height.
-     * @param int $method Thumbnail generation method (default: self::METHOD_CROP)
-     * @param bool $url Should method return URL (true) or PATH (false)
-     * @param bool $relative Should method return relative or absolute url/path
+     * @param JObject  $image     Image object.
+     * @param   int    $width     Required image width.
+     * @param   int    $height    Required image height.
+     * @param   int    $method    Thumbnail generation method (default: self::METHOD_CROP)
+     * @param   bool   $url       Should method return URL (true) or PATH (false)
+     * @param   bool   $relative  Should method return relative or absolute url/path
      *
      * @return  string
      *
      * @throws Exception
      */
-    protected static function getThumbnailDetails($image, $width, $height,
-                                                  $method = self::METHOD_CROP,
-                                                  $url = true, $relative = true)
-    {
-        $filename = (is_object($image) ? basename($image->filename) : basename($image));
+    protected static function getThumbnailDetails(
+        $image,
+        $width,
+        $height,
+        $method = self::METHOD_CROP,
+        $url = true,
+        $relative = true
+    ) {
+        $filename           = (is_object($image) ? basename($image->filename) : basename($image));
         $relative_base_path = self::getParam('images_path', '/images/gallery');
         $options['quality'] = self::getParam('quality', '85');
         $absolute_base_path = JPATH_ROOT . $relative_base_path;
-        $original_relative = $relative_base_path . '/original/' . $filename;
-        $original_path = $absolute_base_path . '/original/' . $filename;
+        $original_relative  = $relative_base_path . '/original/' . $filename;
+        $original_path      = $absolute_base_path . '/original/' . $filename;
 
         $directory = (int)$width . 'x' . (int)$height . '-' . $method;
 
@@ -247,7 +255,6 @@ abstract class BPGalleryHelper extends JHelperContent
 
         // If thumbnail doesn't exists, create it
         if (!file_exists($output_absolute)) {
-
             $app = JFactory::getApplication();
 
             // For the administrator and application debug add error message
@@ -255,18 +262,18 @@ abstract class BPGalleryHelper extends JHelperContent
 
             // If original file was not found
             if (!file_exists($original_path) or !is_file($original_path)) {
-
                 // For the administrator and application debug add error message
                 if ($showMessage) {
-                    $message = JText::sprintf('COM_BPGALLERY_ERROR_MISSING_ORIGINAL_FILE_S',
-                        $original_relative);
+                    $message = JText::sprintf(
+                        'COM_BPGALLERY_ERROR_MISSING_ORIGINAL_FILE_S',
+                        $original_relative
+                    );
                     $app->enqueueMessage($message, 'error');
                 }
 
                 // Failed, return default message
                 return self::$defaultImage;
             } else {
-
                 // If output file exists, remove it
                 if (file_exists($output_absolute)) {
                     JFile::delete($output_absolute);
@@ -278,27 +285,48 @@ abstract class BPGalleryHelper extends JHelperContent
                 // Create a proper image:
                 // Crop the image/fill the dimensions
                 if (in_array($method, [self::METHOD_CROP, self::METHOD_FILL])) {
-                    $output_image->resize($width, $height, false,
-                        Image::SCALE_OUTSIDE);
-                    $output_image = $output_image->crop($width, $height, null,
-                        null, true);
+                    $output_image->resize(
+                        $width,
+                        $height,
+                        false,
+                        Image::SCALE_OUTSIDE
+                    );
+                    $output_image = $output_image->crop(
+                        $width,
+                        $height,
+                        null,
+                        null,
+                        true
+                    );
 
                     // Fit the image inside box
                 } elseif ($method === self::METHOD_FIT) {
-                    $output_image->resize($width, $height, null,
-                        Image::SCALE_INSIDE);
+                    $output_image->resize(
+                        $width,
+                        $height,
+                        null,
+                        Image::SCALE_INSIDE
+                    );
 
                     // Fit image inside box width
                 } elseif ($method === self::METHOD_FIT_WIDTH) {
                     $height = 1;
-                    $output_image->resize($width, $height, false,
-                        Image::SCALE_OUTSIDE);
+                    $output_image->resize(
+                        $width,
+                        $height,
+                        false,
+                        Image::SCALE_OUTSIDE
+                    );
 
                     // Fit image inside box height
                 } elseif ($method === self::METHOD_FIT_HEIGHT) {
                     $width = 1;
-                    $output_image->resize($width, $height, false,
-                        Image::SCALE_OUTSIDE);
+                    $output_image->resize(
+                        $width,
+                        $height,
+                        false,
+                        Image::SCALE_OUTSIDE
+                    );
                 }
 
                 // Get image type
@@ -306,11 +334,12 @@ abstract class BPGalleryHelper extends JHelperContent
 
                 // If image type is not in supported types, return terror
                 if ($image_type == 0) {
-
                     // Show error message
                     if ($showMessage) {
-                        $message = JText::sprintf('COM_BPGALLERY_ERROR_UNSUPPORTED_FILE_S',
-                            $original_relative);
+                        $message = JText::sprintf(
+                            'COM_BPGALLERY_ERROR_UNSUPPORTED_FILE_S',
+                            $original_relative
+                        );
                         $app->enqueueMessage($message, 'error');
                     }
 
@@ -330,11 +359,12 @@ abstract class BPGalleryHelper extends JHelperContent
                 // If we failed to save the output image
                 $result = $output_image->toFile($output_absolute, $image_type, $options);
                 if (!$result) {
-
                     // Show error message
                     if ($showMessage) {
-                        $message = JText::sprintf('COM_BPGALLERY_ERROR_MISSING_THUMBNAIL_FILE_S',
-                            $output_relative);
+                        $message = JText::sprintf(
+                            'COM_BPGALLERY_ERROR_MISSING_THUMBNAIL_FILE_S',
+                            $output_relative
+                        );
                         $app->enqueueMessage($message, 'error');
                     }
 
@@ -410,25 +440,29 @@ abstract class BPGalleryHelper extends JHelperContent
     /**
      * Get thumbnail url and srcset attributes.
      *
-     * @param JObject $image Image object.
-     * @param int $width Required image width.
-     * @param int $height Required image height.
-     * @param int $method Thumbnail generation method (default: self::METHOD_CROP)
-     * @param bool $url Should method return URL (true) or PATH (false)
-     * @param bool $relative Should method return relative or absolute url/path
+     * @param JObject  $image     Image object.
+     * @param   int    $width     Required image width.
+     * @param   int    $height    Required image height.
+     * @param   int    $method    Thumbnail generation method (default: self::METHOD_CROP)
+     * @param   bool   $url       Should method return URL (true) or PATH (false)
+     * @param   bool   $relative  Should method return relative or absolute url/path
      *
      * @return  array
      *
      * @throws Exception
      */
-    public static function getThumbnailWithSrcSet($image, $width, $height,
-                                                  $method = self::METHOD_CROP,
-                                                  $url = true, $relative = true): array
-    {
+    public static function getThumbnailWithSrcSet(
+        $image,
+        $width,
+        $height,
+        $method = self::METHOD_CROP,
+        $url = true,
+        $relative = true
+    ): array {
         /**
          * @var bool $output_relative Relative thumbnail URL.
          * @var bool $output_absolute Absolute thumbnail URL.
-         * @var int $mtime Thumbnail file modify time.
+         * @var int  $mtime           Thumbnail file modify time.
          */
 
         $details = static::getThumbnailDetails(...func_get_args());

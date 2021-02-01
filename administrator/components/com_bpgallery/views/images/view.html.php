@@ -16,54 +16,54 @@ defined('_JEXEC') or die;
  */
 class BPGalleryViewImages extends JViewLegacy
 {
-	/**
-	 * Category data
-	 *
-	 * @var  array
-	 */
-	protected $categories;
+    /**
+     * Category data
+     *
+     * @var  array
+     */
+    protected $categories;
 
-	/**
-	 * An array of items
-	 *
-	 * @var  array
-	 */
-	protected $items;
+    /**
+     * An array of items
+     *
+     * @var  array
+     */
+    protected $items;
 
-	/**
-	 * The pagination object
-	 *
-	 * @var  JPagination
-	 */
-	protected $pagination;
+    /**
+     * The pagination object
+     *
+     * @var  JPagination
+     */
+    protected $pagination;
 
-	/**
-	 * The model state
-	 *
-	 * @var  object
-	 */
-	protected $state;
+    /**
+     * The model state
+     *
+     * @var  object
+     */
+    protected $state;
 
-	/**
-	 * Method to display the view.
-	 *
-	 * @param   string  $tpl  A template file to load. [optional]
-	 *
-	 * @return  mixed  A string if successful, otherwise a JError object.
-	 *
-	 * @since   1.6
-	 */
-	public function display($tpl = null)
-	{
+    /**
+     * Method to display the view.
+     *
+     * @param   string  $tpl  A template file to load. [optional]
+     *
+     * @return  mixed  A string if successful, otherwise a JError object.
+     *
+     * @since   1.6
+     */
+    public function display($tpl = null)
+    {
         if ($this->getLayout() !== 'modal') {
             BPGalleryHelper::addSubmenu('images');
         }
 
-        $this->categories = $this->get('CategoryOrders');
-        $this->items = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
-        $this->state = $this->get('State');
-        $this->filterForm = $this->get('FilterForm');
+        $this->categories    = $this->get('CategoryOrders');
+        $this->items         = $this->get('Items');
+        $this->pagination    = $this->get('Pagination');
+        $this->state         = $this->get('State');
+        $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
 
         // Check for errors.
@@ -99,105 +99,96 @@ class BPGalleryViewImages extends JViewLegacy
         return parent::display($tpl);
     }
 
-	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
-	 */
-	protected function addToolbar()
-	{
-		JLoader::register('BPGalleryHelper', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/bpgallery.php');
+    /**
+     * Add the page title and toolbar.
+     *
+     * @return  void
+     *
+     * @since   1.6
+     */
+    protected function addToolbar()
+    {
+        JLoader::register('BPGalleryHelper', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/bpgallery.php');
 
-		$canDo = JHelperContent::getActions('com_bpgallery', 'category', $this->state->get('filter.category_id'));
-		$user  = JFactory::getUser();
+        $canDo = JHelperContent::getActions('com_bpgallery', 'category', $this->state->get('filter.category_id'));
+        $user  = JFactory::getUser();
 
-		JToolbarHelper::title(JText::_('COM_BPGALLERY_MANAGER_IMAGES'), 'image images');
+        JToolbarHelper::title(JText::_('COM_BPGALLERY_MANAGER_IMAGES'), 'image images');
 
-		if (count($user->getAuthorisedCategories('com_bpgallery', 'core.create')) > 0)
-		{
-			JToolbarHelper::addNew('image.add');
-		}
-
-		if (($canDo->get('core.edit')))
-		{
-            JToolbarHelper::editList('image.edit');
-            JToolBarHelper::custom('images.recreate', 'loop.png', 'loop_f2.png', 'COM_BPGALLERY_TOOLBAR_RECREATE',
-                true);
+        if (count($user->getAuthorisedCategories('com_bpgallery', 'core.create')) > 0) {
+            JToolbarHelper::addNew('image.add');
         }
 
-		if ($canDo->get('core.edit.state'))
-		{
-			if ($this->state->get('filter.published') != 2)
-			{
-				JToolbarHelper::publish('images.publish', 'JTOOLBAR_PUBLISH', true);
-				JToolbarHelper::unpublish('images.unpublish', 'JTOOLBAR_UNPUBLISH', true);
-			}
+        if (($canDo->get('core.edit'))) {
+            JToolbarHelper::editList('image.edit');
+            JToolBarHelper::custom(
+                'images.recreate',
+                'loop.png',
+                'loop_f2.png',
+                'COM_BPGALLERY_TOOLBAR_RECREATE',
+                true
+            );
+        }
 
-			if ($this->state->get('filter.published') != -1)
-			{
-				if ($this->state->get('filter.published') != 2)
-				{
-					JToolbarHelper::archiveList('images.archive');
-				}
-				elseif ($this->state->get('filter.published') == 2)
-				{
-					JToolbarHelper::unarchiveList('images.publish');
-				}
-			}
-		}
+        if ($canDo->get('core.edit.state')) {
+            if ($this->state->get('filter.published') != 2) {
+                JToolbarHelper::publish('images.publish', 'JTOOLBAR_PUBLISH', true);
+                JToolbarHelper::unpublish('images.unpublish', 'JTOOLBAR_UNPUBLISH', true);
+            }
 
-		if ($canDo->get('core.edit.state'))
-		{
-			JToolbarHelper::checkin('images.checkin');
-		}
+            if ($this->state->get('filter.published') != -1) {
+                if ($this->state->get('filter.published') != 2) {
+                    JToolbarHelper::archiveList('images.archive');
+                } elseif ($this->state->get('filter.published') == 2) {
+                    JToolbarHelper::unarchiveList('images.publish');
+                }
+            }
+        }
 
-		// Add a batch button
-		if ($user->authorise('core.create', 'com_bpgallery')
-			&& $user->authorise('core.edit', 'com_bpgallery')
-			&& $user->authorise('core.edit.state', 'com_bpgallery'))
-		{
-			$title = JText::_('JTOOLBAR_BATCH');
+        if ($canDo->get('core.edit.state')) {
+            JToolbarHelper::checkin('images.checkin');
+        }
 
-			// Instantiate a new JLayoutFile instance and render the batch button
-			$layout = new JLayoutFile('joomla.toolbar.batch');
+        // Add a batch button
+        if ($user->authorise('core.create', 'com_bpgallery')
+            && $user->authorise('core.edit', 'com_bpgallery')
+            && $user->authorise('core.edit.state', 'com_bpgallery')) {
+            $title = JText::_('JTOOLBAR_BATCH');
 
-			$dhtml = $layout->render(array('title' => $title));
-			JToolbar::getInstance('toolbar')->appendButton('Custom', $dhtml, 'batch');
-		}
+            // Instantiate a new JLayoutFile instance and render the batch button
+            $layout = new JLayoutFile('joomla.toolbar.batch');
 
-		if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))
-		{
-			JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'images.delete', 'JTOOLBAR_EMPTY_TRASH');
-		}
-		elseif ($canDo->get('core.edit.state'))
-		{
-			JToolbarHelper::trash('images.trash');
-		}
+            $dhtml = $layout->render(array('title' => $title));
+            JToolbar::getInstance('toolbar')->appendButton('Custom', $dhtml, 'batch');
+        }
 
-		if ($user->authorise('core.admin', 'com_bpgallery') || $user->authorise('core.options', 'com_bpgallery'))
-		{
-			JToolbarHelper::preferences('com_bpgallery');
-		}
-	}
+        if ($this->state->get('filter.published') == -2 && $canDo->get('core.delete')) {
+            JToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'images.delete', 'JTOOLBAR_EMPTY_TRASH');
+        } elseif ($canDo->get('core.edit.state')) {
+            JToolbarHelper::trash('images.trash');
+        }
 
-	/**
-	 * Returns an array of fields the table can be sorted by
-	 *
-	 * @return  array  Array containing the field name to sort by as the key and display text as value
-	 *
-	 * @since   3.0
-	 */
-	protected function getSortFields()
-	{
-		return array(
-			'ordering' => JText::_('JGRID_HEADING_ORDERING'),
-			'a.state' => JText::_('JSTATUS'),
-			'a.title' => JText::_('COM_BPGALLERY_HEADING_TITLE'),
-			'a.filename' => JText::_('COM_BPGALLERY_HEADING_FILENAME'),
-			'a.language' => JText::_('JGRID_HEADING_LANGUAGE'),
-			'a.id' => JText::_('JGRID_HEADING_ID')
-		);
-	}
+        if ($user->authorise('core.admin', 'com_bpgallery') || $user->authorise('core.options', 'com_bpgallery')) {
+            JToolbarHelper::preferences('com_bpgallery');
+        }
+    }
+
+    /**
+     * Returns an array of fields the table can be sorted by
+     *
+     * @return  array  Array containing the field name to sort by as the key and display text as value
+     *
+     * @since   3.0
+     */
+    protected function getSortFields()
+    {
+        return array(
+            'ordering'   => JText::_('JGRID_HEADING_ORDERING'),
+            'a.state'    => JText::_('JSTATUS'),
+            'a.title'    => JText::_('COM_BPGALLERY_HEADING_TITLE'),
+            'a.filename' => JText::_('COM_BPGALLERY_HEADING_FILENAME'),
+            'a.language' => JText::_('JGRID_HEADING_LANGUAGE'),
+            'a.id'       => JText::_('JGRID_HEADING_ID')
+        );
+    }
 }

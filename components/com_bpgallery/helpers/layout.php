@@ -55,7 +55,6 @@ abstract class BPGalleryHelperLayout
         $groups = [];
 
         foreach ($items as $item) {
-
             // If there is no info about this category, create it
             if (!array_key_exists($item->catlft, $groups)) {
                 $category              = [
@@ -73,5 +72,4 @@ abstract class BPGalleryHelperLayout
 
         return $groups;
     }
-
 }

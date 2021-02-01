@@ -56,8 +56,11 @@ class BPGalleryModelImage extends JModelAdmin
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm('com_bpgallery.image', 'image',
-            array('control' => 'jform', 'load_data' => $loadData));
+        $form = $this->loadForm(
+            'com_bpgallery.image',
+            'image',
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
 
         if (empty($form)) {
             return false;
@@ -94,8 +97,10 @@ class BPGalleryModelImage extends JModelAdmin
             $data['created_by_alias'] = $filter->clean($data['created_by_alias'], 'TRIM');
         }
 
-        JLoader::register('CategoriesHelper',
-            JPATH_ADMINISTRATOR . '/components/com_categories/helpers/categories.php');
+        JLoader::register(
+            'CategoriesHelper',
+            JPATH_ADMINISTRATOR . '/components/com_categories/helpers/categories.php'
+        );
 
         // Create new category, if needed.
         $createCategory = true;
@@ -143,8 +148,10 @@ class BPGalleryModelImage extends JModelAdmin
         }
 
         // Automatic handling of alias for empty fields
-        if (in_array($input->get('task'),
-                array('apply', 'save', 'save2new')) && (!isset($data['id']) || (int)$data['id'] == 0)) {
+        if (in_array(
+                $input->get('task'),
+                array('apply', 'save', 'save2new')
+            ) && (!isset($data['id']) || (int)$data['id'] == 0)) {
             if ($data['alias'] == null) {
                 if (JFactory::getConfig()->get('unicodeslugs') == 1) {
                     $data['alias'] = JFilterOutput::stringURLUnicodeSlug($data['title']);
@@ -207,7 +214,6 @@ class BPGalleryModelImage extends JModelAdmin
 
         // If uploading the file failed.
         if (!File::upload($data['upload_image'], $path)) {
-
             // If debug is enabled, provide useful message
             if ($this->debugMode) {
                 echo json_encode([
@@ -228,13 +234,11 @@ class BPGalleryModelImage extends JModelAdmin
         $result_thumbnails_generation = $this->generateThumbnails($path);
         $result_save = $result_thumbnails_generation and parent::save($data);
         if (!$result_thumbnails_generation or !$result_save) {
-
             // Remove thumbnails
             $this->removeThumbnails($path);
 
             // If debug is enabled, provide useful message
             if ($this->debugMode) {
-
                 $errors = [];
                 if (!$result_thumbnails_generation) {
                     $errors[] = Text::sprintf('COM_BPGALLERY_ERROR_CREATING_THUMBNAILS_S', $path);
@@ -267,18 +271,18 @@ class BPGalleryModelImage extends JModelAdmin
     {
 
         // Prepare path for this filename
-        $images_path = \BPGalleryHelper::getParam('images_path',
-            '/images/gallery');
+        $images_path = \BPGalleryHelper::getParam(
+            'images_path',
+            '/images/gallery'
+        );
         $filename    = $basename . '.' . strtolower($extension);
         $path        = JPATH_ROOT . $images_path . '/original/' . $filename;
 
         // If path is save (no overwriting)
         if (!file_exists($path)) {
-
             // Return this
             return $filename;
         } else {
-
             // Create new basename
             $parts = explode('-', $basename);
 
@@ -287,7 +291,6 @@ class BPGalleryModelImage extends JModelAdmin
 
             // If this is a number
             if (count($parts) > 1 and is_numeric($end)) {
-
                 // Remove it
                 array_pop($parts);
 
@@ -296,7 +299,6 @@ class BPGalleryModelImage extends JModelAdmin
 
                 // Not a number
             } else {
-
                 // So add 2nd version number
                 $parts [] = 2;
             }
@@ -340,8 +342,12 @@ class BPGalleryModelImage extends JModelAdmin
         // For each thumbnail size, create a thumbnail
         foreach ($sizes as $size) {
             $method = array_search($size->method, BPGalleryHelper::$generationMethods, true);
-            \BPGalleryHelper::getThumbnail($path, $size->width, $size->height,
-                $method);
+            \BPGalleryHelper::getThumbnail(
+                $path,
+                $size->width,
+                $size->height,
+                $method
+            );
         }
 
         return true;
@@ -430,7 +436,6 @@ class BPGalleryModelImage extends JModelAdmin
          */
         $table = $this->getTable();
         foreach ($image_ids as $image_id) {
-
             // Load image
             if (!$table->load($image_id)) {
                 $result = false;
@@ -474,8 +479,10 @@ class BPGalleryModelImage extends JModelAdmin
             $user = Factory::getUser();
 
             if (!empty($record->catid)) {
-                return $user->authorise('core.delete',
-                    'com_bpgallery.category.' . (int)$record->catid);
+                return $user->authorise(
+                    'core.delete',
+                    'com_bpgallery.category.' . (int)$record->catid
+                );
             }
 
             return $user->authorise('core.delete', 'com_bpgallery');
@@ -495,8 +502,10 @@ class BPGalleryModelImage extends JModelAdmin
         $user = Factory::getUser();
 
         if (!empty($record->catid)) {
-            return $user->authorise('core.edit.state',
-                'com_bpgallery.category.' . (int)$record->catid);
+            return $user->authorise(
+                'core.edit.state',
+                'com_bpgallery.category.' . (int)$record->catid
+            );
         }
 
         return $user->authorise('core.edit.state', 'com_bpgallery');
@@ -537,7 +546,6 @@ class BPGalleryModelImage extends JModelAdmin
     public function getItem($pk = null): ?object
     {
         if ($item = parent::getItem($pk)) {
-
             // Convert the params field to an array.
             $registry     = new Registry($item->params);
             $item->params = $registry->toArray();
@@ -628,7 +636,6 @@ class BPGalleryModelImage extends JModelAdmin
             $table->modified    = $date->toSql();
             $table->modified_by = $user->id;
         }
-
     }
 
     /**
@@ -662,7 +669,9 @@ class BPGalleryModelImage extends JModelAdmin
             }
         }
 
-        JEventDispatcher::getInstance()->trigger('onContentAfterSave',
-            array('com_bpgallery.image', &$this->table, true, $fieldsData));
+        JEventDispatcher::getInstance()->trigger(
+            'onContentAfterSave',
+            array('com_bpgallery.image', &$this->table, true, $fieldsData)
+        );
     }
 }
