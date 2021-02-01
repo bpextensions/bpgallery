@@ -9,6 +9,7 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Image\Image;
 
@@ -55,6 +56,7 @@ abstract class BPGalleryHelper extends JHelperContent
      * Fill provided dimentions with image.
      */
     const METHOD_FILL = 5;
+
     /**
      * Thumbnail generation methods used to translate component settings
      * to helper constants.
@@ -68,12 +70,14 @@ abstract class BPGalleryHelper extends JHelperContent
         BPGalleryHelper::METHOD_CROP => 'crop',
         BPGalleryHelper::METHOD_FILL => 'fill',
     ];
+
     /**
      * Default image if file is lost/missing.
      *
      * @var string
      */
     protected static $defaultImage = '/administrator/components/com_bpgallery/assets/images/default.svg';
+
     /**
      * Component params.
      *
@@ -84,11 +88,11 @@ abstract class BPGalleryHelper extends JHelperContent
     /**
      * Configure the Linkbar.
      *
-     * @param string $vName The name of the active view.
+     * @param   string  $vName  The name of the active view.
      *
      * @return  void
      */
-    public static function addSubmenu($vName)
+    public static function addSubmenu($vName): void
     {
         JHtmlSidebar::addEntry(
             JText::_('COM_BPGALLERY_SUBMENU_IMAGES'),
@@ -126,17 +130,17 @@ abstract class BPGalleryHelper extends JHelperContent
      *
      * @since   3.5
      */
-    public static function countItems(&$items)
+    public static function countItems(array &$items): array
     {
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
 
         /* TODO: Performance test */
 
         foreach ($items as $item) {
-            $item->count_trashed = 0;
-            $item->count_archived = 0;
+            $item->count_trashed     = 0;
+            $item->count_archived    = 0;
             $item->count_unpublished = 0;
-            $item->count_published = 0;
+            $item->count_published   = 0;
             $query = $db->getQuery(true);
             $query->select('state, count(*) AS count')
                 ->from($db->qn('#__bpgallery_images'))
@@ -204,10 +208,10 @@ abstract class BPGalleryHelper extends JHelperContent
             return $relative ? $uri_base . ltrim($output_relative,
                     '/') . '?' . $mtime : Uri::root() . ltrim($output_relative, '/') . '?' . $mtime;
 
-            // App requests PATH
-        } else {
-            return $relative ? $output_relative : $output_absolute;
         }
+
+        // App requests PATH
+        return $relative ? $output_relative : $output_absolute;
     }
 
     /**
@@ -378,11 +382,11 @@ abstract class BPGalleryHelper extends JHelperContent
     /**
      * Returns IMAGETYPE constant for provided image (used in thumbnails output).
      *
-     * @param string $file_path Original file path.
+     * @param   string  $file_path  Original file path.
      *
      * @return int
      */
-    public static function getImageType($file_path)
+    public static function getImageType(string $file_path): int
     {
         $properties = Image::getImageFileProperties($file_path);
 
@@ -451,13 +455,13 @@ abstract class BPGalleryHelper extends JHelperContent
      *
      * @since   1.0.0
      */
-    public static function getContexts()
+    public static function getContexts(): array
     {
         JFactory::getLanguage()->load('com_bpgallery', JPATH_ADMINISTRATOR);
 
-        $contexts = array(
+        $contexts = [
             'com_bpgallery.image' => JText::_('COM_BPGALLERY_IMAGE'),
-        );
+        ];
 
         return $contexts;
     }

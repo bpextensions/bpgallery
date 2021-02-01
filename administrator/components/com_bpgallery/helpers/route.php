@@ -28,7 +28,7 @@ abstract class BPGalleryHelperRoute
      *
      * @since   1.0
      */
-    public static function getImageRoute($id, $language = 0)
+    public static function getImageRoute($id, $language = 0): string
     {
         // Create the link
         $link = 'index.php?option=com_bpgallery&view=image&id=' . $id;

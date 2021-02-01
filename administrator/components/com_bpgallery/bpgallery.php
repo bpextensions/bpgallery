@@ -9,6 +9,8 @@
  * @subpackage        ${subpackage}
  */
 
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die;
 JHtml::_('behavior.tabstate');
 
@@ -25,5 +27,5 @@ BPGalleryHelperDonate::showMessage();
 
 // Execute the task.
 $controller = JControllerLegacy::getInstance('BPGallery');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();

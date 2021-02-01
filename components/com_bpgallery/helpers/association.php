@@ -20,43 +20,39 @@ JLoader::register('CategoryHelperAssociation', JPATH_ADMINISTRATOR . '/component
  */
 abstract class BPGalleryHelperAssociation extends CategoryHelperAssociation
 {
-	/**
-	 * Method to get the associations for a given item
-	 *
-	 * @param   integer  $id    Id of the item
-	 * @param   string   $view  Name of the view
-	 *
-	 * @return  array   Array of associations for the item
-	 */
-	public static function getAssociations($id = 0, $view = null)
-	{
-		$jinput = JFactory::getApplication()->input;
-		$view   = $view === null ? $jinput->get('view') : $view;
-		$id     = empty($id) ? $jinput->getInt('id') : $id;
+    /**
+     * Method to get the associations for a given item
+     *
+     * @param   integer  $id    Id of the item
+     * @param   string   $view  Name of the view
+     *
+     * @return  array   Array of associations for the item
+     */
+    public static function getAssociations($id = 0, $view = null): array
+    {
+        $jinput = JFactory::getApplication()->input;
+        $view   = $view === null ? $jinput->get('view') : $view;
+        $id     = empty($id) ? $jinput->getInt('id') : $id;
+        $return = [];
 
-		if ($view === 'image')
-		{
-			if ($id)
-			{
+        if ($view === 'image') {
+            if ($id) {
 				$associations = JLanguageAssociations::getAssociations('com_bpgallery', '#__bpgallery_images', 'com_bpgallery.item', $id);
-
-				$return = array();
 
 				foreach ($associations as $tag => $item)
 				{
 					$return[$tag] = BPGalleryHelperRoute::getImageRoute($item->id, (int) $item->catid, $item->language);
 				}
 
-				return $return;
-			}
-		}
+                return $return;
+            }
+        }
 
-		if ($view === 'category' || $view === 'categories')
-		{
-			return self::getCategoryAssociations($id, 'com_bpgallery');
-		}
+        if ($view === 'category' || $view === 'categories') {
+            $return = self::getCategoryAssociations($id, 'com_bpgallery');
+        }
 
-		return array();
+        return $return;
 
-	}
+    }
 }
