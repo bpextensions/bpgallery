@@ -35,7 +35,6 @@ jobs:
         run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
 
       - name: PSR2 Code style test
-        uses: pipelinecomponents/php-codesniffer:latest
         run: >-
           phpcs -s -p --colors
           --standard=PHPCompatibility
