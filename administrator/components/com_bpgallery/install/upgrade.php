@@ -17,6 +17,13 @@ use Joomla\CMS\Table\Table;
 
 defined('_JEXEC') or die;
 
+if (PHP_VERSION_ID < 70200) {
+    Factory::getApplication()->enqueueMessage('Your PHP version (' . PHP_VERSION . ') is lower then the minimum required by this component (7.2)',
+        'error');
+
+    return;
+}
+
 /**
  * BP Gallery installation tasks class.
  */

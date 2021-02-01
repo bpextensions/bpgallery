@@ -1,6 +1,8 @@
 /**
 !.dev
 !.dev/**
+!.github
+!.github/**
 
 !administrator
 administrator/*
