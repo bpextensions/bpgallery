@@ -1,0 +1,10 @@
+<ruleset name="psr2">
+    <rule ref="PSR2"/>
+    <arg value="s"/>
+    <arg value="p"/>
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/.build/*</exclude-pattern>
+    <exclude-pattern>*/tmpl/*</exclude-pattern>
+</ruleset>

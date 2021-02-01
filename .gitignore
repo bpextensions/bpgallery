@@ -3,6 +3,8 @@
 !.dev/**
 !.github
 !.github/**
+!.phpcs
+!.phpcs/**
 
 !administrator
 administrator/*
