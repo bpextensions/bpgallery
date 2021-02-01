@@ -30,13 +30,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Code sniffer
-        uses: "pipeline-components/phpcode-sniffer@latest"
+      - name: code-sniffer
+        uses: pipeline-components/php-codesniffer@v0.12.3
 
-      - name: PSR2 Code style test
+      - name: code-sniffer-psr2
         run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
 
-      - name: PSR2 Code style test
+      - name: code-sniffer-php72
         run: >-
           phpcs -s -p --colors
           --standard=PHPCompatibility
