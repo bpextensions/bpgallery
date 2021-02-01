@@ -1,5 +1,5 @@
 {
-    "name": "BP Gallery",
+    "name": "bpextensions/bpgallery",
     "license": "proprietary",
     "description": "Build and test environment for BP Gallery Joomla! component.",
     "scripts": {
