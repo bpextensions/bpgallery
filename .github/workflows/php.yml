@@ -6,9 +6,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -31,8 +29,14 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Code style
-        uses: pipelinecomponents/php-codesniffer:latest
-        run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
+      - name: PSR2 Code style test
+      - uses: pipelinecomponents/php-codesniffer:latest
+      - run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
+      - name: PSR2 Code style test
+      - run: >-
+          phpcs -s -p --colors
+          --standard=PHPCompatibility
+          --extensions=php
+          --runtime-set testVersion 7.2 .
+#        run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
