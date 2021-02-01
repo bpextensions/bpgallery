@@ -59,7 +59,7 @@ When you want to reset the image just run `composer test:server:cleanup`. This w
 - Added message informing user about the need to add images and select category.
 - Added created of default category.
 - Added loading of default component parameters.
-- Fixing the package uninstall issue.
+- Fixing the package uninstallation issue.
 
 
 ### v1.0.1
