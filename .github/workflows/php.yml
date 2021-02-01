@@ -30,32 +30,35 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: code-sniffer-psr2
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
-          options: "-s -p --colors --extensions=php --standard=PSR2 ."
+          options: -s -p --colors --extensions=php --standard=PSR2 .
 
       - name: code-sniffer-php72
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
-          options: "-s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 7.2- ."
+          options: -s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 7.2- .
 
       - name: code-sniffer-php73
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
-          options: "-s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 7.3- ."
+          options: -s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 7.3- .
 
       - name: code-sniffer-php74
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
-          options: "-s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 7.2- ."
+          options: -s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 7.2- .
 
       - name: code-sniffer-php80
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
-          options: "-s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 8.0- ."
+          options: -s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 8.0- .
 
       - name: code-sniffer-php9
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
-          options: "-s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 9.0- ."
+          options: -s -p --colors --standard=PHPCompatibility --extensions=php --runtime-set testVersion 9.0- .
