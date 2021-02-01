@@ -30,8 +30,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      #      - name: code-sniffer
-
       - name: code-sniffer-psr2
         uses: pipeline-components/php-codesniffer@v0.12.3
         with:
