@@ -1,4 +1,4 @@
-name: PHP Compatibility
+name: PHP 7.2-8.0
 
 on:
   push:
