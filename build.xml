@@ -8,8 +8,14 @@
 
     <target name="test">
         <echo msg="Test each extension before build"/>
+        <phingcall target="test:compatibility"/>
         <phingcall target="test:com_bpgallery"/>
         <phingcall target="test:mod_bpgallery"/>
+    </target>
+
+    <target name="test:compatibility">
+        <echo msg="Testing PHP 7.2 Compatibility"/>
+        <exec command="composer test:compatibility" checkreturn="true"/>
     </target>
 
     <target name="test:com_bpgallery">
