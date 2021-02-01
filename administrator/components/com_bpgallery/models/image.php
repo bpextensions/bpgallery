@@ -218,7 +218,7 @@ class BPGalleryModelImage extends JModelAdmin
             if ($this->debugMode) {
                 echo json_encode([
                     'error' => Text::sprintf('COM_BPGALLERY_ERROR_IMAGE_UPLOAD_S', $data['upload_image'], $path)
-                ], JSON_THROW_ON_ERROR);
+                ]);
                 JFactory::getApplication()->close(500);
             }
 
