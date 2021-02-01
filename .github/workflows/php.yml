@@ -33,13 +33,13 @@ jobs:
       #      - name: code-sniffer
 
       - name: code-sniffer-psr2
-      - uses: pipeline-components/php-codesniffer@v0.12.3
+        uses: pipeline-components/php-codesniffer@v0.12.3
         with:
           options: -s -p --colors --extensions=php --standard=PSR2 .
       #        run: app/phpcs -s -p --colors --extensions=php --standard=PSR2 .
 
       - name: code-sniffer-php72
-      - uses: pipeline-components/php-codesniffer@v0.12.3
+        uses: pipeline-components/php-codesniffer@v0.12.3
         with:
           options: |
             -s -p --colors
