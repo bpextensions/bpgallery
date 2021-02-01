@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a687913567c0826b55b8986aaa941b6",
+    "content-hash": "f5be1b1801318e88ecf8d884d7baa9bd",
     "packages": [],
     "packages-dev": [
         {
             "name": "phing/phing",
-            "version": "2.16.3",
+            "version": "2.16.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phingofficial/phing.git",
-                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567"
+                "reference": "30831b22fc6bab57003f1893842668c44b7f65ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/b34c2bf9cd6abd39b4287dee31e68673784c8567",
-                "reference": "b34c2bf9cd6abd39b4287dee31e68673784c8567",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/30831b22fc6bab57003f1893842668c44b7f65ae",
+                "reference": "30831b22fc6bab57003f1893842668c44b7f65ae",
                 "shasum": ""
             },
             "require": {
@@ -98,7 +98,21 @@
                 "task",
                 "tool"
             ],
-            "time": "2020-02-03T18:50:54+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/mrook",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/siad007",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/michielrook",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2021-01-29T14:00:54+00:00"
         }
     ],
     "aliases": [],
@@ -110,5 +124,6 @@
         "ext-json": "*",
         "php": "^7.2"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
