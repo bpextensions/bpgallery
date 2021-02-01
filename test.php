@@ -4,7 +4,7 @@ class test
 {
     function run()
     {
-
+        //asdasd
     }
 }
 
