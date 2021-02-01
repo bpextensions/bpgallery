@@ -29,7 +29,7 @@
         "masonry-layout": "^4.2.2",
         "node-sass": "^4.14.1",
         "sass-loader": "^8.0.2",
-        "serialize-javascript": "^2.1.2",
+        "serialize-javascript": "^3.1.0",
         "webpack-notifier": "^1.12.0"
     },
     "dependencies": {
