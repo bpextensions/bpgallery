@@ -5,11 +5,14 @@
     "scripts": {
         "build": "phing",
         "clean": "phing clean",
+        "test:style": "phpcs --standard=.phpcs/psr2.xml .",
+        "test:style:fix": "phpcbf --standard=.phpcs/psr2.xml .",
         "test:server:start": "docker-compose up -d",
         "test:server:cleanup": "docker-compose down -v"
     },
     "require-dev": {
-        "phing/phing": "2.*"
+        "phing/phing": "2.*",
+        "squizlabs/php_codesniffer": "^3.5"
     },
     "require": {
         "ext-json": "*",
