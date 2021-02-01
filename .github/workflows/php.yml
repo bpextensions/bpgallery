@@ -34,11 +34,11 @@ jobs:
         uses: pipeline-components/php-codesniffer@v0.12.3
 
       - name: code-sniffer-psr2
-        run: phpcs -s -p --colors --extensions=php --standard=PSR2 .
+        run: app/phpcs -s -p --colors --extensions=php --standard=PSR2 .
 
       - name: code-sniffer-php72
         run: >-
-          phpcs -s -p --colors
+          app/phpcs -s -p --colors
           --standard=PHPCompatibility
           --extensions=php
           --runtime-set testVersion 7.2 .
