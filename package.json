@@ -22,7 +22,7 @@
     "homepage": "https://github.com/bestproject/bpgallery#readme",
     "devDependencies": {
         "@babel/preset-env": "^7.12.11",
-        "@symfony/webpack-encore": "^0.30.2",
+        "@symfony/webpack-encore": "^4.1.1",
         "core-js": "^3.8.3",
         "imagesloaded": "^4.1.4",
         "magnific-popup": "^1.1.0",
