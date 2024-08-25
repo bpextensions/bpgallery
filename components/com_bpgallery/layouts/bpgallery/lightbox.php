@@ -1,11 +1,12 @@
 <?php
+
 /**
- * @package     ${package}
- * @subpackage  ${subpackage}
- *
- * @copyright   Copyright (C) ${build.year} ${copyrights},  All rights reserved.
- * @license     ${license.name}; see ${license.url}
- * @author      ${author.name}
+ * @author            ${author.name} (${author.email})
+ * @website           ${author.url}
+ * @copyright         ${copyrights}
+ * @license           ${license.url} ${license.name}
+ * @package           ${package}
+ * @subpackage        ${subpackage}
  */
 
 use Joomla\CMS\Factory;
