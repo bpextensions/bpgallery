@@ -466,7 +466,7 @@ class CategoryModel extends ListModel
 
         // Filter by start and end dates.
         $nullDate = $db->quote($db->getNullDate());
-        $nowDate = $db->quote(JFactory::getDate()->toSql());
+        $nowDate = $db->quote(Factory::getDate()->toSql());
 
         if ($this->getState('filter.publish_date')) {
             $query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
@@ -508,7 +508,7 @@ class CategoryModel extends ListModel
 
         // Filter by language
         if ($this->getState('filter.language')) {
-            $query->where('a.language in (' . $db->quote(JFactory::getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
+            $query->where('a.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
         }
 
         // Filter images ids

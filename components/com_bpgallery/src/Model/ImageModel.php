@@ -9,25 +9,36 @@
  * @subpackage  BPGallery
  */
 
+namespace BPExtensions\Component\BPGallery\Site\Model;
+
 defined('_JEXEC') or die;
 
+use BPExtensions\Component\BPGallery\Administrator\Extension\BPGalleryComponent;
+use Exception;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\TagsHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\Registry\Registry;
+use RuntimeException;
 
 /**
  * Single image model for a BP Galllery.
  *
  * @package     ${package}
  * @subpackage  com_bpgallery
- * @since       1.0
  */
-class BPGalleryModelImage extends JModelForm
+class ImageModel extends ItemModel
 {
     /**
      * The name of the view for a single item
      *
      * @since   1.0
      */
-    protected $view_item = 'image';
+    protected string $view_item = 'image';
 
     /**
      * A loaded item
@@ -41,7 +52,7 @@ class BPGalleryModelImage extends JModelForm
      *
      * @var        string
      */
-    protected $_context = 'com_bpgallery-image';
+    protected $_context = 'com_bpgallery.image';
 
     public function getForm($data = array(), $loadData = true)
     {
@@ -66,7 +77,7 @@ class BPGalleryModelImage extends JModelForm
 
         if (!isset($this->_item[$pk])) {
             try {
-                $db = $this->getDbo();
+                $db      = $this->getDatabase();
                 $query = $db->getQuery(true);
 
                 // Changes for sqlsrv
@@ -100,7 +111,7 @@ class BPGalleryModelImage extends JModelForm
 
                 // Filter by start and end dates.
                 $nullDate = $db->quote($db->getNullDate());
-                $nowDate = $db->quote(JFactory::getDate()->toSql());
+                $nowDate = $db->quote(Factory::getDate()->toSql());
 
                 // Filter by published state.
                 $published = $this->getState('filter.published');
@@ -116,12 +127,12 @@ class BPGalleryModelImage extends JModelForm
                 $data = $db->loadObject();
 
                 if (empty($data)) {
-                    JError::raiseError(404, JText::_('COM_BPGALLERY_ERROR_IMAGE_NOT_FOUND'));
+                    throw new RuntimeException(Text::_('COM_BPGALLERY_ERROR_IMAGE_NOT_FOUND'), 404);
                 }
 
                 // Check for published state if filter set.
                 if ((is_numeric($published) || is_numeric($archived)) && (($data->state != $published) && ($data->state != $archived))) {
-                    JError::raiseError(404, JText::_('COM_BPGALLERY_ERROR_IMAGE_NOT_FOUND'));
+                    throw new RuntimeException(Text::_('COM_BPGALLERY_ERROR_IMAGE_NOT_FOUND'), 404);
                 }
 
                 /**
@@ -142,7 +153,7 @@ class BPGalleryModelImage extends JModelForm
 
                 // Some contexts may not use tags data at all, so we allow callers to disable loading tag data
                 if ($this->getState('load_tags', true)) {
-                    $data->tags = new JHelperTags;
+                    $data->tags = new TagsHelper();
                     $data->tags->getItemTags('com_bpgallery.image', $data->id);
                 }
 
@@ -152,7 +163,7 @@ class BPGalleryModelImage extends JModelForm
                     $data->params->set('access-view', true);
                 } else {
                     // If no access filter is set, the layout takes some responsibility for display of limited information.
-                    $user = JFactory::getUser();
+                    $user = Factory::getApplication()->getIdentity();
                     $groups = $user->getAuthorisedViewLevels();
 
                     if ($data->catid == 0 || $data->category_access === null) {
@@ -180,20 +191,18 @@ class BPGalleryModelImage extends JModelForm
      * @return  boolean  True if successful; false otherwise and internal error set.
      *
      * @throws Exception
-     * @since   3.0
      *
      */
-    public function hit($pk = 0)
+    public function hit($pk = 0): bool
     {
-        $input = JFactory::getApplication()->input;
+        $input         = Factory::getApplication()->getInput();
         $hitcount = $input->getInt('hitcount', 1);
 
         if ($hitcount) {
             $pk = (!empty($pk)) ? $pk : (int)$this->getState('image.id');
-
-            $table = JTable::getInstance('Image', 'BPGalleryTable');
-            $table->load($pk);
-            $table->hit($pk);
+            $component = Factory::getApplication()->bootComponent('BPGallery');
+            $table     = $component->getMVCFactory()->createTable('Image', 'Administrator');
+            $table->load($pk) && $table->hit($pk);
         }
 
         return true;
@@ -205,20 +214,24 @@ class BPGalleryModelImage extends JModelForm
      * Note. Calling getState in this method will result in recursion.
      *
      * @return  void
-     *
      * @throws Exception
-     *
-     * @since   1.6
      */
-    protected function populateState()
+    protected function populateState(): void
     {
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_bpgallery');
+        /**
+         * @var CMSApplication $app
+         */
+        $app    = Factory::getApplication();
+        $params = ComponentHelper::getParams('com_bpgallery');
+
+        // Load state from the request.
+        $pk = $app->input->getInt('id');
+        $this->setState('image.id', $pk);
 
         // Prepare parameters
-        $menuParams = new Registry;
-        if ($menu = $app->getMenu()->getActive()) {
-            $menuParams->loadString($menu->params);
+        $menuParams = $app->getParams();
+        if ($active = $app->getMenu()->getActive()) {
+            $menuParams->loadString($active->getParams());
         }
 
         $mergedParams = clone $params;
@@ -227,11 +240,15 @@ class BPGalleryModelImage extends JModelForm
         $this->setState('image.id', $app->input->getInt('id'));
         $this->setState('params', $mergedParams);
 
-        $user = JFactory::getUser();
+        $user = $app->getIdentity();
+
+        $asset = empty($pk) ? 'com_bpgallery' : 'com_bpgallery.image.' . $pk;
 
         if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery'))) {
-            $this->setState('filter.published', 1);
-            $this->setState('filter.archived', 2);
+            $this->setState('filter.published', BPGalleryComponent::CONDITION_PUBLISHED);
+            $this->setState('filter.archived', BPGalleryComponent::CONDITION_ARCHIVED);
         }
+
+        $this->setState('filter.language', Multilanguage::isEnabled());
     }
 }
