@@ -14,7 +14,7 @@ use Joomla\Registry\Registry;
  * Example:
  *  new ImagePrepareEvent('onEventName', ['context' => 'com_example.example', 'subject' => $contentObject, 'params' => $params]);
  */
-class ImagePrepareEvent extends AbstractImmutableEvent
+class AfterDisplayTitle extends AbstractImmutableEvent
 {
 
     /**
