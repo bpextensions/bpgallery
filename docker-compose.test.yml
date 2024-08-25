@@ -1,10 +1,9 @@
-name: bpgallery-joomla-5
+name: bpgallery-j5-test
 services:
+
   joomla:
     image: joomla:5.1-php8.3-apache
     restart: unless-stopped
-    links:
-      - mariadb:3306
     ports:
       - "80:80"
     depends_on:
@@ -14,22 +13,15 @@ services:
       JOOMLA_DB_USER: joomla_db
       JOOMLA_DB_PASSWORD: joomla_db
       JOOMLA_DB_NAME: joomla_db
-      JOOMLA_SITE_NAME: BP Gallery Development
-      JOOMLA_ADMIN_EMAIL: webmaster@localhost.com
+      JOOMLA_SITE_NAME: BP Gallery Test
+      JOOMLA_ADMIN_EMAIL: webmaster@localhost.pl
       JOOMLA_ADMIN_USERNAME: test
       JOOMLA_ADMIN_USER: test
       JOOMLA_ADMIN_PASSWORD: testtesttesttest
-    volumes:
-      - ./administrator/components/com_bpgallery:/var/www/html/administrator/components/com_bpgallery
-      - ./components/com_bpgallery:/var/www/html/components/com_bpgallery
-      - ./modules/mod_bpgallery:/var/www/html/modules/mod_bpgallery
-      - ./media/com_bpgallery:/var/www/html/media/com_bpgallery
 
   mariadb:
     image: mariadb
     restart: unless-stopped
-    ports:
-      - "3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: joomla_db
@@ -47,13 +39,3 @@ services:
       PMA_PASSWORD: root
     links:
       - mariadb
-
-  maildev:
-    image: maildev/maildev
-    restart: unless-stopped
-    environment:
-      MAILDEV_WEB_PORT: 8082
-      MAILDEV_SMTP_PORT: 8025
-    ports:
-      - "8082:8082"
-      - "8025:8025"

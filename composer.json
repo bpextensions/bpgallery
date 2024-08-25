@@ -6,13 +6,11 @@
         "build": "phing",
         "clean": "phing clean",
         "test:compatibility": [
-            "@test:compatibility:php72",
-            "@test:compatibility:php80"
+            "@test:compatibility:php81"
         ],
-        "test:compatibility:php72": "phpcs --standard=.phpcs/compatibility/php72.xml .",
-        "test:compatibility:php80": "phpcs --standard=.phpcs/compatibility/php80.xml .",
-        "test:server:start": "docker-compose up -d",
-        "test:server:cleanup": "docker-compose down -v"
+        "test:compatibility:php81": "phpcs --standard=.phpcs/compatibility/php81.xml .",
+        "test:server:start": "docker-compose -f docker-compose.test.yml up -d",
+        "test:server:cleanup": "docker-compose -f docker-compose.test.yml down -v"
     },
     "require-dev": {
         "phing/phing": "2.*",
@@ -22,6 +20,6 @@
     },
     "require": {
         "ext-json": "*",
-        "php": "^7.2|^8.0"
+        "php": "^8.1"
     }
 }
