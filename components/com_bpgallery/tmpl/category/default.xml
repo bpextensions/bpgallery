@@ -7,11 +7,9 @@
 	</layout>
 
 	<!-- Add fields to the request variables for the layout. -->
-	<fields name="request"
-			addfieldpath="/administrator/components/com_categories/models/fields"
+    <fields name="request" addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field"
 	>
-		<fieldset name="request"
-			addfieldpath="/administrator/components/com_bpgallery/models/fields"
+        <fieldset name="request" addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field"
 		>
 			<field
 				name="id"
@@ -19,11 +17,11 @@
 				label="COM_BPGALLERY_FIELD_CATEGORY_LABEL"
 				description="COM_BPGALLERY_FIELD_CATEGORY_DESC"
 				extension="com_bpgallery"
-				required="true"
-				select="true"
-				new="true"
-				edit="true"
-				clear="true"
+                required="true"
+                select="true"
+                new="true"
+                edit="true"
+                clear="true"
 			/>
 		</fieldset>
 	</fields>
@@ -48,8 +46,9 @@
                     type="list"
                     label="JGLOBAL_SHOW_CATEGORY_TITLE"
                     description="JGLOBAL_SHOW_CATEGORY_TITLE_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -60,8 +59,9 @@
                     type="list"
                     label="JGLOBAL_SHOW_CATEGORY_DESCRIPTION_LABEL"
                     description="JGLOBAL_SHOW_CATEGORY_DESCRIPTION_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -72,8 +72,9 @@
                     type="list"
                     label="JGLOBAL_SHOW_CATEGORY_IMAGE_LABEL"
                     description="JGLOBAL_SHOW_CATEGORY_IMAGE_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -85,6 +86,7 @@
                     label="JGLOBAL_MAXIMUM_CATEGORY_LEVELS_LABEL"
                     description="JGLOBAL_MAXIMUM_CATEGORY_LEVELS_DESC"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="-1">JALL</option>
                 <option value="0">JNONE</option>
@@ -100,8 +102,9 @@
                     type="list"
                     label="JGLOBAL_SHOW_EMPTY_CATEGORIES_LABEL"
                     description="COM_BPGALLERY_SHOW_EMPTY_CATEGORIES_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -113,8 +116,9 @@
                     type="list"
                     label="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_LABEL"
                     description="JGLOBAL_SHOW_SUBCATEGORIES_DESCRIPTION_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -127,6 +131,7 @@
                     description="JGLOBAL_SHOW_CATEGORY_HEADING_TITLE_TEXT_DESC"
                     class="btn-group btn-group-yesno"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="1">JSHOW</option>
                 <option value="0">JHIDE</option>
@@ -138,8 +143,9 @@
                     label="COM_BPGALLERY_CONFIG_SHOW_CAT_NUM_IMAGES_LABEL"
                     description="COM_BPGALLERY_CONFIG_SHOW_CAT_NUM_IMAGES_DESC"
                     useglobal="true"
+                    validate="options"
                     filter="INT"
-                    class="chzn-color"
+                    class="form-select-color-state"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -168,15 +174,17 @@
                     label="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_LABEL"
                     description="COM_BPGALLERY_CONFIG_IMAGES_LIMIT_DESC"
                     filter="INT"
-                    useglobal="true"/>
+                    useglobal="true"
+                    validate="options"/>
 
             <field
                     name="group_images"
                     type="list"
                     label="COM_BPGALLERY_CONFIG_GROUP_IMAGES_LABEL"
                     description="COM_BPGALLERY_CONFIG_GROUP_IMAGES_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
@@ -195,6 +203,7 @@
                     label="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_LABEL"
                     description="COM_BPGALLERY_CONFIG_IMAGES_ALIGN_DESC"
                     useglobal="true"
+                    validate="options"
             >
                 <option value="left">JGLOBAL_LEFT</option>
                 <option value="center">JGLOBAL_CENTER</option>
@@ -218,8 +227,9 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_LABEL"
                     description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_TITLE_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="1"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -230,8 +240,9 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_LABEL"
                     description="COM_BPGALLERY_CONFIG_SHOW_IMAGE_INTRO_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="1"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -242,8 +253,9 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_LABEL"
                     description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="1"
+                    validate="options"
             >
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
@@ -254,8 +266,9 @@
                     type="list"
                     label="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_TITLE_LABEL"
                     description="COM_BPGALLERY_CONFIG_IMAGES_LIGHTBOX_TITLE_DESC"
-                    class="chzn-color"
+                    class="form-select-color-state"
                     useglobal="1"
+                    validate="options"
             >
                 <option value="0">JHIDE</option>
                 <option value="1">JSHOW</option>
@@ -269,6 +282,7 @@
                     filter="INT"
                     min="0" step="100"
                     useglobal="1"
+                    validate="options"
             />
 
             <field
@@ -278,6 +292,7 @@
                     description="COM_BPGALLERY_FIELDSET_IMAGE_THUMBNAIL_SIZE_DESC"
                     layout="joomla.form.field.subform.repeatable-table"
                     useglobal="1"
+                    validate="options"
                     formsource="/administrator/components/com_bpgallery/models/forms/thumbnail_sizes_global.xml"
             />
 
@@ -291,7 +306,8 @@
 					label="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_LABEL"
 					description="COM_BPGALLERY_CONFIG_INCLUDE_COMPONENT_ASSETS_DESC"
 					useglobal="true"
-					class="chzn-color"
+                    validate="options"
+                    class="form-select-color-state"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
@@ -303,7 +319,8 @@
 					label="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_LABEL"
 					description="COM_BPGALLERY_CONFIG_INCLUDE_THEME_ASSETS_DESC"
 					useglobal="true"
-					class="chzn-color"
+                    validate="options"
+                    class="form-select-color-state"
 			>
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>

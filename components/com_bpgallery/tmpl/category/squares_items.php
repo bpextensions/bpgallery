@@ -9,9 +9,11 @@
  * @subpackage        ${subpackage}
  */
 
-defined('_JEXEC') or die;
+use BPExtensions\Component\BPGallery\Site\Helper\LayoutHelper;
+use BPExtensions\Component\BPGallery\Site\View\Category\HtmlView;
+use Joomla\CMS\Language\Text;
 
-JHtml::_('behavior.core');
+defined('_JEXEC') or die;
 
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
@@ -20,12 +22,12 @@ $image_lightbox             = $this->params->def('images_lightbox', 1);
 $category_square_row_length = $this->params->def('category_square_row_length', 4);
 
 $gap = (bool)$this->params->get('category_squares_gap', 1);
-list($thumbnail_width, $thumbnail_height, $thumbnail_method) = BPGalleryHelperLayout::getThumbnailSettingsFromParams($this->params,
+[$thumbnail_width, $thumbnail_height, $thumbnail_method] = LayoutHelper::getThumbnailSettingsFromParams($this->params,
     'thumbnails_size_category_squares');
 
 // Group items if required
 if ($this->params->get('group_images')) {
-    $groups = BPGalleryHelperLayout::groupItemsByCategory($this->items);
+    $groups = LayoutHelper::groupItemsByCategory($this->items);
 }
 
 $layoutOptions = [
@@ -41,9 +43,13 @@ $layoutOptions = [
     'category_square_row_length' => $category_square_row_length,
 ];
 
+/**
+ * @var HtmlView $this
+ */
+
 ?>
 <?php if (empty($this->items)) : ?>
-    <p> <?php echo JText::_('COM_BPGALLERY_NO_IMAGES'); ?>     </p>
+    <p> <?php echo Text::_('COM_BPGALLERY_NO_IMAGES'); ?>     </p>
 <?php else : ?>
 
     <?php // Render category items using default category layout ?>

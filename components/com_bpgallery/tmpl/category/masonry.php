@@ -9,42 +9,32 @@
  * @subpackage        ${subpackage}
  */
 
+use BPExtensions\Component\BPGallery\Site\View\Category\HtmlView;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\FileLayout;
+use Joomla\Language\Text;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die;
 
 /**
  * @var Registry $params
+ * @var HtmlView $this
  */
 $params = $this->params;
 
 // Prepare layouts
-$this->layoutThumbnail = new FileLayout('components.com_bpgallery.layouts.image.thumbnail', JPATH_ROOT);
-$this->layoutCategory  = new FileLayout('components.com_bpgallery.layouts.category.default', JPATH_ROOT);
+$this->layoutThumbnail = new FileLayout('bpgallery.image.thumbnail', JPATH_ROOT);
+$this->layoutCategory  = new FileLayout('bpgallery.category.masonry', JPATH_ROOT);
 
 $category = $this->get('category');
 $canEdit  = $params->get('access-edit');
 
-$dispatcher = JEventDispatcher::getInstance();
-
-$category->text = $category->description;
-$dispatcher->trigger('onContentPrepare', array('com_bpgallery.categories', &$category, &$params, 0));
-$category->description = $category->text;
-
-$results           = $dispatcher->trigger('onContentAfterTitle',
-    array('com_bpgallery.categories', &$category, &$params, 0));
-$afterDisplayTitle = trim(implode("\n", $results));
-
-$results              = $dispatcher->trigger('onContentBeforeDisplay',
-    array('com_bpgallery.categories', &$category, &$params, 0));
-$beforeDisplayContent = trim(implode("\n", $results));
-
-$results             = $dispatcher->trigger('onContentAfterDisplay',
-    array('com_bpgallery.categories', &$category, &$params, 0));
-$afterDisplayContent = trim(implode("\n", $results));
+$afterDisplayTitle    = $category->event->afterDisplayTitle;
+$beforeDisplayContent = $category->event->beforeDisplayContent;
+$afterDisplayContent  = $category->event->afterDisplayContent;
 ?>
-<section class="bpgallery-category bpgallery-category-default<?php echo $this->pageclass_sfx ?>">
+<section class="bpgallery-category bpgallery-category-masonry<?php echo $this->pageclass_sfx ?>">
 
     <div class="page-header">
         <?php if ($params->get('show_page_heading')) : ?>
@@ -55,7 +45,7 @@ $afterDisplayContent = trim(implode("\n", $results));
 
         <?php if ($params->get('show_category_title', 1)) : ?>
             <h2>
-                <?php echo JHtml::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
+                <?php echo HTMLHelper::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
             </h2>
         <?php endif; ?>
     </div>
@@ -72,7 +62,7 @@ $afterDisplayContent = trim(implode("\n", $results));
             <?php endif; ?>
             <?php echo $beforeDisplayContent; ?>
             <?php if ($params->get('show_description') && $category->description) : ?>
-                <?php echo JHtml::_('content.prepare', $category->description, '',
+                <?php echo HTMLHelper::_('content.prepare', $category->description, '',
                     'com_bpgallery.category.description'); ?>
             <?php endif; ?>
             <?php echo $afterDisplayContent; ?>
@@ -86,7 +76,7 @@ $afterDisplayContent = trim(implode("\n", $results));
         <div class="cat-children">
             <?php if ($params->get('show_category_heading_title_text', 1) == 1) : ?>
                 <h3>
-                    <?php echo JText::_('JGLOBAL_SUBCATEGORIES'); ?>
+                    <?php echo Text::_('JGLOBAL_SUBCATEGORIES'); ?>
                 </h3>
             <?php endif; ?>
             <?php echo $this->loadTemplate('children'); ?>

@@ -9,7 +9,17 @@
  * @subpackage        ${subpackage}
  */
 
+use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
+use BPExtensions\Component\BPGallery\Site\View\Category\HtmlView;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
+
 defined('_JEXEC') or die;
+
+/**
+ * @var HtmlView $this
+ */
+
 if ($this->maxLevel != 0 && count($this->children[$this->category->id]) > 0) :
 ?>
     <ul class="categories-list">
@@ -20,7 +30,7 @@ if ($this->maxLevel != 0 && count($this->children[$this->category->id]) > 0) :
         ?>
         <li class="category-item">
             <h4>
-                <a href="<?php echo JRoute::_(BPGalleryHelperRoute::getCategoryRoute($child->id)); ?>"
+                <a href="<?php echo Route::_(RouteHelper::getCategoryRoute($child->id)); ?>"
                    class="category-anchor">
                     <?php if (!empty($image)): ?>
                         <span class="image-wrapper">
@@ -42,7 +52,8 @@ if ($this->maxLevel != 0 && count($this->children[$this->category->id]) > 0) :
             <?php if ($this->params->get('show_subcat_desc') == 1) : ?>
                 <?php if ($child->description) : ?>
                     <div class="category-desc">
-                        <?php echo JHtml::_('content.prepare', $child->description, '', 'com_bpgallery.category'); ?>
+                        <?php echo HTMLHelper::_('content.prepare', $child->description, '',
+                            'com_bpgallery.category'); ?>
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
