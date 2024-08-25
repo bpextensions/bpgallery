@@ -22,6 +22,7 @@ use Joomla\CMS\Menu\MenuItem;
 use Joomla\CMS\MVC\View\CategoryView;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\Registry\Registry;
+use stdClass;
 
 /**
  * HTML View class for the BPGallery component
@@ -97,9 +98,11 @@ class HtmlView extends CategoryView
             $item->params = clone $this->params;
             $item->params->merge($temp);
 
-            $event = new ImagePrepareEvent('ImagePrepareEvent', ['subject' => $item, 'params' => $params]);
-
-            $item->imagePrepareEvent = $dispatcher->dispatch('onImagePrepareEvent', $event);
+            $event                            = new ImagePrepareEvent('ImagePrepareEvent',
+                ['context' => 'com_bpgallery.category', 'subject' => $item, 'params' => $params]);
+            $item->event                      = new stdClass();
+            $item->event->onImagePrepareEvent = $dispatcher->dispatch($event->getName(), $event)->getArgument('result',
+                []);
         }
 
 

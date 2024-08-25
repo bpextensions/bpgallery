@@ -9,13 +9,15 @@
  * @subpackage        ${subpackage}
  */
 
-namespace BPExtensions\Component\BPGallery\Site;
+namespace BPExtensions\Component\BPGallery\Site\Helper;
 
 defined('_JEXEC') or die;
 
-use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Associations;
+use Joomla\CMS\Language\LanguageHelper;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\Component\Categories\Administrator\Helper\CategoryAssociationHelper;
 
 /**
@@ -60,6 +62,53 @@ abstract class AssociationHelper extends CategoryAssociationHelper
 
         if ($view === 'category' || $view === 'categories') {
             $return = self::getCategoryAssociations($id, 'com_bpgallery', $layout);
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * Method to display in frontend the associations for a given article
+     *
+     * @param   integer  $id  Id of the article
+     *
+     * @return  array  An array containing the association URL and the related language object
+     * @throws Exception
+     */
+    public static function displayAssociations(int $id): array
+    {
+        $return = [];
+
+        if ($associations = self::getAssociations($id, 'article')) {
+            $levels    = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+            $languages = LanguageHelper::getLanguages();
+
+            foreach ($languages as $language) {
+                // Do not display language when no association
+                if (empty($associations[$language->lang_code])) {
+                    continue;
+                }
+
+                // Do not display language without frontend UI
+                if (!array_key_exists($language->lang_code, LanguageHelper::getInstalledLanguages(0))) {
+                    continue;
+                }
+
+                // Do not display language without specific home menu
+                if (!array_key_exists($language->lang_code, Multilanguage::getSiteHomePages())) {
+                    continue;
+                }
+
+                // Do not display language without authorized access level
+                if (isset($language->access) && $language->access && !in_array($language->access, $levels, true)) {
+                    continue;
+                }
+
+                $return[$language->lang_code] = ['item'     => $associations[$language->lang_code],
+                                                 'language' => $language
+                ];
+            }
         }
 
         return $return;
