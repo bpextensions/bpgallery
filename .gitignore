@@ -13,6 +13,7 @@ administrator/components/*
 !administrator/components/com_bpgallery
 administrator/components/com_bpgallery/assets
 !administrator/components/com_bpgallery/models
+!administrator/components/com_bpgallery/src
 !administrator/components/com_bpgallery/models/fields
 !administrator/components/com_bpgallery/models/fields/**
 
@@ -31,6 +32,7 @@ components/com_bpgallery/assets
 !modules
 modules/**
 !modules/mod_bpgallery
+!modules/mod_bpgallery/**
 
 !LICENSE
 !README.md
