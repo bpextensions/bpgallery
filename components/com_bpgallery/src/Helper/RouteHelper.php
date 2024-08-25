@@ -9,6 +9,11 @@
  * @subpackage        ${subpackage}
  */
 
+namespace BPExtensions\Component\BPGallery\Site\Helper;
+
+use Joomla\CMS\Categories\CategoryNode;
+use Joomla\CMS\Language\Multilanguage;
+
 defined('_JEXEC') or die;
 
 /**
@@ -17,7 +22,7 @@ defined('_JEXEC') or die;
  * @static
  * @subpackage  com_bpgallery
  */
-abstract class BPGalleryHelperRoute
+abstract class RouteHelper
 {
     /**
      * Get the URL route for a image from a image ID, image category ID and language
@@ -28,7 +33,7 @@ abstract class BPGalleryHelperRoute
      *
      * @return  string  The link to the image
      */
-    public static function getImageRoute($id, $catid, $language = 0): string
+    public static function getImageRoute($id, $catid, $language = 0, $layout = null): string
     {
         // Create the link
         $link = 'index.php?option=com_bpgallery&view=image&id=' . $id;
@@ -37,8 +42,12 @@ abstract class BPGalleryHelperRoute
             $link .= '&catid=' . $catid;
         }
 
-        if ($language && $language !== '*' && JLanguageMultilang::isEnabled()) {
+        if ($language && $language !== '*' && Multilanguage::isEnabled()) {
             $link .= '&lang=' . $language;
+        }
+
+        if ($layout) {
+            $link .= '&layout=' . $layout;
         }
 
         return $link;
@@ -47,28 +56,32 @@ abstract class BPGalleryHelperRoute
     /**
      * Get the URL route for a image category from a image category ID and language
      *
-     * @param   mixed  $catid     The id of the image's category either an integer id or an instance of JCategoryNode
-     * @param   mixed  $language  The id of the language being used.
+     * @param   integer|CategoryNode  $catid     The id of the image's category either an integer id or an instance of JCategoryNode
+     * @param   integer|string        $language  The id of the language being used.
+     * @param   null|string           $layout    The layout value.
      *
      * @return  string  The link to the image
      */
-    public static function getCategoryRoute($catid, $language = 0): string
+    public static function getCategoryRoute($catid, $language = 0, ?string $layout = null): string
     {
-        if ($catid instanceof JCategoryNode) {
+        if ($catid instanceof CategoryNode) {
             $id = $catid->id;
         } else {
             $id = (int)$catid;
         }
 
         if ($id < 1) {
-            $link = '';
-        } else {
-            // Create the link
-            $link = 'index.php?option=com_bpgallery&view=category&id=' . $id;
+            return '';
+        }
 
-            if ($language && $language !== '*' && JLanguageMultilang::isEnabled()) {
-                $link .= '&lang=' . $language;
-            }
+        $link = 'index.php?option=com_bpgallery&view=category&id=' . $id;
+
+        if ($language && $language !== '*' && Multilanguage::isEnabled()) {
+            $link .= '&lang=' . $language;
+        }
+
+        if ($layout) {
+            $link .= '&layout=' . $layout;
         }
 
         return $link;

@@ -1,20 +1,26 @@
 <?php
 
 /**
- * @author        ${author.name} (${author.email})
- * @website        ${author.url}
- * @copyright    ${copyrights}
- * @license        ${license.url} ${license.name}
- * @package        ${package}
+ * @author            ${author.name} (${author.email})
+ * @website           ${author.url}
+ * @copyright         ${copyrights}
+ * @license           ${license.url} ${license.name}
+ * @package           ${package}
  * @subpackage        ${subpackage}
  */
+
+namespace BPExtensions\Component\BPGallery\Site;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 
 defined('_JEXEC') or die;
 
 /**
  * BPGallery Component Controller
  */
-class BPGalleryController extends JControllerLegacy
+class DisplayController extends BaseController
 {
     /**
      * Constructor.
@@ -25,13 +31,12 @@ class BPGalleryController extends JControllerLegacy
      *
      * @since   3.7.0
      */
-    public function __construct($config = array())
+    public function __construct($config = [], MVCFactoryInterface $factory = null, $app = null, $input = null)
     {
-        $this->input = JFactory::getApplication()->input;
+        $this->input = Factory::getApplication()->getInput();
 
         // Image frontpage Editor images proxying:
         if ($this->input->get('view') === 'category' && $this->input->get('layout') === 'modal') {
-            JHtml::_('stylesheet', 'system/adminlist.css', array(), true);
             $config['base_path'] = JPATH_COMPONENT_ADMINISTRATOR;
         }
 
@@ -44,13 +49,13 @@ class BPGalleryController extends JControllerLegacy
      * @param   boolean  $cachable   If true, the view output will be cached
      * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
      *
-     * @return  JControllerLegacy  This object to support chaining.
+     * @return  DisplayController  This object to support chaining.
      *
      * @since   1.5
      */
     public function display($cachable = false, $urlparams = array())
     {
-        if (JFactory::getApplication()->getUserState('com_bpgallery.image.data') === null) {
+        if (Factory::getApplication()->getUserState('com_bpgallery.image.data') === null) {
             $cachable = true;
         }
 

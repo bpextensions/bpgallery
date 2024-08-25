@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package     ${package}
  * @subpackage  ${subpackage}
@@ -8,13 +9,16 @@
  * @author      ${author.name}
  */
 
-use Joomla\Registry\Registry;
+namespace BPExtensions\Component\BPGallery\Site\Helper;
 
 defined('_JEXEC') or die;
 
-JLoader::register('AssetsTrait', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/trait/AssetsTrait.php');
+use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
+use BPExtensions\Component\BPGallery\Administrator\Trait\AssetsTrait;
+use Joomla\Registry\Registry;
+use JsonException;
 
-abstract class BPGalleryHelperLayout
+abstract class LayoutHelper
 {
 
     use AssetsTrait;
@@ -24,7 +28,7 @@ abstract class BPGalleryHelperLayout
      *
      * @var string
      */
-    protected static $assets_root = 'components/com_bpgallery/assets';
+    protected static string $assets_root = 'components/com_bpgallery/assets';
 
     /**
      * Get thumbnail settings from parameters to use on the helper.
@@ -49,6 +53,7 @@ abstract class BPGalleryHelperLayout
      * @param   array  $items
      *
      * @return array
+     * @throws JsonException
      */
     public static function groupItemsByCategory(array $items): array
     {
@@ -63,7 +68,7 @@ abstract class BPGalleryHelperLayout
                     'slug'  => $item->catslug,
                     'items' => []
                 ];
-                $groups[$item->catlft] = (object)json_decode(json_encode($category));
+                $groups[$item->catlft] = (object)json_decode(json_encode($category), false, 512, JSON_THROW_ON_ERROR);
             }
 
             // Add item to the category group
