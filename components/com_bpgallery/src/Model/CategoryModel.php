@@ -1,25 +1,37 @@
 <?php
 
 /**
- * @author        ${author.name} (${author.email})
- * @website        ${author.url}
- * @copyright    ${copyrights}
- * @license        ${license.url} ${license.name}
- * @package        ${package}
+ * @author            ${author.name} (${author.email})
+ * @website           ${author.url}
+ * @copyright         ${copyrights}
+ * @license           ${license.url} ${license.name}
+ * @package           ${package}
  * @subpackage        ${subpackage}
  */
 
+namespace BPExtensions\Component\BPGallery\Site\Model;
+
 defined('_JEXEC') or die;
 
+use Exception;
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\Component\Categories\Administrator\Extension\CategoriesComponent;
+use Joomla\Component\Categories\Administrator\Table\CategoryTable;
+use Joomla\Database\DatabaseQuery;
+use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Single item model for a image
+ * Single category model for the images' category.
  */
-class BPGalleryModelCategory extends JModelList
+class CategoryModel extends ListModel
 {
     /**
      * Category items data
@@ -27,6 +39,8 @@ class BPGalleryModelCategory extends JModelList
      * @var array
      */
     protected $_item = null;
+
+    protected $_images = null;
 
     protected $_siblings = null;
 
@@ -70,12 +84,106 @@ class BPGalleryModelCategory extends JModelList
         parent::__construct($config);
     }
 
+
+    /**
+     * Method to auto-populate the model state.
+     *
+     * Note. Calling getState in this method will result in recursion.
+     *
+     * @param   string  $ordering   An optional ordering field.
+     * @param   string  $direction  An optional direction (asc|desc).
+     *
+     * @return  void
+     *
+     * @throws Exception
+     */
+    protected function populateState($ordering = null, $direction = null): void
+    {
+        /**
+         * @var CMSApplication $app
+         */
+        $app    = Factory::getApplication();
+        $params = ComponentHelper::getParams('com_bpgallery');
+
+        // Optional filter text
+        $itemid = $app->input->get('Itemid', 0, 'int');
+        $search = $app->getUserStateFromRequest('com_bpgallery.category.list.' . $itemid . '.filter-search',
+            'filter-search', '', 'string');
+        $this->setState('list.filter', $search);
+
+        // Prepare parameters
+        $menuParams = new Registry;
+        if ($menu = $app->getMenu()->getActive()) {
+            $menuParams->loadString($menu->getParams());
+        }
+
+        $mergedParams = clone $params;
+        $mergedParams->merge($menuParams);
+
+        // Fix Joomla! issue with use global on subform fields
+        $this->mergeThumbnailsParams($params, $menuParams, $mergedParams);
+
+        // List state information
+        $format = $app->input->getWord('format');
+        if ($format === 'feed') {
+            $limit = $app->get('feed_limit');
+        } else {
+            $limit = $mergedParams->get('images_limit', $app->get('list_limit'));
+        }
+        $this->setState('list.limit', $limit);
+        $limitstart = $app->input->get('limitstart', 0, 'uint');
+        $this->setState('list.start', $limitstart);
+
+        $orderCol = $app->input->get('filter_order', $mergedParams->get('initial_sort', 'ordering'));
+        if (!in_array($orderCol, $this->filter_fields)) {
+            $orderCol = 'ordering';
+        }
+        $this->setState('list.ordering', $orderCol);
+
+        $listOrder = $app->input->get('filter_order_Dir', 'ASC');
+
+        if (!in_array(strtoupper($listOrder), ['ASC', 'DESC', ''])) {
+            $listOrder = 'ASC';
+        }
+
+        $this->setState('list.direction', $listOrder);
+
+        // Category filter
+        $id = $app->input->get('id', 0, 'int');
+        $this->setState('filter.category_id', $id);
+
+        // Group images by category (add lft data)
+        $this->setState('list.group', $mergedParams->get('group_images', 0));
+
+        // Category level filter
+        $this->setState('filter.max_category_levels', $mergedParams->get('maxLevel', 1));
+        $this->setState('filter.subcategories', true);
+
+        $user = $app->getIdentity();
+
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise(
+                'core.edit',
+                'com_bpgallery'
+            ))) {
+            // Limit to published for people who can't edit or edit.state.
+            $this->setState('filter.published', 1);
+
+            // Filter by start and end dates.
+            $this->setState('filter.publish_date', true);
+        }
+
+        $this->setState('filter.language', Multilanguage::isEnabled());
+
+        // Load the parameters.
+        $this->setState('params', $mergedParams);
+    }
+
     /**
      * Method to get a list of items.
      *
      * @return  mixed  An array of objects on success, false on failure.
      */
-    public function getItems()
+    public function getItems(): mixed
     {
         // Invoke the parent getItems method to get the main list
         $items = parent::getItems();
@@ -83,7 +191,7 @@ class BPGalleryModelCategory extends JModelList
         // Convert the params field into an object, saving original in _params
         foreach ($items as $item) {
             if (is_string($item->params)) {
-                $item->params = new Joomla\Registry\Registry($item->params);
+                $item->params = new Registry($item->params);
             }
         }
 
@@ -97,7 +205,7 @@ class BPGalleryModelCategory extends JModelList
      *
      * @throws Exception
      */
-    public function getParent()
+    public function getParent(): mixed
     {
         if (!is_object($this->_item)) {
             $this->getCategory();
@@ -116,26 +224,39 @@ class BPGalleryModelCategory extends JModelList
     public function getCategory()
     {
         if (!is_object($this->_item)) {
+            /**
+             * @var CMSApplication $app
+             * @var Categories     $categories
+             */
             $app = Factory::getApplication();
-            $menu = $app->getMenu();
-            $active = $menu->getActive();
-            $params = new Registry;
+            $user = $app->getIdentity();
 
-            if ($active) {
-                $params->loadString($active->params);
+            $options = [];
+
+            if ($params = $this->state->get('params')) {
+                $options['countItems'] = $params->get('show_cat_num_articles',
+                        1) || !$params->get('show_empty_categories_cat', 0);
+                $options['access']     = $params->get('check_access_rights', 1);
+            } else {
+                $options['countItems'] = 0;
             }
 
-            $options = array();
-            $options['countItems'] = $params->get('show_cat_items', 0) || $params->get('show_empty_categories', 0);
-
             // User witch change stat have access to both published and unpublished items
-            if (Factory::getUser()->authorise('core.edit.state', $this->option)) {
+            if ($user->authorise('core.edit.state', $this->option)) {
                 $options['published'] = [0, 1, 2];
             }
 
-            $categories = Categories::getInstance('BPGallery', $options);
+            $categories = Factory::getApplication()->bootComponent('BPGallery')->getCategory($options);
             $this->_item = $categories->get($this->getState('filter.category_id', 'root'));
             if (is_object($this->_item)) {
+
+                $asset = 'com_bpgallery.category.' . $this->_item->id;
+
+                // Check general create permission.
+                if ($user->authorise('core.create', $asset)) {
+                    $this->_item->getParams()->set('access-create', true);
+                }
+
                 $this->_children = $this->_item->getChildren();
                 $this->_parent = false;
 
@@ -161,7 +282,7 @@ class BPGalleryModelCategory extends JModelList
      *
      * @throws Exception
      */
-    public function &getLeftSibling()
+    public function &getLeftSibling(): mixed
     {
         if (!is_object($this->_item)) {
             $this->getCategory();
@@ -177,7 +298,7 @@ class BPGalleryModelCategory extends JModelList
      *
      * @throws Exception
      */
-    public function &getRightSibling()
+    public function &getRightSibling(): mixed
     {
         if (!is_object($this->_item)) {
             $this->getCategory();
@@ -193,7 +314,7 @@ class BPGalleryModelCategory extends JModelList
      *
      * @throws Exception
      */
-    public function &getChildren()
+    public function &getChildren(): mixed
     {
         if (!is_object($this->_item)) {
             $this->getCategory();
@@ -213,29 +334,34 @@ class BPGalleryModelCategory extends JModelList
      */
     public function hit($pk = 0)
     {
-        $input = JFactory::getApplication()->input;
+        $input         = Factory::getApplication()->getInput();
         $hitcount = $input->getInt('hitcount', 1);
 
         if ($hitcount) {
+            /**
+             * @var CategoriesComponent $component
+             * @var CategoryTable       $table
+             */
             $pk = (!empty($pk)) ? $pk : (int)$this->getState('filter.category_id');
-
-            $table = JTable::getInstance('Category', 'JTable');
-            $table->load($pk);
-            $table->hit($pk);
+            $component = Factory::getApplication()->bootComponent('Categories');
+            $table     = $component->getMVCFactory()->createTable('Category');
+            $table->load($pk) && $table->hit($pk);
         }
 
         return true;
     }
 
     /**
+     * TODO: Verify if this method is required at all.
+     *
      * Method to build an SQL query to load the list data.
      *
-     * @return  string    An SQL query
-     *
+     * @return DatabaseQuery|QueryInterface
+     * @throws Exception
      */
     protected function getListQuery()
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $groups = implode(',', $user->getAuthorisedViewLevels());
 
         // Create a new query object.
@@ -408,94 +534,6 @@ class BPGalleryModelCategory extends JModelList
         return $query;
     }
 
-    /**
-     * Method to auto-populate the model state.
-     *
-     * Note. Calling getState in this method will result in recursion.
-     *
-     * @param string $ordering An optional ordering field.
-     * @param string $direction An optional direction (asc|desc).
-     *
-     * @return  void
-     *
-     * @throws Exception
-     */
-    protected function populateState($ordering = null, $direction = null)
-    {
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_bpgallery');
-
-        // Optional filter text
-        $itemid = $app->input->get('Itemid', 0, 'int');
-        $search = $app->getUserStateFromRequest('com_bpgallery.category.list.' . $itemid . '.filter-search', 'filter-search', '', 'string');
-        $this->setState('list.filter', $search);
-
-        // Prepare parameters
-        $menuParams = new Registry;
-        if ($menu = $app->getMenu()->getActive()) {
-            $menuParams->loadString($menu->params);
-        }
-
-        $mergedParams = clone $params;
-        $mergedParams->merge($menuParams);
-
-        // Fix Joomla! issue with useglobal on subform fields
-        $this->mergeThumbnailsParams($params, $menuParams, $mergedParams);
-
-        // List state information
-        $format = $app->input->getWord('format');
-        if ($format === 'feed') {
-            $limit = $app->get('feed_limit');
-        } else {
-            $limit = $mergedParams->get('images_limit', $app->get('list_limit'));
-        }
-        $this->setState('list.limit', $limit);
-        $limitstart = $app->input->get('limitstart', 0, 'uint');
-        $this->setState('list.start', $limitstart);
-
-        $orderCol = $app->input->get('filter_order', $mergedParams->get('initial_sort', 'ordering'));
-        if (!in_array($orderCol, $this->filter_fields)) {
-            $orderCol = 'ordering';
-        }
-        $this->setState('list.ordering', $orderCol);
-
-        $listOrder = $app->input->get('filter_order_Dir', 'ASC');
-
-        if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', ''))) {
-            $listOrder = 'ASC';
-        }
-
-        $this->setState('list.direction', $listOrder);
-
-        // Category filter
-        $id = $app->input->get('id', 0, 'int');
-        $this->setState('filter.category_id', $id);
-
-        // Group images by category (add lft data)
-        $this->setState('list.group', $mergedParams->get('group_images', 0));
-
-        // Category level filter
-        $this->setState('filter.max_category_levels', $mergedParams->get('maxLevel', 1));
-        $this->setState('filter.subcategories', true);
-
-        $user = JFactory::getUser();
-
-        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise(
-                'core.edit',
-                'com_bpgallery'
-            ))) {
-            // Limit to published for people who can't edit or edit.state.
-            $this->setState('filter.published', 1);
-
-            // Filter by start and end dates.
-            $this->setState('filter.publish_date', true);
-        }
-
-        $this->setState('filter.language', JLanguageMultilang::isEnabled());
-
-        // Load the parameters.
-        $this->setState('params', $mergedParams);
-    }
 
     /**
      * Merge view dependent thumbnails settings. (Note: Fixes Joomla! issue with useglobal on subform fields)
@@ -504,7 +542,7 @@ class BPGalleryModelCategory extends JModelList
      * @param Registry $menuParams Menu parameters.
      * @param Registry $params Merged parameters.
      */
-    protected function mergeThumbnailsParams(Registry $componentsParams, Registry $menuParams, Registry $params)
+    protected function mergeThumbnailsParams(Registry $componentsParams, Registry $menuParams, Registry $params): void
     {
         $groups = ['thumbnails_size_category_default', 'thumbnails_size_category_squares', 'thumbnails_size_category_masonry'];
 
@@ -519,5 +557,20 @@ class BPGalleryModelCategory extends JModelList
             $merged = $cparam->merge($mparam);
             $params->set($name, $merged->toObject());
         }
+    }
+
+
+    /**
+     * Method to get a JPagination object for the data set.
+     *
+     * @return Pagination|null A JPagination object for the data set.
+     */
+    public function getPagination(): ?Pagination
+    {
+        if (empty($this->_pagination)) {
+            return null;
+        }
+
+        return $this->_pagination;
     }
 }
