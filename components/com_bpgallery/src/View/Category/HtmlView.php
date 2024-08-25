@@ -13,16 +13,17 @@ namespace BPExtensions\Component\BPGallery\Site\View\Category;
 
 defined('_JEXEC') or die;
 
-use BPExtensions\Component\BPGallery\Administrator\Event\ImagePrepareEvent;
+use BPExtensions\Component\BPGallery\Site\Helper\LayoutHelper;
 use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Document\HtmlDocument;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Menu\MenuItem;
 use Joomla\CMS\MVC\View\CategoryView;
 use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
-use stdClass;
 
 /**
  * HTML View class for the BPGallery component
@@ -51,15 +52,15 @@ class HtmlView extends CategoryView
      */
     protected $viewName = 'image';
 
-    /**
-     * @var null|Registry
-     */
-    protected $params = null;
+    protected ?Registry $params = null;
 
-    /**
-     * @var null|MenuItem
-     */
-    protected $menu = null;
+    protected ?MenuItem $menu = null;
+
+    protected ?int $maxLevel = null;
+
+    protected ?FileLayout $layoutThumbnail = null;
+
+    protected ?FileLayout $layoutCategory = null;
 
     /**
      * Execute and display a template script.
@@ -90,6 +91,9 @@ class HtmlView extends CategoryView
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
+        // Process the content plugins.
+        PluginHelper::importPlugin('bpgallery', null, true, $dispatcher);
+
         // Prepare the data.
         // Compute the image slug.
         foreach ($this->items as $item) {
@@ -98,11 +102,13 @@ class HtmlView extends CategoryView
             $item->params = clone $this->params;
             $item->params->merge($temp);
 
-            $event                            = new ImagePrepareEvent('ImagePrepareEvent',
-                ['context' => 'com_bpgallery.category', 'subject' => $item, 'params' => $params]);
-            $item->event                      = new stdClass();
-            $item->event->onImagePrepareEvent = $dispatcher->dispatch($event->getName(), $event)->getArgument('result',
-                []);
+            $eventArguments = [
+                'context' => 'com_bpgallery.category',
+                'subject' => $item,
+                'params'  => $item->params,
+            ];
+
+            LayoutHelper::processImageEvents($item, $dispatcher, $eventArguments);
         }
 
 

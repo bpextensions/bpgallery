@@ -13,8 +13,8 @@ namespace BPExtensions\Component\BPGallery\Site\View\Image;
 
 defined('_JEXEC') or die;
 
-use BPExtensions\Component\BPGallery\Administrator\Event\ImagePrepareEvent;
 use BPExtensions\Component\BPGallery\Site\Helper\AssociationHelper;
+use BPExtensions\Component\BPGallery\Site\Helper\LayoutHelper;
 use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
@@ -175,16 +175,13 @@ class HtmlView extends BaseHtmlView
         // Process the content plugins.
         PluginHelper::importPlugin('bpgallery', null, true, $dispatcher);
 
-        $contentEventArguments = [
+        $eventArguments = [
             'context' => 'com_bpgallery.image',
             'subject' => $item,
             'params'  => $item->params,
         ];
 
-        $event                            = new ImagePrepareEvent('ImagePrepareEvent',
-            ['context' => 'com_bpgallery.category', 'subject' => $item, 'params' => $params]);
-        $item->event                      = new stdClass();
-        $item->event->onImagePrepareEvent = $dispatcher->dispatch($event->getName(), $event)->getArgument('result', []);
+        LayoutHelper::processImageEvents($item, $dispatcher, $eventArguments);
 
         // Escape strings for HTML output
         $this->pageclass_sfx = htmlspecialchars($this->item->params->get('pageclass_sfx', ''));
