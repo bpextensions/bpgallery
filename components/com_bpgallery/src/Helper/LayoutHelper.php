@@ -13,10 +13,13 @@ namespace BPExtensions\Component\BPGallery\Site\Helper;
 
 defined('_JEXEC') or die;
 
+use BPExtensions\Component\BPGallery\Administrator\Event as GalleryEvent;
 use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
 use BPExtensions\Component\BPGallery\Administrator\Trait\AssetsTrait;
+use Joomla\Event\DispatcherInterface;
 use Joomla\Registry\Registry;
 use JsonException;
+use stdClass;
 
 abstract class LayoutHelper
 {
@@ -76,5 +79,23 @@ abstract class LayoutHelper
         }
 
         return $groups;
+    }
+
+    public static function processImageEvents(stdClass $image, DispatcherInterface $dispatcher, array $arguments): void
+    {
+        $ImagePrepareEvent         = new GalleryEvent\ImagePrepareEvent('ImagePrepareEvent', $arguments);
+        $AfterDisplayTitleEvent    = new GalleryEvent\AfterDisplayTitle('AfterDisplayTitle', $arguments);
+        $BeforeDisplayContentEvent = new GalleryEvent\BeforeDisplayContent('BeforeDisplayContent', $arguments);
+        $AfterDisplayContentEvent  = new GalleryEvent\AfterDisplayContent('AfterDisplayContent', $arguments);
+
+        $image->event                       = new stdClass();
+        $image->event->imagePrepare         = $dispatcher->dispatch($ImagePrepareEvent->getName(),
+            $ImagePrepareEvent)->getArgument('result', []);
+        $image->event->afterDisplayTitle    = $dispatcher->dispatch($AfterDisplayTitleEvent->getName(),
+            $AfterDisplayTitleEvent)->getArgument('result', []);
+        $image->event->beforeDisplayContent = $dispatcher->dispatch($BeforeDisplayContentEvent->getName(),
+            $BeforeDisplayContentEvent)->getArgument('result', []);
+        $image->event->afterDisplayContent  = $dispatcher->dispatch($AfterDisplayContentEvent->getName(),
+            $AfterDisplayContentEvent)->getArgument('result', []);
     }
 }
