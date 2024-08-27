@@ -11,49 +11,50 @@
     <description>COM_BPGALLERY_XML_DESCRIPTION</description>
 
     <!-- Install/Upgdate script -->
-    <scriptfile>install/upgrade.php</scriptfile>
+	<scriptfile>script.php</scriptfile>
 
-    <install> <!-- Runs on install -->
-        <sql>
-            <file driver="mysql" charset="utf8">install/sql/install.mysql.utf8.sql</file>
-        </sql>
-    </install>
-    
-	<uninstall> <!-- Runs on uninstall -->
-		<sql>
-			<file driver="mysql" charset="utf8">install/sql/uninstall.mysql.utf8.sql</file>
-		</sql>
-	</uninstall>
-    
-    <!-- Upgdate database queries -->
-	<update>
-		<schemas>
-			<schemapath type="mysql">install/sql/updates/mysql</schemapath>
-		</schemas>
-	</update>
+	<namespace path="src">BPExtensions\Component\BPGallery</namespace>
 
 	<files folder="site">
 		<folder>assets</folder>
-		<folder>helpers</folder>
-		<folder>language</folder>
 		<folder>layouts</folder>
-		<folder>models</folder>
-		<folder>views</folder>
+		<folder>src</folder>
+		<folder>tmpl</folder>
 		<filename>bpgallery.php</filename>
 		<filename>controller.php</filename>
 		<filename>router.php</filename>
 	</files>
 
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB/com_bpgallery.ini</language>
+		<language tag="en-GB">language/en-GB/com_bpgallery.sys.ini</language>
+		<language tag="pl-PL">language/pl-PL/com_bpgallery.ini</language>
+		<language tag="pl-PL">language/pl-PL/com_bpgallery.sys.ini</language>
+	</languages>
+
 	<media folder="media" destination="com_bpgallery">
 		<folder>js</folder>
+		<folder>css</folder>
 	</media>
 
-	<languages folder="site">
-		<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.ini</language>
-		<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.sys.ini</language>
-		<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.ini</language>
-		<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.sys.ini</language>
-	</languages>
+    <install> <!-- Runs on install -->
+        <sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<!-- Update database queries -->
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
 
 	<administration>
 
@@ -67,19 +68,19 @@
 			<folder>tables</folder>
 			<folder>views</folder>
 			<filename>access.xml</filename>
-			<filename>bpgallery.php</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
 		</files>
 
 		<languages folder="admin">
-			<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.ini</language>
-			<language tag="en-GB">language/en-GB/en-GB.com_bpgallery.sys.ini</language>
-			<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.ini</language>
-			<language tag="pl-PL">language/pl-PL/pl-PL.com_bpgallery.sys.ini</language>
+			<language tag="en-GB">language/en-GB/com_bpgallery.ini</language>
+			<language tag="en-GB">language/en-GB/com_bpgallery.sys.ini</language>
+			<language tag="pl-PL">language/pl-PL/com_bpgallery.ini</language>
+			<language tag="pl-PL">language/pl-PL/com_bpgallery.sys.ini</language>
 		</languages>
-        
-		<menu img="class:bpgallery">com_bpgallery</menu>
+
+		<menu img="class:bpgallery">COM_BPGALLERY</menu>
+
 		<submenu>
 			<!--
 				Note that all & must be escaped to &amp; for the file to be valid
@@ -91,7 +92,7 @@
 				img="class:images"
 				alt="BPGallery/Images"
 				>
-				com_bpgallery_images
+				COM_BPGALLERY_IMAGES
 			</menu>
 			<menu
 					link="option=com_categories&amp;extension=com_bpgallery"
@@ -99,7 +100,7 @@
 					img="class:bpgallery-cat"
 					alt="BPGallery/Categories"
 			>
-				com_bpgallery_categories
+				COM_BPGALLERY_CATEGORIES
 			</menu>
 			<menu
 					link="option=com_fields&amp;context=com_bpgallery.image"
