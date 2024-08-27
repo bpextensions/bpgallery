@@ -104,9 +104,9 @@ class Router extends RouterView
      * @param   string  $id     ID of the category to retrieve the segments for
      * @param   array   $query  The request that is built right now
      *
-     * @return  array|string  The segments of this item
+     * @return  array  The segments of this item
      */
-    public function getCategoriesSegment($id, $query)
+    public function getCategoriesSegment($id, $query): array
     {
         return $this->getCategorySegment($id, $query);
     }
@@ -117,9 +117,9 @@ class Router extends RouterView
      * @param   string  $id     ID of the category to retrieve the segments for
      * @param   array   $query  The request that is built right now
      *
-     * @return  array|string  The segments of this item
+     * @return  array  The segments of this item
      */
-    public function getCategorySegment($id, $query)
+    public function getCategorySegment($id, $query): array
     {
         $category = $this->getCategories(['access' => true])->get($id);
 
@@ -163,9 +163,9 @@ class Router extends RouterView
      * @param   string  $id     ID of the image form to retrieve the segments for
      * @param   array   $query  The request that is built right now
      *
-     * @return  array|string  The segments of this item
+     * @return  array  The segments of this item
      */
-    public function getFormSegment($id, $query)
+    public function getFormSegment($id, $query): array
     {
         return $this->getImageSegment($id, $query);
     }
@@ -176,9 +176,9 @@ class Router extends RouterView
      * @param   string  $id     ID of the image to retrieve the segments for
      * @param   array   $query  The request that is built right now
      *
-     * @return  array|string  The segments of this item
+     * @return  array  The segments of this item
      */
-    public function getImageSegment($id, $query)
+    public function getImageSegment($id, $query): array
     {
         if (!strpos($id, ':')) {
             $id      = (int)$id;
@@ -209,7 +209,7 @@ class Router extends RouterView
      *
      * @return  mixed   The id of this item or false
      */
-    public function getCategoriesId($segment, $query)
+    public function getCategoriesId($segment, $query): mixed
     {
         return $this->getCategoryId($segment, $query);
     }
@@ -220,9 +220,9 @@ class Router extends RouterView
      * @param   string  $segment  Segment to retrieve the ID for
      * @param   array   $query    The request that is parsed right now
      *
-     * @return  mixed   The id of this item or false
+     * @return  int|bool   The id of this item or false
      */
-    public function getCategoryId($segment, $query)
+    public function getCategoryId($segment, $query): int|bool
     {
         if (isset($query['id'])) {
             $category = $this->getCategories(['access' => false])->get($query['id']);
@@ -251,9 +251,9 @@ class Router extends RouterView
      * @param   string  $segment  Segment of the image to retrieve the ID for
      * @param   array   $query    The request that is parsed right now
      *
-     * @return  mixed   The id of this item or false
+     * @return  int   The id of this item or false
      */
-    public function getImageId($segment, $query)
+    public function getImageId(string $segment, array $query): int
     {
         if ($this->noIDs) {
             $dbquery = $this->db->getQuery(true);
