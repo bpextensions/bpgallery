@@ -9,10 +9,10 @@
         margin: 0;
 
         .category-item {
+            margin-bottom: 20px;
             @media screen and (min-width: 800px) {
                 margin-right: 20px;
             }
-            margin-bottom: 20px;
 
             h4 {
                 .category-anchor {
