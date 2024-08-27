@@ -14,6 +14,9 @@ administrator/components/*
 administrator/components/com_bpgallery/assets
 !administrator/components/com_bpgallery/models
 !administrator/components/com_bpgallery/src
+!administrator/components/com_bpgallery/src/Controller
+!administrator/components/com_bpgallery/src/Model
+!administrator/components/com_bpgallery/src/Field
 !administrator/components/com_bpgallery/models/fields
 !administrator/components/com_bpgallery/models/fields/**
 
