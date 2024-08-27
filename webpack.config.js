@@ -1,25 +1,45 @@
-var Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore');
+const BuildPlugin = require('./.dev/BuildPlugin');
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
-// ADMIN CONFIGURATION ---------------------------------------
-
 // Module build configuration
 Encore
-    .setOutputPath('administrator/components/com_bpgallery/assets')
-    .setPublicPath('administrator/components/com_bpgallery/assets/')
+    .setOutputPath('media/com_bpgallery')
+    .setPublicPath('media/com_bpgallery/')
+    .addPlugin(new BuildPlugin)
     .cleanupOutputBeforeBuild()
     .enableBuildNotifications()
-    .enableSassLoader()
+    .disableSingleRuntimeChunk()
+    .enableVersioning(false)
+    .enableSassLoader((options) => {
+        options.sassOptions = {
+            quietDeps: true, // disable warning msg
+        }
+    })
     .disableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())
-    .configureBabel(() => {
+    .configureBabel((config) => {
+        config.plugins.push("@babel/plugin-transform-class-properties")
     }, {
+        includeNodeModules: ['swiper', 'dom7', 'ssr-window'],
         useBuiltIns: 'usage',
-        corejs: 3
+        corejs: 3,
     })
+    .configureTerserPlugin((options) => {
+        options.terserOptions = {
+            output: {
+                comments: false,
+            },
+            compress: {
+                drop_console: true,
+            }
+        }
+    })
+    .autoProvidejQuery()
+    .enablePostCssLoader()
     .addExternals({
         jquery: 'jQuery',
         joomla: 'Joomla',
@@ -31,40 +51,10 @@ Encore
         './.dev/admin/js/uploader.js',
         './.dev/admin/scss/uploader.scss',
     ])
-    .copyFiles({
-        from: './.dev/admin/images',
-
-        // optional target path, relative to the output dir
-        to: 'images/[path][name].[ext]',
-    });
-
-const adminConfig = Encore.getWebpackConfig();
-
-// FRONT-END CONFIGURATION ---------------------------------------
-
-// Module build configuration
-Encore.reset();
-Encore
-    .setOutputPath('components/com_bpgallery/assets')
-    .setPublicPath('/components/com_bpgallery/assets')
-    .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
-    .enableSassLoader()
-    .disableSingleRuntimeChunk()
-    .enableSourceMaps(!Encore.isProduction())
-    .configureBabel(() => {
-    }, {
-        useBuiltIns: 'usage',
-        corejs: 3
-    })
-    .addExternals({
-        jquery: 'jQuery',
-        joomla: 'Joomla',
-    })
-    .addEntry('default', [
+    .addStyleEntry('default', [
         './.dev/site/scss/default.scss',
     ])
-    .addEntry('square', [
+    .addStyleEntry('square', [
         './.dev/site/scss/square.scss',
     ])
     .addEntry('masonry', [
@@ -81,43 +71,17 @@ Encore
         './.dev/site/js/lightbox.js',
     ])
     .copyFiles({
-        from: './.dev/site/images',
+        from: './.dev/admin/images',
 
         // optional target path, relative to the output dir
         to: 'images/[path][name].[ext]',
-    });
-
-const siteConfig = Encore.getWebpackConfig();
-
-// MEDIA CONFIGURATION ---------------------------------------
-
-// Module build configuration
-Encore.reset();
-Encore
-    .setOutputPath('media/com_bpgallery')
-    .setPublicPath('/media/com_bpgallery/')
-    .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
-    .enableSassLoader()
-    .disableSingleRuntimeChunk()
-    .enableVersioning(false)
-    .enableSourceMaps(!Encore.isProduction())
-    .configureBabel(() => {
-    }, {
-        useBuiltIns: 'usage',
-        corejs: 3
     })
-    .addExternals({
-        jquery: 'jQuery',
-        joomla: 'Joomla',
-    })
-    .addEntry('modal_image', './.dev/media/js/modal_image.js')
     .configureFilenames({
         css: 'css/[name].css',
         js: 'js/[name].js'
     });
 
-const mediaConfig = Encore.getWebpackConfig();
+const assetsConfig = Encore.getWebpackConfig();
 
 // Export configurations
-module.exports = [adminConfig, siteConfig, mediaConfig];
+module.exports = [assetsConfig];

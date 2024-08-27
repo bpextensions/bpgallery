@@ -1,14 +1,14 @@
 {
     "name": "com_bpgallery",
-    "version": "1.0.0",
-    "description": "Joomla! 3 gallery component",
+    "version": "5.0.0",
+    "description": "Joomla! 5 gallery component",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "./node_modules/.bin/encore dev --progress",
-        "watch": "./node_modules/.bin/encore dev --watch",
-        "watch-prod": "./node_modules/.bin/encore prod --watch",
-        "prod": "./node_modules/.bin/encore prod --progress",
-        "build": "./node_modules/.bin/encore prod --progress"
+        "dev": "encore dev --progress",
+        "watch": "encore dev --watch",
+        "watch-prod": "encore prod --watch",
+        "prod": "encore prod --progress",
+        "build": "encore prod --progress"
     },
     "repository": {
         "type": "git",
@@ -21,16 +21,21 @@
     },
     "homepage": "https://github.com/bestproject/bpgallery#readme",
     "devDependencies": {
+        "@babel/plugin-transform-class-properties": "latest",
         "@babel/preset-env": "^7.12.11",
-        "@symfony/webpack-encore": "^0.30.2",
+        "@symfony/webpack-encore": "^4.3",
+        "autoprefixer": "^10.4",
         "core-js": "^3.8.3",
+        "crc": "^4.3.2",
+        "file-loader": "^6.2",
         "imagesloaded": "^4.1.4",
         "magnific-popup": "^1.1.0",
         "masonry-layout": "^4.2.2",
-        "node-sass": "^4.14.1",
-        "sass-loader": "^8.0.2",
+        "postcss-loader": "^7.3",
+        "sass": "latest",
+        "sass-loader": "^13",
         "serialize-javascript": "^3.1.0",
-        "webpack-notifier": "^1.12.0"
+        "webpack-notifier": "^1.15"
     },
     "dependencies": {
         "caniuse-lite": "^1.0.30001181"
