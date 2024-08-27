@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <fieldset addfieldpath="/administrator/components/com_bpgallery/models/fields">
+	<fieldset addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field">
 
         <field
                 name="id"
@@ -59,7 +59,7 @@
 			description="COM_BPGALLERY_FIELD_CATEGORY_DESC"
 			extension="com_bpgallery"
 			required="true"
-			addfieldpath="/administrator/components/com_categories/models/fields"
+			addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field"
 			default=""
 		/>
 
