@@ -13,12 +13,18 @@ administrator/components/*
 !administrator/components/com_bpgallery
 administrator/components/com_bpgallery/assets
 !administrator/components/com_bpgallery/models
+!administrator/components/com_bpgallery/forms
 !administrator/components/com_bpgallery/src
 !administrator/components/com_bpgallery/src/Controller
 !administrator/components/com_bpgallery/src/Model
 !administrator/components/com_bpgallery/src/Field
-!administrator/components/com_bpgallery/models/fields
-!administrator/components/com_bpgallery/models/fields/**
+!administrator/components/com_bpgallery/src/Helper
+!administrator/components/com_bpgallery/src/Field/Modal
+!administrator/components/com_bpgallery/src/Table
+!administrator/components/com_bpgallery/src/View
+!administrator/components/com_bpgallery/src/View/**
+!administrator/components/com_bpgallery/tmpl
+!administrator/components/com_bpgallery/tmpl/**
 
 !administrator/manifests
 administrator/manifests/*
