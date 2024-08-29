@@ -79,8 +79,7 @@ class BPGalleryComponent extends MVCComponent implements
      */
     public const CONDITION_TRASHED = -2;
     /** @var array Supported functionality */
-    protected $supportedFunctionality = [
-        'core.featured' => true,
+    protected array $supportedFunctionality = [
         'core.state'    => true,
     ];
 
@@ -186,7 +185,7 @@ class BPGalleryComponent extends MVCComponent implements
     /**
      * Returns a table name for the state association
      *
-     * @param   string  $section  An optional section to separate different areas in the component
+     * @param   string|null  $section  An optional section to separate different areas in the component
      *
      * @return  string
      */
