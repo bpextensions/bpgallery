@@ -16,13 +16,9 @@
 	<namespace path="src">BPExtensions\Component\BPGallery</namespace>
 
 	<files folder="site">
-		<folder>assets</folder>
 		<folder>layouts</folder>
 		<folder>src</folder>
 		<folder>tmpl</folder>
-		<filename>bpgallery.php</filename>
-		<filename>controller.php</filename>
-		<filename>router.php</filename>
 	</files>
 
 	<languages folder="site">
@@ -59,14 +55,7 @@
 	<administration>
 
 		<files folder="admin">
-			<folder>assets</folder>
-			<folder>controllers</folder>
-			<folder>helpers</folder>
-			<folder>install</folder>
-			<folder>language</folder>
-			<folder>models</folder>
-			<folder>tables</folder>
-			<folder>views</folder>
+			<folder>src</folder>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
