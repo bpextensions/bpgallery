@@ -1,35 +1,44 @@
 <?php
 
 /**
- * @author        ${author.name} (${author.email})
- * @website        ${author.url}
- * @copyright    ${copyrights}
- * @license        ${license.url} ${license.name}
- * @package        ${package}
+ * @author            ${author.name} (${author.email})
+ * @website           ${author.url}
+ * @copyright         ${copyrights}
+ * @license           ${license.url} ${license.name}
+ * @package           ${package}
  * @subpackage        ${subpackage}
  */
 
-use Joomla\Utilities\ArrayHelper;
+namespace BPExtensions\Component\BPGallery\Administrator\Model;
 
 defined('_JEXEC') or die;
 
+use Exception;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Table\Table;
+use Joomla\Component\Categories\Administrator\Table\CategoryTable;
+use Joomla\Database\DatabaseQuery;
+use Joomla\Utilities\ArrayHelper;
+
+
 /**
  * Methods supporting a list of images records.
- *
  */
-class BPGalleryModelImages extends JModelList
+class ImagesModel extends ListModel
 {
     /**
      * Constructor.
      *
-     * @param array $config An optional associative array of configuration settings.
+     * @param   array  $config  An optional associative array of configuration settings.
      *
-     * @see     JControllerLegacy
+     * @throws Exception
+     * @see     ListModel
      */
     public function __construct($config = [])
     {
         if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = array(
+            $config['filter_fields'] = [
                 'id',
                 'a.id',
                 'title',
@@ -61,7 +70,7 @@ class BPGalleryModelImages extends JModelList
                 'published',
                 'level',
                 'c.level',
-            );
+            ];
         }
 
         parent::__construct($config);
@@ -72,7 +81,7 @@ class BPGalleryModelImages extends JModelList
      *
      * @return  array
      */
-    public function &getCategoryOrders()
+    public function &getCategoryOrders(): array
     {
         if (!isset($this->cache['categoryorders'])) {
             $db    = $this->getDbo();
@@ -91,25 +100,24 @@ class BPGalleryModelImages extends JModelList
     /**
      * Returns a reference to the a Table object, always creating it.
      *
-     * @param   string  $type    The table type to instantiate
-     * @param   string  $prefix  A prefix for the table class name. Optional.
-     * @param   array   $config  Configuration array for model. Optional.
+     * @param   string  $name     The table type to instantiate
+     * @param   string  $prefix   A prefix for the table class name. Optional.
+     * @param   array   $options  Configuration array for model. Optional.
      *
-     * @return  JTable  A JTable object
+     * @return  Table  A Table object
+     * @throws Exception
      */
-    public function getTable($type = 'Image', $prefix = 'BPGalleryTable', $config = [])
+    public function getTable($name = 'Image', $prefix = 'Administrator', $options = []): Table
     {
-        return JTable::getInstance($type, $prefix, $config);
+        return parent::getTable($name, $prefix, $options);
     }
 
     /**
      * Build an SQL query to load the list data.
      *
-     * @return  JDatabaseQuery
-     *
-     * @since   1.6
+     * @return  DatabaseQuery
      */
-    protected function getListQuery()
+    protected function getListQuery(): DatabaseQuery
     {
         $db    = $this->getDbo();
         $query = $db->getQuery(true);
@@ -173,7 +181,7 @@ class BPGalleryModelImages extends JModelList
         // Case: Using both categories filter and by level filter
         if (count($categoryId)) {
             $categoryId = ArrayHelper::toInteger($categoryId);
-            $categoryTable = JTable::getInstance('Category', 'JTable');
+            $categoryTable = new CategoryTable($this->getDbo(), $this->getDispatcher());
             $subCatItemsWhere = [];
 
             foreach ($categoryId as $filter_catid) {
@@ -211,7 +219,7 @@ class BPGalleryModelImages extends JModelList
         $orderCol  = $this->state->get('list.ordering', 'a.id');
         $orderDirn = $this->state->get('list.direction', 'DESC');
 
-        if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
+        if ($orderCol === 'a.ordering' || $orderCol === 'category_title') {
             $orderCol = 'c.title ' . $orderDirn . ', a.ordering';
         }
 
@@ -231,7 +239,7 @@ class BPGalleryModelImages extends JModelList
      *
      * @return  string  A store id.
      */
-    protected function getStoreId($id = '')
+    protected function getStoreId($id = ''): string
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter.search');
@@ -253,7 +261,7 @@ class BPGalleryModelImages extends JModelList
      *
      * @return  void
      */
-    protected function populateState($ordering = 'a.id', $direction = 'desc')
+    protected function populateState($ordering = 'a.id', $direction = 'desc'): void
     {
         // Load the filter state.
         $this->setState(
@@ -278,7 +286,7 @@ class BPGalleryModelImages extends JModelList
         );
 
         // Load the parameters.
-        $this->setState('params', JComponentHelper::getParams('com_bpgallery'));
+        $this->setState('params', ComponentHelper::getParams('com_bpgallery'));
 
         // List state information.
         parent::populateState($ordering, $direction);
