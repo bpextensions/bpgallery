@@ -10,7 +10,10 @@
 	<version>${build.version}</version>
 	<description>MOD_BPGALLERY_XML_DESCRIPTION</description>
 
-	<files>
+
+    <namespace path="src">BPExtensions\Module\BPGallery</namespace>
+
+    <files>
 		<filename module="mod_bpgallery">mod_bpgallery.php</filename>
 		<folder>tmpl</folder>
 		<filename>helper.php</filename>
@@ -313,10 +316,7 @@
 				<field
 						name="cachemode"
 						type="hidden"
-						default="id">
-					<option
-							value="id"></option>
-				</field>
+                        default="id"/>
 
 				<field
 						name="cache_time"
