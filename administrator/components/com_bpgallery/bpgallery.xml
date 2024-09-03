@@ -11,7 +11,7 @@
     <description>COM_BPGALLERY_XML_DESCRIPTION</description>
 
     <!-- Install/Upgdate script -->
-	<scriptfile>script.php</scriptfile>
+	<scriptfile>install/script.php</scriptfile>
 
 	<namespace path="src">BPExtensions\Component\BPGallery</namespace>
 
@@ -35,20 +35,20 @@
 
     <install> <!-- Runs on install -->
         <sql>
-			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+			<file driver="mysql" charset="utf8">install/sql/install.mysql.utf8.sql</file>
         </sql>
     </install>
     
 	<uninstall> <!-- Runs on uninstall -->
 		<sql>
-			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+			<file driver="mysql" charset="utf8">install/sql/uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
 
 	<!-- Update database queries -->
 	<update>
 		<schemas>
-			<schemapath type="mysql">sql/updates/mysql</schemapath>
+			<schemapath type="mysql">install/sql/updates/mysql</schemapath>
 		</schemas>
 	</update>
 
@@ -56,9 +56,10 @@
 
 		<files folder="admin">
 			<folder>src</folder>
+			<folder>services</folder>
+			<filename>tmpl</filename>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>
-			<filename>controller.php</filename>
 		</files>
 
 		<languages folder="admin">
@@ -90,18 +91,30 @@
 					alt="BPGallery/Categories"
 			>
 				COM_BPGALLERY_CATEGORIES
+				<params>
+					<menu-quicktask-title>COM_CONTENT_MENUS_NEW_CATEGORY</menu-quicktask-title>
+					<menu-quicktask>index.php?option=com_categories&amp;view=category&amp;layout=edit&amp;extension=com_bpgallery</menu-quicktask>
+				</params>
 			</menu>
 			<menu
 					link="option=com_fields&amp;context=com_bpgallery.image"
 					alt="BPGallery/Fields"
 			>
 				JGLOBAL_FIELDS
+				<params>
+					<menu-quicktask-title>COM_BPGALLERY_ADD_FIELD</menu-quicktask-title>
+					<menu-quicktask>index.php?option=com_fields&amp;view=field&amp;layout=edit&amp;context=com_bpgallery.image</menu-quicktask>
+				</params>
 			</menu>
 			<menu
 					link="option=com_fields&amp;view=groups&amp;context=com_bpgallery.image"
 					alt="BPGallery/FieldsGroups"
 			>
 				JGLOBAL_FIELD_GROUPS
+				<params>
+					<menu-quicktask-title>COM_BPGALLERY_ADD_FIELD_GROUP</menu-quicktask-title>
+					<menu-quicktask>index.php?option=com_fields&amp;view=group&amp;layout=edit&amp;context=com_bpgallery.image</menu-quicktask>
+				</params>
 			</menu>
 		</submenu>
         
