@@ -32,6 +32,7 @@ abstract class AssociationHelper extends CategoryAssociationHelper
      * @param   string   $view  Name of the view
      *
      * @return  array   Array of associations for the item
+     * @throws Exception
      */
     public static function getAssociations($id = 0, $view = null, $layout = null): array
     {
