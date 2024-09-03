@@ -30,6 +30,7 @@
 
     <target name="build:com_bpgallery">
         <echo msg="Creating component directories"/>
+        <mkdir dir="./.build"/>
         <mkdir dir="./.build/com_bpgallery/admin"/>
         <mkdir dir="./.build/com_bpgallery/site"/>
         <mkdir dir="./.build/com_bpgallery/install"/>
@@ -41,7 +42,7 @@
         <copy todir="./.build/com_bpgallery/admin">
             <fileset dir="./administrator/components/com_bpgallery">
                 <include name="**/*"/>
-                <exclude name="install/upgrade.php"/>
+                <exclude name="install/script.php"/>
             </fileset>
             <filterchain>
                 <expandproperties/>
@@ -72,7 +73,7 @@
 
         <copy todir="./.build/com_bpgallery/install">
             <fileset dir="./administrator/components/com_bpgallery/install/">
-                <include name="upgrade.php"/>
+                <include name="script.php"/>
                 <include name="defaults.json"/>
             </fileset>
             <filterchain>
