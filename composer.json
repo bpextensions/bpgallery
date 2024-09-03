@@ -22,5 +22,10 @@
         "ext-json": "*",
         "php": "^8",
         "ext-simplexml": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
