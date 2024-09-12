@@ -9,20 +9,22 @@
  * @subpackage        ${subpackage}
  */
 
-namespace BPExtensions\Component\BPGallery\Administrator\View;
+namespace BPExtensions\Component\BPGallery\Administrator\View\Images;
 
 defined('_JEXEC') or die;
 
+use BPExtensions\Component\BPGallery\Administrator\Extension\BPGalleryComponent;
 use Exception;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Toolbar\Button\DropdownButton;
 use Joomla\CMS\Toolbar\Toolbar;
-use Joomla\CMS\Toolbar\ToolbarFactoryInterface;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\User\CurrentUserTrait;
 use Joomla\Component\Content\Administrator\Helper\ContentHelper;
 use SimpleXMLElement;
 
@@ -31,6 +33,8 @@ use SimpleXMLElement;
  */
 class HtmlView extends BaseHtmlView
 {
+    use CurrentUserTrait;
+
     /**
      * Form object for search filters
      *
@@ -61,6 +65,14 @@ class HtmlView extends BaseHtmlView
      * @var   object
      */
     protected $state;
+
+    /**
+     * Are hits being recorded on the site?
+     *
+     * @var   boolean
+     */
+    protected $hits = false;
+
     /**
      * All transition, which can be executed of one if the items
      *
@@ -91,6 +103,7 @@ class HtmlView extends BaseHtmlView
         $this->state         = $this->get('State');
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
+        $this->hits = ComponentHelper::getParams('com_bpgallery')->get('record_hits', 1) === 1;
 
         $this->categories = $this->get('CategoryOrders');
 
@@ -142,58 +155,62 @@ class HtmlView extends BaseHtmlView
         /**
          * @var Toolbar $toolbar
          */
-        $toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar();
+        $toolbar = $this->getDocument()->getToolbar();
 
-        if (count($user->getAuthorisedCategories('com_bpgallery', 'core.create')) > 0) {
+        if ($canDo->get('core.create') || \count($user->getAuthorisedCategories('com_bpgallery', 'core.create')) > 0) {
             $toolbar->addNew('image.add');
         }
 
-        if (($canDo->get('core.edit'))) {
-            $toolbar->editList('image.edit');
-            $toolbar->custom(
-                'images.recreate',
-                'loop.png',
-                'loop_f2.png',
-                'COM_BPGALLERY_TOOLBAR_RECREATE',
-                true
-            );
-        }
+        if (!$this->isEmptyState && $canDo->get('core.edit.state')) {
+            /** @var  DropdownButton $dropdown */
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
 
-        if ($canDo->get('core.edit.state')) {
-            if ($this->state->get('filter.published') != 2) {
-                $toolbar->publish('images.publish', 'JTOOLBAR_PUBLISH', true);
-                $toolbar->unpublish('images.unpublish', 'JTOOLBAR_UNPUBLISH', true);
-            }
+            $childBar = $dropdown->getChildToolbar();
 
-            if ($this->state->get('filter.published') != -1) {
-                if ($this->state->get('filter.published') != 2) {
-                    $toolbar->archiveList('images.archive');
-                } elseif ($this->state->get('filter.published') == 2) {
-                    $toolbar->unarchiveList('images.publish');
+            $childBar->customButton('recreate', 'COM_BPGALLERY_TOOLBAR_RECREATE', 'image.recreate')
+                ->listCheck(true)
+                ->icon('icon-project-diagram');
+
+            $childBar->separatorButton('transition-separator');
+
+            if ($canDo->get('core.edit.state')) {
+                $childBar->publish('images.publish')->listCheck(true);
+
+                $childBar->unpublish('images.unpublish')->listCheck(true);
+
+                $childBar->archive('images.archive')->listCheck(true);
+
+                $childBar->checkin('images.checkin');
+
+                if ($this->state->get('filter.published') !== BPGalleryComponent::CONDITION_TRASHED) {
+                    $childBar->trash('images.trash')->listCheck(true);
                 }
             }
+
+            // Add a batch button
+            if (
+                $user->authorise('core.create', 'com_bpgallery')
+                && $user->authorise('core.edit', 'com_bpgallery')
+            ) {
+                $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
+                    ->popupType('inline')
+                    ->textHeader(Text::_('COM_BPGALLERY_BATCH_OPTIONS'))
+                    ->url('#joomla-dialog-batch')
+                    ->modalWidth('800px')
+                    ->modalHeight('fit-content')
+                    ->listCheck(true);
+            }
         }
 
-        if ($canDo->get('core.edit.state')) {
-            $toolbar->checkin('images.checkin');
-        }
-
-        // Add a batch button
-        if ($user->authorise('core.create', 'com_bpgallery')
-            && $user->authorise('core.edit', 'com_bpgallery')
-            && $user->authorise('core.edit.state', 'com_bpgallery')) {
-            $title = Text::_('JTOOLBAR_BATCH');
-
-            // Instantiate a new JLayoutFile instance and render the batch button
-            $layout = new FileLayout('joomla.toolbar.batch');
-
-            $dhtml = $layout->render(['title' => $title]);
-            $toolbar->customButton('Custom', $dhtml, 'batch');
-        }
-
-        if ($this->state->get('filter.published') === -2 && $canDo->get('core.delete')) {
-            $toolbar->delete('images.delete')
-                ->text('JTOOLBAR_EMPTY_TRASH')
+        if (!$this->isEmptyState && $this->state->get(
+                'filter.published'
+            ) === BPGalleryComponent::CONDITION_TRASHED && $canDo->get('core.delete')) {
+            $toolbar->delete('images.delete', 'JTOOLBAR_DELETE_FROM_TRASH')
                 ->message('JGLOBAL_CONFIRM_DELETE')
                 ->listCheck(true);
         }
