@@ -11,28 +11,59 @@
 
 defined('_JEXEC') or die;
 
-$published = $this->state->get('filter.published');
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+
+/** @var \BPExtensions\Component\BPGallery\Administrator\View\Images\HtmlView $this */
+
+$params = ComponentHelper::getParams('com_bpgallery');
+
+$published = (int)$this->state->get('filter.published');
+
+$user = $this->getCurrentUser();
 ?>
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="control-group span6">
-            <div class="controls">
-                <?php echo JHtml::_('batch.language'); ?>
+
+<div class="p-3">
+    <div class="row">
+        <?php
+        if (Multilanguage::isEnabled()) : ?>
+            <div class="form-group col-md-6">
+                <div class="controls">
+                    <?php
+                    echo LayoutHelper::render('joomla.html.batch.language', []); ?>
+                </div>
             </div>
-        </div>
-        <div class="control-group span6">
+        <?php
+        endif; ?>
+        <div class="form-group col-md-6">
             <div class="controls">
-                <?php echo JHtml::_('batch.access'); ?>
+                <?php
+                echo LayoutHelper::render('joomla.html.batch.access', []); ?>
             </div>
         </div>
     </div>
-    <div class="row-fluid">
+    <div class="row">
         <?php if ($published >= 0) : ?>
-            <div class="control-group span6">
+            <div class="form-group col-md-6">
                 <div class="controls">
-                    <?php echo JHtml::_('batch.item', 'com_bpgallery'); ?>
+                    <?php
+                    echo LayoutHelper::render('joomla.html.batch.item', ['extension' => 'com_bpgallery']); ?>
                 </div>
             </div>
         <?php endif; ?>
+        <div class="form-group col-md-6">
+            <div class="controls">
+                <?php
+                echo LayoutHelper::render('joomla.html.batch.tag', []); ?>
+            </div>
+        </div>
     </div>
+</div>
+<div class="btn-toolbar p-3">
+    <joomla-toolbar-button task="images.batch" class="ms-auto">
+        <button type="button" class="btn btn-success"><?php
+            echo Text::_('JGLOBAL_BATCH_PROCESS'); ?></button>
+    </joomla-toolbar-button>
 </div>

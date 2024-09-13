@@ -9,7 +9,7 @@
  * @subpackage        ${subpackage}
  */
 
-namespace BPExtensions\Component\BPGallery\Administrator\View;
+namespace BPExtensions\Component\BPGallery\Administrator\View\Image;
 
 defined('_JEXEC') or die;
 

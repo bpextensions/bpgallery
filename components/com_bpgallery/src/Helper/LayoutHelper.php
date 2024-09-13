@@ -36,8 +36,8 @@ abstract class LayoutHelper
     /**
      * Get thumbnail settings from parameters to use on the helper.
      *
-     * @param Registry $params Params to be used in extraction
-     * @param string $name Name of the parameter holding thumbnail settings.
+     * @param   Registry  $params  Params to be used in extraction
+     * @param   string    $name    Name of the parameter holding thumbnail settings.
      *
      * @return array
      */
@@ -89,13 +89,21 @@ abstract class LayoutHelper
         $AfterDisplayContentEvent  = new GalleryEvent\AfterDisplayContent('AfterDisplayContent', $arguments);
 
         $image->event                       = new stdClass();
-        $image->event->imagePrepare         = $dispatcher->dispatch($ImagePrepareEvent->getName(),
-            $ImagePrepareEvent)->getArgument('result', []);
-        $image->event->afterDisplayTitle    = $dispatcher->dispatch($AfterDisplayTitleEvent->getName(),
-            $AfterDisplayTitleEvent)->getArgument('result', []);
-        $image->event->beforeDisplayContent = $dispatcher->dispatch($BeforeDisplayContentEvent->getName(),
-            $BeforeDisplayContentEvent)->getArgument('result', []);
-        $image->event->afterDisplayContent  = $dispatcher->dispatch($AfterDisplayContentEvent->getName(),
-            $AfterDisplayContentEvent)->getArgument('result', []);
+        $image->event->imagePrepare = $dispatcher->dispatch(
+            $ImagePrepareEvent->getName(),
+            $ImagePrepareEvent
+        )->getArgument('result', []);
+        $image->event->afterDisplayTitle = $dispatcher->dispatch(
+            $AfterDisplayTitleEvent->getName(),
+            $AfterDisplayTitleEvent
+        )->getArgument('result', []);
+        $image->event->beforeDisplayContent = $dispatcher->dispatch(
+            $BeforeDisplayContentEvent->getName(),
+            $BeforeDisplayContentEvent
+        )->getArgument('result', []);
+        $image->event->afterDisplayContent = $dispatcher->dispatch(
+            $AfterDisplayContentEvent->getName(),
+            $AfterDisplayContentEvent
+        )->getArgument('result', []);
     }
 }

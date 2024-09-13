@@ -15,7 +15,6 @@ defined('_JEXEC') or die;
 
 use BPExtensions\Component\BPGallery\Administrator\Extension\BPGalleryComponent;
 use Exception;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
@@ -103,7 +102,6 @@ class HtmlView extends BaseHtmlView
         $this->state         = $this->get('State');
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
-        $this->hits = ComponentHelper::getParams('com_bpgallery')->get('record_hits', 1) === 1;
 
         $this->categories = $this->get('CategoryOrders');
 
@@ -159,6 +157,14 @@ class HtmlView extends BaseHtmlView
 
         if ($canDo->get('core.create') || \count($user->getAuthorisedCategories('com_bpgallery', 'core.create')) > 0) {
             $toolbar->addNew('image.add');
+
+            $toolbar->popupButton('upload', 'COM_BPGALLERY_BUTTON_UPLOAD_LABEL')
+                ->popupType('inline')
+                ->icon('icon-upload')
+                ->textHeader(Text::_('COM_BPGALLERY_IMAGES_UPLOAD_HEADER'))
+                ->url('#bpgallery_upload_form')
+                ->modalWidth('800px')
+                ->modalHeight('fit-content');
         }
 
         if (!$this->isEmptyState && $canDo->get('core.edit.state')) {

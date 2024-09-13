@@ -74,7 +74,7 @@ class ImageController extends FormController
          */
         $app = Factory::getApplication();
         $app->allowCache(false);
-        $debugMode = $app->isClient('administrator') || $app->get('debug');
+        $debug = $app->get('debug');
 
         // Set mime
         $app->mimeType = 'application/json';
@@ -98,7 +98,7 @@ class ImageController extends FormController
         if (!in_array($file['type'], $permitted_types, true)) {
 
             // Useful debug message
-            if ($debugMode) {
+            if ($debug) {
                 echo json_encode(['error' => Text::sprintf('COM_BPGALLERY_ERROR_UNSUPPORTED_FILE_S', $file['type'])],
                     JSON_THROW_ON_ERROR);
             }
@@ -111,14 +111,17 @@ class ImageController extends FormController
             'catid'            => $this->input->getInt('category_id'),
             'upload_image'     => $file['tmp_name'],
             'upload_file_name' => $file['name'],
-            'language'         => $app->getUserStateFromRequest($this->option . '.images.filter.language',
-                'filter_language', '')
+            'language' => $app->getUserStateFromRequest(
+                $this->option . '.images.filter.language',
+                'filter_language',
+                '*'
+            )
         ];
 
         // Access check.
         if (!$this->allowAdd($data)) {
             // Useful debug message
-            if ($debugMode) {
+            if ($debug) {
                 echo json_encode(['error' => Text::_('COM_BPGALLERY_ERROR_MISSING_ADD_PERMISSION')],
                     JSON_THROW_ON_ERROR);
             }
@@ -135,30 +138,31 @@ class ImageController extends FormController
         $response = [];
 
         // If save process succeed
-        if ($model->save($data)) {
-            // Useful debug message
-            if ($debugMode) {
+        try {
+            if ($model->save($data)) {
+                // Useful debug message
+                if ($debug) {
+                    $response = array_merge($response, [
+                        'result' => Text::_('COM_BPGALLERY_SUCCESS_ADDED'),
+                    ]);
+                }
+
+                // Send proper status code
+                $app->setHeader('status', 200);
+            }
+        } catch (Exception $e) {
+            $app->setHeader('status', 500);
+            if ($debug) {
                 $response = array_merge($response, [
-                    'result' => Text::_('COM_BPGALLERY_SUCCESS_ADDED'),
-                    'data'   => $data
+                    'error' => $e->getMessage(),
                 ]);
             }
-
-            // Send proper status code
-            $app->setHeader('status', 200);
-
-            // save process failed
-        } else {
-            // Useful debug message
-            if ($debugMode) {
+        } finally {
+            if ($debug) {
                 $response = array_merge($response, [
-                    'error' => Text::_('COM_BPGALLERY_ERROR_SAVING_IMAGE_DATA'),
                     'data'  => $data
                 ]);
             }
-
-            // Send proper status code
-            $app->setHeader('status', 500);
         }
 
         // Set peak memory usage

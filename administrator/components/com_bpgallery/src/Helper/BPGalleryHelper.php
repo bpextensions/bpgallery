@@ -84,7 +84,7 @@ abstract class BPGalleryHelper extends ContentHelper
      *
      * @var Registry|null
      */
-    private static ?Registry $params;
+    private static ?Registry $params = null;
 
     /**
      * Adds Count Items for Category Manager.
@@ -229,7 +229,7 @@ abstract class BPGalleryHelper extends ContentHelper
         bool $relative = true
     ): array|string {
         $filename           = (is_object($image) ? basename($image->filename) : basename($image));
-        $relative_base_path = self::getParam('images_path', '/images/gallery');
+        $relative_base_path = rtrim(self::getParam('images_path', '/images/gallery'), '/');
         $options['quality'] = self::getParam('quality', '85');
         $absolute_base_path = JPATH_ROOT . $relative_base_path;
         $original_relative  = $relative_base_path . '/original/' . $filename;
@@ -238,7 +238,7 @@ abstract class BPGalleryHelper extends ContentHelper
         $directory = (int)$width . 'x' . (int)$height . '-' . $method;
 
         $output_base     = $relative_base_path . '/thumbs/' . $directory;
-        $output_relative = $output_base . '/' . $filename;
+        $output_relative = rtrim($output_base, '/') . '/' . $filename;
         $output_absolute = JPATH_ROOT . $output_relative;
 
         // If thumbnail doesn't exists, create it
@@ -334,9 +334,9 @@ abstract class BPGalleryHelper extends ContentHelper
                 return self::$defaultImage;
             }
 
-            if ($image_type === 'image/jpeg') {
+            if ($image_type === IMAGETYPE_JPEG) {
                 $options['quality'] = (int)$options['quality'];
-            } elseif ($image_type === 'image/png') {
+            } elseif ($image_type === IMAGETYPE_PNG) {
                 $options['quality'] = round((int)$options['quality'] / 10);
             }
 

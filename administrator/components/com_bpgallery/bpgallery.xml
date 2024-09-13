@@ -28,9 +28,11 @@
 		<language tag="pl-PL">language/pl-PL/com_bpgallery.sys.ini</language>
 	</languages>
 
-	<media folder="media" destination="com_bpgallery">
+    <media destination="com_bpgallery" folder="media">
 		<folder>js</folder>
 		<folder>css</folder>
+        <folder>images</folder>
+        <filename>joomla.asset.json</filename>
 	</media>
 
     <install> <!-- Runs on install -->

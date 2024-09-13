@@ -26,7 +26,7 @@ $user = $this->getCurrentUser();
 if ($user->authorise('core.create', 'com_bpgallery') || count(
         $user->getAuthorisedCategories('com_bpgallery', 'core.create')
     ) > 0) {
-    $displayData['createURL'] = 'index.php?option=com_bpgallery&task=image.add';
+    $displayData['createURL'] = '#bpgallery_upload_form';
 }
 
 echo LayoutHelper::render('joomla.content.emptystate', $displayData);

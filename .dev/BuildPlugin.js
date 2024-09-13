@@ -115,7 +115,7 @@ class BuildPlugin {
         compiler.hooks.done.tap('BuildPlugin', (compilation) => {
 
             // Create assets file
-            let joomla_assets_buffer = fs.readFileSync(__dirname + '/joomla.assets.json');
+            let joomla_assets_buffer = fs.readFileSync(__dirname + '/joomla.asset.json');
             let joomla_assets = JSON.parse(joomla_assets_buffer.toString());
             let manifest_buffer = fs.readFileSync(media_path + '/manifest.json');
             let manifest = JSON.parse(manifest_buffer.toString());
@@ -143,7 +143,7 @@ class BuildPlugin {
             }
 
             try {
-                fs.writeFileSync(media_path + '/joomla.assets.json', JSON.stringify(joomla_assets));
+                fs.writeFileSync(media_path + '/joomla.asset.json', JSON.stringify(joomla_assets));
             } catch (e) {
                 return false;
             }

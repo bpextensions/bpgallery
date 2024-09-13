@@ -31,23 +31,22 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\Helper\ContentHelper as LibraryContentHelper;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Tag\TagServiceInterface;
 use Joomla\CMS\Tag\TagServiceTrait;
-use Joomla\CMS\Workflow\WorkflowServiceInterface;
-use Joomla\CMS\Workflow\WorkflowServiceTrait;
 use Psr\Container\ContainerInterface;
 
 /**
  * Component class for com_bpgallery
  */
 class BPGalleryComponent extends MVCComponent implements
-    BootableExtensionInterface, CategoryServiceInterface, FieldsServiceInterface, AssociationServiceInterface,
-    WorkflowServiceInterface, RouterServiceInterface, TagServiceInterface
+    BootableExtensionInterface,
+    CategoryServiceInterface,
+    FieldsServiceInterface,
+    AssociationServiceInterface,
+    RouterServiceInterface
 {
     use AssociationServiceTrait;
     use RouterServiceTrait;
     use HTMLRegistryAwareTrait;
-    use WorkflowServiceTrait;
     use CategoryServiceTrait, TagServiceTrait {
         CategoryServiceTrait::getTableNameForSection insteadof TagServiceTrait;
         CategoryServiceTrait::getStateColumnForSection insteadof TagServiceTrait;
@@ -56,7 +55,7 @@ class BPGalleryComponent extends MVCComponent implements
     /**
      * The trashed condition
      */
-    const CONDITION_NAMES = [
+    public const CONDITION_NAMES = [
         self::CONDITION_PUBLISHED   => 'JPUBLISHED',
         self::CONDITION_UNPUBLISHED => 'JUNPUBLISHED',
         self::CONDITION_ARCHIVED    => 'JARCHIVED',
