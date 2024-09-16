@@ -52,8 +52,9 @@ class ImageController extends FormController
         $model = $this->getModel('Image', 'Administrator', []);
 
         // Preset the redirect
-        $this->setRedirect(Route::_('index.php?option=com_govarticle&view=articles' . $this->getRedirectToListAppend(),
-            false));
+        $this->setRedirect(
+            Route::_('index.php?option=com_bpgallery&view=images' . $this->getRedirectToListAppend(), false)
+        );
 
         return parent::batch($model);
     }

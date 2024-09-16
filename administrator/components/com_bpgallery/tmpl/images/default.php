@@ -11,6 +11,7 @@
 
 defined('_JEXEC') or die;
 
+use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
 use BPExtensions\Component\BPGallery\Administrator\View\Images\HtmlView;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Button\PublishedButton;
@@ -118,6 +119,10 @@ $assoc = Associations::isEnabled();
                                         $listDirn,
                                         $listOrder
                                     ); ?>
+                                </th>
+                                <th scope="col" class="w-1 text-center">
+                                    <?php
+                                    echo Text::_('COM_BPGALLERY_HEADING_THUMBNAIL') ?>
                                 </th>
                                 <th scope="col" style="min-width:100px">
                                     <?php
@@ -288,6 +293,11 @@ $assoc = Associations::isEnabled();
                                             $item->publish_down
                                         );
                                         ?>
+                                    </td>
+                                    <td>
+                                        <img src="<?php
+                                        echo BPGalleryHelper::getThumbnail($item, 80, 60) ?>" alt="<?php
+                                        echo htmlspecialchars($item->title) ?>" class="img-fluid"/>
                                     </td>
                                     <th scope="row" class="has-context">
                                         <div class="break-word">

@@ -14,6 +14,7 @@ namespace BPExtensions\Component\BPGallery\Administrator\View\Images;
 defined('_JEXEC') or die;
 
 use BPExtensions\Component\BPGallery\Administrator\Extension\BPGalleryComponent;
+use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
@@ -24,7 +25,6 @@ use Joomla\CMS\Toolbar\Button\DropdownButton;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\User\CurrentUserTrait;
-use Joomla\Component\Content\Administrator\Helper\ContentHelper;
 use SimpleXMLElement;
 
 /**
@@ -145,7 +145,7 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        $canDo = ContentHelper::getActions('com_bpgallery', 'category', $this->state->get('filter.category_id'));
+        $canDo = BPGalleryHelper::getActions('com_bpgallery', 'category', $this->state->get('filter.category_id'));
         $user  = Factory::getApplication()->getIdentity();
 
         ToolbarHelper::title(Text::_('COM_BPGALLERY_MANAGER_IMAGES'), 'image images');
@@ -178,13 +178,12 @@ class HtmlView extends BaseHtmlView
 
             $childBar = $dropdown->getChildToolbar();
 
-            $childBar->customButton('recreate', 'COM_BPGALLERY_TOOLBAR_RECREATE', 'image.recreate')
-                ->listCheck(true)
-                ->icon('icon-project-diagram');
-
-            $childBar->separatorButton('transition-separator');
 
             if ($canDo->get('core.edit.state')) {
+                $childBar->basicButton('recreate', 'COM_BPGALLERY_TOOLBAR_RECREATE', 'images.recreate')
+                    ->listCheck(true)
+                    ->icon('icon-refresh');
+
                 $childBar->publish('images.publish')->listCheck(true);
 
                 $childBar->unpublish('images.unpublish')->listCheck(true);
@@ -213,9 +212,11 @@ class HtmlView extends BaseHtmlView
             }
         }
 
-        if (!$this->isEmptyState && $this->state->get(
-                'filter.published'
-            ) === BPGalleryComponent::CONDITION_TRASHED && $canDo->get('core.delete')) {
+        if (
+            !$this->isEmptyState &&
+            $this->state->get('filter.published') === BPGalleryComponent::CONDITION_TRASHED &&
+            $canDo->get('core.delete')
+        ) {
             $toolbar->delete('images.delete', 'JTOOLBAR_DELETE_FROM_TRASH')
                 ->message('JGLOBAL_CONFIRM_DELETE')
                 ->listCheck(true);

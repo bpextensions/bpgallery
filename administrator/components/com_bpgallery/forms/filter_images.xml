@@ -4,38 +4,50 @@
 		<field
 			name="search"
 			type="text"
+			inputmode="search"
 			label="COM_BPGALLERY_IMAGES_FILTER_SEARCH_LABEL"
 			description="COM_BPGALLERY_IMAGES_FILTER_SEARCH_DESC"
 			hint="JSEARCH_FILTER"
 		/>
 
 		<field
-			name="published"
-			type="status"
-			label="JOPTION_SELECT_PUBLISHED"
-			description="JOPTION_SELECT_PUBLISHED_DESC"
-			onchange="this.form.submit();"
-			>
+				name="published"
+				type="status"
+				label="JOPTION_SELECT_PUBLISHED"
+				class="js-select-submit-on-change"
+				extension="com_content"
+		>
 			<option value="">JOPTION_SELECT_PUBLISHED</option>
 		</field>
 
 		<field
-			name="category_id"
-			type="category"
-			label="JOPTION_FILTER_CATEGORY"
-			description="JOPTION_FILTER_CATEGORY_DESC"
-			extension="com_bpgallery"
-			onchange="this.form.submit();"
-			>
-			<option value="">JOPTION_SELECT_CATEGORY</option>
-		</field>
+				name="category_id"
+				type="category"
+				label="JCATEGORY"
+				multiple="true"
+				extension="com_bpgallery"
+				layout="joomla.form.field.list-fancy-select"
+				hint="JOPTION_SELECT_CATEGORY"
+				class="js-select-submit-on-change"
+				published="0,1,2"
+		/>
+
+		<field
+				name="access"
+				type="accesslevel"
+				label="JGRID_HEADING_ACCESS"
+				multiple="true"
+				layout="joomla.form.field.list-fancy-select"
+				hint="JOPTION_SELECT_ACCESS"
+				class="js-select-submit-on-change"
+		/>
 
 		<field
 			name="language"
 			type="contentlanguage"
 			label="JOPTION_FILTER_LANGUAGE"
 			description="JOPTION_FILTER_LANGUAGE_DESC"
-			onchange="this.form.submit();"
+			class="js-select-submit-on-change"
 			>
 			<option value="">JOPTION_SELECT_LANGUAGE</option>
 			<option value="*">JALL</option>
@@ -50,20 +62,19 @@
 			last="10"
 			step="1"
 			languages="*"
-			onchange="this.form.submit();"
+			class="js-select-submit-on-change"
 			>
 			<option value="">JOPTION_SELECT_MAX_LEVELS</option>
 		</field>
 	</fields>
 	<fields name="list">
 		<field
-			name="fullordering"
-			type="list"
-			label="JGLOBAL_SORT_BY"
-			description="JGLOBAL_SORT_BY"
-			statuses="*,0,1,2,-2"
-			onchange="this.form.submit();"
-			default="a.id DESC"
+				name="fullordering"
+				type="list"
+				label="JGLOBAL_SORT_BY"
+				class="js-select-submit-on-change"
+				default="a.id DESC"
+				validate="options"
 			>
 			<option value="">JGLOBAL_SORT_BY</option>
 			<option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
@@ -72,24 +83,34 @@
 			<option value="a.state DESC">JSTATUS_DESC</option>
 			<option value="a.title ASC">COM_BPGALLERY_HEADING_TITLE_ASC</option>
 			<option value="a.title DESC">COM_BPGALLERY_HEADING_TITLE_DESC</option>
-			<option value="a.filename ASC">COM_BPGALLERY_HEADING_FILENAME_ASC</option>
-			<option value="a.filename DESC">COM_BPGALLERY_HEADING_FILENAME_DESC</option>
 			<option value="category_title ASC">JCATEGORY_ASC</option>
 			<option value="category_title DESC">JCATEGORY_DESC</option>
-			<option value="a.language ASC">JGRID_HEADING_LANGUAGE_ASC</option>
-			<option value="a.language DESC">JGRID_HEADING_LANGUAGE_DESC</option>
+			<option value="a.access ASC">JGRID_HEADING_ACCESS_ASC</option>
+			<option value="a.access DESC">JGRID_HEADING_ACCESS_DESC</option>
+			<option value="a.created_by ASC">JAUTHOR_ASC</option>
+			<option value="a.created_by DESC">JAUTHOR_DESC</option>
+			<option value="language ASC" requires="multilanguage">JGRID_HEADING_LANGUAGE_ASC</option>
+			<option value="language DESC" requires="multilanguage">JGRID_HEADING_LANGUAGE_DESC</option>
+			<option value="a.created ASC">JDATE_ASC</option>
+			<option value="a.created DESC">JDATE_DESC</option>
+			<option value="a.modified ASC">COM_BPGALLERY_MODIFIED_ASC</option>
+			<option value="a.modified DESC">COM_BPGALLERY_MODIFIED_DESC</option>
+			<option value="a.publish_up ASC">COM_BPGALLERY_PUBLISH_UP_ASC</option>
+			<option value="a.publish_up DESC">COM_BPGALLERY_PUBLISH_UP_DESC</option>
+			<option value="a.publish_down ASC">COM_BPGALLERY_PUBLISH_DOWN_ASC</option>
+			<option value="a.publish_down DESC">COM_BPGALLERY_PUBLISH_DOWN_DESC</option>
+			<option value="a.filename ASC">COM_BPGALLERY_HEADING_FILENAME_ASC</option>
+			<option value="a.filename DESC">COM_BPGALLERY_HEADING_FILENAME_DESC</option>
 			<option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
 			<option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
 		</field>
 
 		<field
-			name="limit"
-			type="limitbox"
-			label="COM_BPGALLERY_LIST_LIMIT"
-			description="COM_BPGALLERY_LIST_LIMIT_DESC"
-			class="input-mini"
-			default="25"
-			onchange="this.form.submit();"
+				name="limit"
+				type="limitbox"
+				label="JGLOBAL_LIST_LIMIT"
+				default="25"
+				class="js-select-submit-on-change"
 		/>
 	</fields>
 </form>
