@@ -9,7 +9,8 @@
 	<!-- Add fields to the request variables for the layout. -->
     <fields name="request" addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field"
 	>
-        <fieldset name="request" addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field"
+        <fieldset name="request"
+                  addfieldprefix="Joomla\Component\Categories\Administrator\Field"
 		>
 			<field
 				name="id"

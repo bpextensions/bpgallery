@@ -61,7 +61,8 @@ class BuildPlugin {
             const ext = path.extname(assetPath).substring(1);
             const parts = assetPath.split('/').splice(1);
             const filename = path.basename(versionedPath);
-            let name = parts.join('.');
+            // let name = parts.join('.');
+            let name = filename;
             name = name.substring(0, name.length - ext.length - 1);
 
             if (ext === 'css') {

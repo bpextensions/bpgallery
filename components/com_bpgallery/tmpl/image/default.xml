@@ -9,11 +9,11 @@
     <!-- Add fields to the request variables for the layout. -->
     <fields name="request">
         <fieldset name="request"
-                  addfieldpath="/administrator/components/com_bpgallery/models/fields">
+                  addfieldprefix="BPExtensions\Component\BPGallery\Administrator\Field">
 
             <field
                     name="id"
-                    type="modal_bpgalleryimage"
+                    type="modal_image"
                     label="COM_BPGALLERY_FIELD_SELECT_IMAGE_LABEL"
                     description="COM_BPGALLERY_FIELD_SELECT_IMAGE_DESC"
                     required="true"

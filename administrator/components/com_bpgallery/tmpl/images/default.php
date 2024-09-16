@@ -35,7 +35,7 @@ use Joomla\CMS\WebAsset\WebAssetManager;
 $wa = $this->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns')
     ->useScript('multiselect')
-    ->usePreset('component');
+    ->usePreset('com_bpgallery.component');
 
 $app       = Factory::getApplication();
 $user      = $this->getCurrentUser();

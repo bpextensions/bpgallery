@@ -11,7 +11,7 @@
             addfieldpath="/administrator/components/com_categories/models/fields"
     >
         <fieldset name="request"
-                  addfieldpath="/administrator/components/com_bpgallery/models/fields"
+                  addfieldprefix="Joomla\Component\Categories\Administrator\Field"
         >
             <field
                     name="id"

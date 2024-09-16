@@ -30,7 +30,7 @@ $doc   = $app->getDocument();
 $input = $app->input;
 $wa    = $doc->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('com_contenthistory');
-$wa->usePreset('component');
+$wa->usePreset('com_bpgallery.component');
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 

@@ -1,186 +1,246 @@
 <?php
+
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_bpgallery
+ * @package     ${package}
+ * @subpackage  ${subpackage}
  *
- * @copyright   Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright   Copyright (C) ${build.year} ${copyrights},  All rights reserved.
+ * @license     ${license.name}; see ${license.url}
+ * @author      ${author.name}
  */
 
 defined('_JEXEC') or die;
 
-$app = JFactory::getApplication();
+use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
+use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+
+/** @var \BPExtensions\Component\BPGallery\Administrator\View\Images\HtmlView $this */
+
+$app = Factory::getApplication();
 
 if ($app->isClient('site')) {
-    JSession::checkToken('get') or die(JText::_('JINVALID_TOKEN'));
+    Session::checkToken('get') or die(Text::_('JINVALID_TOKEN'));
 }
 
-JLoader::register('BPGalleryHelperRoute', JPATH_ADMINISTRATOR . '/components/com_bpgallery/helpers/route.php');
+/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+$wa = $this->getDocument()->getWebAssetManager();
+$wa->useScript('core')
+    ->useScript('multiselect')
+    ->useScript('modal-content-select')
+    ->usePreset('com_bpgallery.admin-images-modal');
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-
-JHtml::_('behavior.core');
-JHtml::_('bootstrap.tooltip', '.hasTooltip', ['placement' => 'bottom']);
-JHtml::_('bootstrap.popover', '.hasPopover', ['placement' => 'right']);
-JHtml::_('formbehavior.chosen', 'select');
-JHtml::_('behavior.polyfill', ['event'], 'lt IE 9');
-JHtml::_('script', 'com_bpgallery/modal_image.js', ['version' => 'auto', 'relative' => true]);
-
-// Special case for the search field tooltip.
-$searchFilterDesc = $this->filterForm->getFieldAttribute('search', 'description', null, 'filter');
-JHtml::_('bootstrap.tooltip', '#filter_search', ['title' => JText::_($searchFilterDesc), 'placement' => 'bottom']);
-
-$function  = $app->input->getCmd('function', 'jSelectBPGalleryImage');
-$editor    = $app->input->getCmd('editor', '');
+// @todo: Use of Function and Editor is deprecated and should be removed in 6.0. It stays only for backward compatibility.
+$function  = $app->getInput()->getCmd('function', 'jSelectImage');
+$editor    = $app->getInput()->getCmd('editor', '');
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
 $onclick   = $this->escape($function);
+$multilang = Multilanguage::isEnabled();
 
 if (!empty($editor)) {
     // This view is used also in com_menus. Load the xtd script only if the editor is set!
-//	JFactory::getDocument()->addScriptOptions('xtd-bpgalleryimage', array('editor' => $editor));
-    $onclick = "jSelectBPGalleryImage";
+    $this->getDocument()->addScriptOptions('xtd-images', ['editor' => $editor]);
+    $onclick = "jSelectImage";
 }
-
-BPGalleryHelper::includeEntryPointAssets('component');
 ?>
 <div class="container-popup">
 
-    <form
-            action="<?php echo JRoute::_('index.php?option=com_bpgallery&view=images&layout=modal&tmpl=component&editor=' . $editor . '&function=' . $function . '&' . JSession::getFormToken() . '=1'); ?>"
-            method="post" name="adminForm" id="adminForm" class="form-inline">
+    <form action="<?php
+    echo Route::_(
+        'index.php?option=com_bpgallery&view=images&layout=modal&tmpl=component&function=' . $function . '&' . Session::getFormToken(
+        ) . '=1&editor=' . $editor
+    ); ?>" method="post" name="adminForm" id="adminForm">
 
-        <?php echo JLayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+        <?php
+        echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 
         <?php if (empty($this->items)) : ?>
-            <div class="alert alert-no-items">
-                <?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+            <div class="alert alert-info">
+                <span class="icon-info-circle" aria-hidden="true"></span><span class="visually-hidden"><?php
+                    echo Text::_('INFO'); ?></span>
+                <?php
+                echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
             </div>
         <?php else : ?>
-            <table class="table table-striped table-condensed">
+            <table class="table table-sm">
+                <caption class="visually-hidden">
+                    <?php
+                    echo Text::_('COM_BPGALLERY_IMAGES_TABLE_CAPTION'); ?>,
+                    <span id="orderedBy"><?php
+                        echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
+                    <span id="filteredBy"><?php
+                        echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
+                </caption>
                 <thead>
                 <tr>
-                    <th width="1%" class="nowrap center">
-                        <?php echo JHtml::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
+                    <th scope="col" class="w-1 text-center">
+                        <?php
+                        echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
                     </th>
-                    <th class="nowrap hidden-phone">
-                        <?php echo JHtml::_('searchtools.sort', 'COM_BPGALLERY_HEADING_TITLE', 'a.title', $listDirn,
-                            $listOrder); ?>
+                    <th scope="col" class="w-1 text-center">
+                        <?php
+                        echo Text::_('COM_BPGALLERY_HEADING_THUMBNAIL') ?>
                     </th>
-                    <th width="10%" class="nowrap hidden-phone">
-                        <?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn,
-                            $listOrder); ?>
+                    <th scope="col" class="title">
+                        <?php
+                        echo HTMLHelper::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
                     </th>
-                    <th width="10%" class="nowrap hidden-phone">
-                        <?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn,
-                            $listOrder); ?>
+                    <th scope="col" class="w-10 d-none d-md-table-cell">
+                        <?php
+                        echo HTMLHelper::_(
+                            'searchtools.sort',
+                            'JGRID_HEADING_ACCESS',
+                            'a.access',
+                            $listDirn,
+                            $listOrder
+                        ); ?>
                     </th>
-                    <th width="1%" class="nowrap hidden-phone">
-                        <?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+                    <?php
+                    if ($multilang) : ?>
+                        <th scope="col" class="w-15">
+                            <?php
+                            echo HTMLHelper::_(
+                                'searchtools.sort',
+                                'JGRID_HEADING_LANGUAGE',
+                                'language',
+                                $listDirn,
+                                $listOrder
+                            ); ?>
+                        </th>
+                    <?php
+                    endif; ?>
+                    <th scope="col" class="w-10 d-none d-md-table-cell">
+                        <?php
+                        echo HTMLHelper::_('searchtools.sort', 'JDATE', 'a.created', $listDirn, $listOrder); ?>
+                    </th>
+                    <th scope="col" class="w-1 d-none d-md-table-cell">
+                        <?php
+                        echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                 </tr>
                 </thead>
-                <tfoot>
-                <tr>
-                    <td colspan="6">
-                        <?php echo $this->pagination->getListFooter(); ?>
-                    </td>
-                </tr>
-                </tfoot>
                 <tbody>
                 <?php
                 $iconStates = [
                     -2 => 'icon-trash',
-                    0  => 'icon-unpublish',
-                    1  => 'icon-publish',
+                    0 => 'icon-times',
+                    1 => 'icon-check',
                     2  => 'icon-archive',
                 ];
                 ?>
-                <?php foreach ($this->items as $i => $item) :
-                    $ordering = ($listOrder == 'ordering');
-                    $item->cat_link = JRoute::_('index.php?option=com_categories&extension=com_bpgallery&task=edit&type=other&cid[]=' . $item->catid);
-                    $item->item_link = JRoute::_('index.php?option=com_bpgallery&task=image.edit&id=' . (int)$item->id);
-                    $item->thumbnail = BPGalleryHelper::getThumbnail($item, 64, 64, BPGalleryHelper::METHOD_CROP);
-                    $item->thumbnail_preview = BPGalleryHelper::getThumbnail($item, 320, 320,
-                        BPGalleryHelper::METHOD_FIT);
-                    ?>
-                    <?php if ($item->language && JLanguageMultilang::isEnabled()) {
-                    $tag = strlen($item->language);
-                    if ($tag == 5) {
-                        $lang = substr($item->language, 0, 2);
-                    } elseif ($tag == 6) {
-                        $lang = substr($item->language, 0, 3);
-                    } else {
-                        $lang = '';
-                    }
-                } elseif (!JLanguageMultilang::isEnabled()) {
+                <?php
+                foreach ($this->items as $i => $item) : ?>
+                    <?php
                     $lang = '';
-                }
+                    if ($item->language && $multilang) {
+                        $tag = strlen($item->language);
+                        if ($tag == 5) {
+                            $lang = substr($item->language, 0, 2);
+                        } elseif ($tag == 6) {
+                            $lang = substr($item->language, 0, 3);
+                        }
+                    }
+
+                    $link     = RouteHelper::getImageRoute($item->id, $item->catid, $item->language);
+                    $itemHtml = '<a href="' . $this->escape(
+                            $link
+                        ) . '"' . ($lang ? ' hreflang="' . $lang . '"' : '') . '>' . $item->title . '</a>';
                     ?>
-                    <tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $item->catid; ?>">
-                        <td class="center" style="vertical-align: middle">
-                            <span class="<?php echo $iconStates[$this->escape($item->state)]; ?>"
-                                  aria-hidden="true"></span>
+                    <tr class="row<?php
+                    echo $i % 2; ?>">
+                        <td class="text-center">
+                            <span class="tbody-icon">
+                                <span class="<?php
+                                echo $iconStates[$this->escape($item->state)]; ?>" aria-hidden="true"></span>
+                            </span>
                         </td>
-                        <td class="nowrap has-context" style="vertical-align: middle">
-                            <div class="pull-left">
-                                <a class="select-link thumbnail hasPopover" href="javascript:void(0)"
-                                   data-function="<?php echo $this->escape($onclick); ?>"
-                                   data-id="<?php echo $item->id; ?>"
-                                   data-title="<?php echo $this->escape($item->title); ?>"
-                                   data-uri="<?php echo $this->escape(BPGalleryHelperRoute::getImageRoute($item->id,
-                                       $item->language)); ?>"
-                                   data-language="<?php echo $this->escape($lang); ?>" data-placement="right"
-                                   data-content="<img src='<?php echo $item->thumbnail_preview ?>' />"
-                                   data-original-title="<?php echo $this->escape($item->title) ?>">
-                                    <img src="<?php echo $item->thumbnail ?>"
-                                         alt="<?php echo $this->escape($item->title) ?>"/>
-                                </a>
+                        <td class="text-center">
+                            <img src="<?php
+                            echo BPGalleryHelper::getThumbnail($item, 80, 60) ?>" alt="<?php
+                            echo htmlspecialchars($item->title) ?>" class="img-fluid"/>
+                        </td>
+                        <th scope="row">
+                            <?php
+                            $attribs = 'data-content-select data-content-type="com_bpgallery.image"'
+                                . 'data-function="' . $this->escape($onclick) . '"'
+                                . ' data-id="' . $item->id . '"'
+                                . ' data-title="' . $this->escape($item->title) . '"'
+                                . ' data-cat-id="' . $this->escape($item->catid) . '"'
+                                . ' data-uri="' . $this->escape($link) . '"'
+                                . ' data-language="' . $this->escape($lang) . '"'
+                                . ' data-html="' . $this->escape($itemHtml) . '"';
+                            ?>
+                            <a class="select-link" href="javascript:void(0)" <?php
+                            echo $attribs; ?>>
+                                <?php
+                                echo $this->escape($item->title); ?>
+                            </a>
+                            <div class="small break-word">
+                                <?php
+                                if (empty($item->note)) : ?>
+                                    <?php
+                                    echo Text::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>
+                                <?php
+                                else : ?>
+                                    <?php
+                                    echo Text::sprintf(
+                                        'JGLOBAL_LIST_ALIAS_NOTE',
+                                        $this->escape($item->alias),
+                                        $this->escape($item->note)
+                                    ); ?>
+                                <?php
+                                endif; ?>
                             </div>
-                            <div class="pull-left">
-                                <a class="select-link" href="javascript:void(0)"
-                                   data-function="<?php echo $this->escape($onclick); ?>"
-                                   data-id="<?php echo $item->id; ?>"
-                                   data-title="<?php echo $this->escape($item->title); ?>"
-                                   data-uri="<?php echo $this->escape(BPGalleryHelperRoute::getImageRoute($item->id,
-                                       $item->language)); ?>"
-                                   data-language="<?php echo $this->escape($lang); ?>">
-                                    <?php echo $this->escape($item->title); ?>
-                                </a>
-                                <span class="small">
-                                    <?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>
-                                </span>
-                                <div class="small">
-                                    <?php echo JText::_('JCATEGORY') . ': ' . $this->escape($item->category_title); ?>
-                                </div>
+                            <div class="small">
+                                <?php
+                                echo Text::_('JCATEGORY') . ': ' . $this->escape($item->category_title); ?>
                             </div>
+                        </th>
+                        <td class="small d-none d-md-table-cell">
+                            <?php
+                            echo $this->escape($item->access_level); ?>
                         </td>
-                        <td class="small hidden-phone" style="vertical-align: middle">
-                            <?php echo $item->access_level; ?>
+                        <?php
+                        if ($multilang) : ?>
+                            <td class="small">
+                                <?php
+                                echo LayoutHelper::render('joomla.content.language', $item); ?>
+                            </td>
+                        <?php
+                        endif; ?>
+                        <td class="small d-none d-md-table-cell">
+                            <?php
+                            echo HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC4')); ?>
                         </td>
-                        <td class="small nowrap hidden-phone" style="vertical-align: middle">
-                            <?php if ($item->language == '*'): ?>
-                                <?php echo JText::alt('JALL', 'language'); ?>
-                            <?php else: ?>
-                                <?php echo $item->language_title ? JHtml::_('image',
-                                        'mod_languages/' . $item->language_image . '.gif', $item->language_title,
-                                        ['title' => $item->language_title],
-                                        true) . '&nbsp;' . $this->escape($item->language_title) : JText::_('JUNDEFINED'); ?>
-                            <?php endif; ?>
-                        </td>
-                        <td class="hidden-phone" style="vertical-align: middle">
-                            <?php echo $item->id; ?>
+                        <td class="small d-none d-md-table-cell">
+                            <?php
+                            echo (int)$item->id; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
+
+            <?php
+            // load the pagination. ?>
+            <?php
+            echo $this->pagination->getListFooter(); ?>
+
         <?php endif; ?>
 
-        <input type="hidden" name="task" value=""/>
-        <input type="hidden" name="forcedLanguage"
-               value="<?php echo $app->input->get('forcedLanguage', '', 'CMD'); ?>"/>
-        <?php echo JHtml::_('form.token'); ?>
+        <input type="hidden" name="task" value="">
+        <input type="hidden" name="boxchecked" value="0">
+        <input type="hidden" name="forcedLanguage" value="<?php
+        echo $app->getInput()->get('forcedLanguage', '', 'CMD'); ?>">
+        <?php
+        echo HTMLHelper::_('form.token'); ?>
 
     </form>
 </div>

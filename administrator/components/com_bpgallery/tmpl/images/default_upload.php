@@ -41,8 +41,10 @@ $wa->
 useScript('core')->
 useScript('joomla.dialog')->
 useScript('joomla.dialog-autocreate')->
-useScript('com_bpgallery.uploader')->
-useStyle('com_bpgallery.uploader');
+usePreset('com_bpgallery.uploader')
+//    useScript('com_bpgallery.uploader')->
+//    useStyle('com_bpgallery.uploader')
+;
 
 $title = Text::_('COM_BPGALLERY_IMAGES_UPLOAD_HEADER');
 

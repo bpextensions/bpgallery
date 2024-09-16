@@ -44,30 +44,33 @@ Encore
         jquery: 'jQuery',
         joomla: 'Joomla',
     })
-    .addStyleEntry('component', [
+    .addStyleEntry('com_bpgallery.component', [
         './.dev/admin/scss/component.scss',
     ])
-    .addEntry('uploader', [
+    .addEntry('com_bpgallery.uploader', [
         './.dev/admin/js/uploader.js',
         './.dev/admin/scss/uploader.scss',
     ])
-    .addStyleEntry('default', [
+    .addEntry('com_bpgallery.admin-images-modal', [
+        './.dev/admin/js/admin-images-modal.js',
+    ])
+    .addStyleEntry('com_bpgallery.default', [
         './.dev/site/scss/default.scss',
     ])
-    .addStyleEntry('square', [
+    .addStyleEntry('com_bpgallery.square', [
         './.dev/site/scss/square.scss',
     ])
-    .addEntry('masonry', [
+    .addEntry('com_bpgallery.masonry', [
         './.dev/site/js/masonry.js',
         './.dev/site/scss/masonry.scss',
     ])
-    .addStyleEntry('category-default', [
+    .addStyleEntry('com_bpgallery.category-default', [
         './.dev/site/scss/themes/category/default.scss',
     ])
-    .addStyleEntry('image-default', [
+    .addStyleEntry('com_bpgallery.image-default', [
         './.dev/site/scss/themes/image/default.scss',
     ])
-    .addEntry('lightbox', [
+    .addEntry('com_bpgallery.lightbox', [
         './.dev/site/js/lightbox.js',
     ])
     .copyFiles({
