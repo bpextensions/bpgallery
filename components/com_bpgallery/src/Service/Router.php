@@ -258,7 +258,7 @@ class Router extends RouterView
         if ($this->noIDs) {
             $dbquery = $this->db->getQuery(true);
             $dbquery->select($this->db->quoteName('id'))
-                ->from($this->db->quoteName('##__bpgallery_images'))
+                ->from($this->db->quoteName('#__bpgallery_images'))
                 ->where(
                     [
                         $this->db->quoteName('alias') . ' = :alias',

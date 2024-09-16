@@ -16,6 +16,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Image\Image;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -190,7 +191,6 @@ abstract class BPGalleryHelper extends ContentHelper
         $details = static::getThumbnailDetails(...func_get_args());
         extract($details, EXTR_SKIP);
 
-
         if ($url) {
             // Prepare relative base
             $uri_base = trim(Uri::root(true), '/');
@@ -228,6 +228,7 @@ abstract class BPGalleryHelper extends ContentHelper
         bool $url = true,
         bool $relative = true
     ): array|string {
+        $image->filename = HTMLHelper::cleanImageURL($image->filename)->url;
         $filename           = (is_object($image) ? basename($image->filename) : basename($image));
         $relative_base_path = rtrim(self::getParam('images_path', '/images/gallery'), '/');
         $options['quality'] = self::getParam('quality', '85');

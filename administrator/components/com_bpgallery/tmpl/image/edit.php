@@ -25,12 +25,6 @@ use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die;
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHtml::_('behavior.formvalidator');
-JHtml::_('formbehavior.chosen', 'select');
-
-$this->ignore_fieldsets = ['jmetadata', 'item_associations'];
-
 $app   = Factory::getApplication();
 $doc   = $app->getDocument();
 $input = $app->input;
@@ -45,7 +39,7 @@ $this->ignore_fieldsets = array_merge(['jmetadata', 'item_associations']);
 $this->useCoreUI        = true;
 
 $params = clone $this->state->get('params');
-$params->merge(new Registry($this->item->attribs));
+$params->merge(new Registry($this->item->params));
 
 $input = $app->input;
 
@@ -59,7 +53,8 @@ if (!$assoc || !$showArticleOptions) {
 if (!$showArticleOptions) {
     // Ignore fieldsets inside Options tab
     $this->ignore_fieldsets = array_merge($this->ignore_fieldsets,
-        ['attribs', 'basic', 'category', 'author', 'date', 'other']);
+        ['params', 'basic', 'category', 'author', 'date', 'other']
+    );
 }
 
 // In case of modal
@@ -77,8 +72,9 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
     <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
     <div class="main-card">
-        <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab',
-            ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
+        <?php
+        echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]
+        ); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'general', Text::_('COM_BPGALLERY_IMAGE_CONTENT')); ?>
         <div class="row">
@@ -106,7 +102,8 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
         <?php // Do not show the publishing options if the edit form is configured not to. ?>
         <?php if ($params->get('show_publishing_options', 1) == 1) : ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing',
-                Text::_('COM_CONTENT_FIELDSET_PUBLISHING')); ?>
+                Text::_('COM_BPGALLERY_FIELDSET_PUBLISHING')
+            ); ?>
             <div class="row">
                 <div class="col-12 col-lg-6">
                     <fieldset id="fieldset-publishingdata" class="options-form">

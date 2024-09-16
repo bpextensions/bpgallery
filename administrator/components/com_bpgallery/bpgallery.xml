@@ -99,7 +99,7 @@
 				</params>
 			</menu>
 			<menu
-					link="option=com_fields&amp;context=com_bpgallery.image"
+					link="option=com_fields&amp;view=fields&amp;context=com_bpgallery.image"
 					alt="BPGallery/Fields"
 			>
 				JGLOBAL_FIELDS
