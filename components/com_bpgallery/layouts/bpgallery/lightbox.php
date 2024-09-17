@@ -10,8 +10,8 @@
  */
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\WebAsset\WebAssetManager;
 use Joomla\Registry\Registry;
 
 defined('JPATH_BASE') or die;
@@ -20,12 +20,15 @@ defined('JPATH_BASE') or die;
  * @var array    $displayData    Layout data.
  * @var Registry $params         Parameters to use on this layout.
  * @var string   $lightbox_query Lightbox container element query string.
+ * @var WebAssetManager $wa
  */
 
 extract($displayData, EXTR_SKIP);
 
-HTMLHelper::_('jquery.framework');
-BPGalleryHelperLayout::includeEntryPointAssets('lightbox');
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+$wa->useScript('jquery');
+$wa->usePreset('com_bpgallery.lightbox');
 
 $lightbox_options = [
     'type'           => 'image',
@@ -44,7 +47,7 @@ $lightbox_options = [
         'easing'   => 'ease-in-out'
     ]
 ];
-$lightbox_options = json_encode($lightbox_options);
+$lightbox_options = json_encode($lightbox_options, JSON_THROW_ON_ERROR);
 
 // Enable or disable image title in a lightbox
 $titleSrc = '"title"';
@@ -65,7 +68,8 @@ if ($images_lightbox_min_res) {
 }
 
 // Create lightbox instance
-Factory::getDocument()->addScriptDeclaration("
+$wa->addInlineScript(
+    "
 
     // Run lightbox for BP Gallery
     jQuery(function($){
@@ -77,4 +81,6 @@ Factory::getDocument()->addScriptDeclaration("
         }
         $('$lightbox_query .image-link').magnificPopup(lightbox_options);
     });
-");
+", [], [],
+    ['jquery']
+);

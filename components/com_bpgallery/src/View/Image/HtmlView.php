@@ -46,7 +46,7 @@ class HtmlView extends BaseHtmlView
 
     protected bool $print = false;
 
-    protected stdClass $state;
+    protected object $state;
 
     protected ?User $user;
 

@@ -15,7 +15,6 @@ defined('_JEXEC') or die;
 
 use BPExtensions\Component\BPGallery\Administrator\Event as GalleryEvent;
 use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
-use BPExtensions\Component\BPGallery\Administrator\Trait\AssetsTrait;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Registry\Registry;
 use JsonException;
@@ -23,8 +22,6 @@ use stdClass;
 
 abstract class LayoutHelper
 {
-
-    use AssetsTrait;
 
     /**
      * Root url for assets directory relative to website root URL.
@@ -71,7 +68,12 @@ abstract class LayoutHelper
                     'slug'  => $item->catslug,
                     'items' => []
                 ];
-                $groups[$item->catlft] = (object)json_decode(json_encode($category), false, 512, JSON_THROW_ON_ERROR);
+                $groups[$item->catlft] = (object)json_decode(
+                    json_encode($category, JSON_THROW_ON_ERROR),
+                    false,
+                    512,
+                    JSON_THROW_ON_ERROR
+                );
             }
 
             // Add item to the category group

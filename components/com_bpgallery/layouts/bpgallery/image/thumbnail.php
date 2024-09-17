@@ -9,6 +9,8 @@
  * @subpackage        ${subpackage}
  */
 
+use BPExtensions\Component\BPGallery\Administrator\Helper\BPGalleryHelper;
+use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
 
@@ -16,7 +18,7 @@ defined('JPATH_BASE') or die;
 
 /**
  * @var array    $displayData      Layout data.
- * @var JObject  $item             Image object.
+ * @var object $item Image object.
  * @var int      $thumbnail_width  Thumbnail width.
  * @var int      $thumbnail_height Thumbnail height.
  * @var int      $thumbnail_method Thumbnail generation method.
@@ -27,7 +29,7 @@ extract($displayData, EXTR_SKIP);
 
 $url_thumbnail = BPGalleryHelper::getThumbnail($item, $thumbnail_width, $thumbnail_height, $thumbnail_method);
 $url_full      = BPGalleryHelper::getThumbnail($item, 1920, 1080, BPGalleryHelper::METHOD_FIT);
-$url           = Route::_(BPGalleryHelperRoute::getImageRoute($item->slug, $item->catid, $item->language));
+$url = Route::_(RouteHelper::getImageRoute($item->slug, $item->catid, $item->language));
 $alt           = empty($item->alt) ? $item->title : $item->alt;
 ?>
 <a href="<?php echo $image_lightbox ? $url_full : $url ?>"
@@ -36,7 +38,7 @@ $alt           = empty($item->alt) ? $item->title : $item->alt;
 endif ?> class="image-link"
    title="<?php echo $item->title ?>">
     <span class="inner">
-        <span class="overlay"></span>
+        <span class="overlay" aria-hidden="true"></span>
         <img src="<?php echo $url_thumbnail ?>" alt="<?php echo $alt ?>" class="image">
     </span>
 </a>

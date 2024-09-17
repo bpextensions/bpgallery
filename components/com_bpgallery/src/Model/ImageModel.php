@@ -35,15 +35,11 @@ class ImageModel extends ItemModel
 {
     /**
      * The name of the view for a single item
-     *
-     * @since   1.0
      */
     protected string $view_item = 'image';
 
     /**
      * A loaded item
-     *
-     * @since   1.0
      */
     protected $_item = null;
 
@@ -54,7 +50,7 @@ class ImageModel extends ItemModel
      */
     protected $_context = 'com_bpgallery.image';
 
-    public function getForm($data = array(), $loadData = true)
+    public function getForm($data = [], $loadData = true): void
     {
     }
 
@@ -64,10 +60,8 @@ class ImageModel extends ItemModel
      * @param integer $pk Id for the image
      *
      * @return  mixed Object or null
-     *
-     * @since   1.0.0
      */
-    public function &getItem($pk = null)
+    public function &getItem($pk = null): mixed
     {
         $pk = (!empty($pk)) ? $pk : (int)$this->getState('image.id');
 
@@ -110,7 +104,6 @@ class ImageModel extends ItemModel
                     ->where('a.id = ' . (int)$pk);
 
                 // Filter by start and end dates.
-                $nullDate = $db->quote($db->getNullDate());
                 $nowDate = $db->quote(Factory::getDate()->toSql());
 
                 // Filter by published state.
@@ -119,8 +112,8 @@ class ImageModel extends ItemModel
 
                 if (is_numeric($published)) {
                     $query->where('(a.state = ' . (int)$published . ' OR a.state =' . (int)$archived . ')')
-                        ->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
-                        ->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
+                        ->where('(a.publish_up IS NULL OR a.publish_up <= ' . $nowDate . ')')
+                        ->where('(a.publish_down IS NULL OR a.publish_down >= ' . $nowDate . ')');
                 }
 
                 $db->setQuery($query);
@@ -184,31 +177,6 @@ class ImageModel extends ItemModel
     }
 
     /**
-     * Increment the hit counter for the image.
-     *
-     * @param integer $pk Optional primary key of the image to increment.
-     *
-     * @return  boolean  True if successful; false otherwise and internal error set.
-     *
-     * @throws Exception
-     *
-     */
-    public function hit($pk = 0): bool
-    {
-        $input         = Factory::getApplication()->getInput();
-        $hitcount = $input->getInt('hitcount', 1);
-
-        if ($hitcount) {
-            $pk = (!empty($pk)) ? $pk : (int)$this->getState('image.id');
-            $component = Factory::getApplication()->bootComponent('BPGallery');
-            $table     = $component->getMVCFactory()->createTable('Image', 'Administrator');
-            $table->load($pk) && $table->hit($pk);
-        }
-
-        return true;
-    }
-
-    /**
      * Method to auto-populate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
@@ -244,7 +212,7 @@ class ImageModel extends ItemModel
 
         $asset = empty($pk) ? 'com_bpgallery' : 'com_bpgallery.image.' . $pk;
 
-        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise('core.edit', 'com_bpgallery'))) {
+        if ((!$user->authorise('core.edit.state', $asset)) && (!$user->authorise('core.edit', $asset))) {
             $this->setState('filter.published', BPGalleryComponent::CONDITION_PUBLISHED);
             $this->setState('filter.archived', BPGalleryComponent::CONDITION_ARCHIVED);
         }

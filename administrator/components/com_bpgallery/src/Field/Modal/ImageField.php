@@ -11,7 +11,6 @@
 
 namespace BPExtensions\Component\BPGallery\Administrator\Field\Modal;
 
-
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ModalSelectField;

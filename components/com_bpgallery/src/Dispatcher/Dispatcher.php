@@ -26,14 +26,17 @@ class Dispatcher extends ComponentDispatcher
      *
      * @return  void
      */
-    public function dispatch()
+    public function dispatch(): void
     {
-        $checkCreateEdit = $this->input->get('view') === 'category' || $this->input->get('view') === 'image';
+        $checkCreateEdit =
+            ($this->input->get('view') === 'category' && $this->input->get('layout') === 'modal') ||
+            ($this->input->get('view') === 'image' && $this->input->get('layout') === 'modal');
 
         if ($checkCreateEdit) {
             // Can create in any category (component permission) or at least in one category
-            $canCreateRecords = $this->app->getIdentity()->authorise('core.create', 'com_bpgallery')
-                || count($this->app->getIdentity()->getAuthorisedCategories('com_bpgallery', 'core.create')) > 0;
+            $canCreateRecords = $this->app->getIdentity()->authorise('core.create', 'com_bpgallery') || count(
+                    $this->app->getIdentity()->getAuthorisedCategories('com_bpgallery', 'core.create')
+                ) > 0;
 
             // Instead of checking edit on all records, we can use **same** check as the form editing view
             $values           = (array)$this->app->getUserState('com_bpgallery.edit.image.id');
