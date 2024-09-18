@@ -10,8 +10,8 @@
     <version>${build.version}</version>
     <description>COM_BPGALLERY_XML_DESCRIPTION</description>
 
-    <!-- Install/Upgdate script -->
-	<scriptfile>install/script.php</scriptfile>
+	<!-- Install/Update script -->
+	<scriptfile>script.php</scriptfile>
 
 	<namespace path="src">BPExtensions\Component\BPGallery</namespace>
 
@@ -29,9 +29,9 @@
 	</languages>
 
     <media destination="com_bpgallery" folder="media">
-		<folder>js</folder>
 		<folder>css</folder>
         <folder>images</folder>
+		<folder>js</folder>
         <filename>joomla.asset.json</filename>
 	</media>
 
@@ -57,11 +57,15 @@
 	<administration>
 
 		<files folder="admin">
-			<folder>src</folder>
+			<folder>forms</folder>
+			<folder>install</folder>
 			<folder>services</folder>
-			<filename>tmpl</filename>
+			<folder>src</folder>
+			<folder>tmpl</folder>
 			<filename>access.xml</filename>
+			<filename>bpgallery.xml</filename>
 			<filename>config.xml</filename>
+			<filename>script.php</filename>
 		</files>
 
 		<languages folder="admin">
