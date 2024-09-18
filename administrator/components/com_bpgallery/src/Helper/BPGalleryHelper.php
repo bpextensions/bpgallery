@@ -228,7 +228,11 @@ abstract class BPGalleryHelper extends ContentHelper
         bool $url = true,
         bool $relative = true
     ): array|string {
-        $image->filename = HTMLHelper::cleanImageURL($image->filename)->url;
+        if (is_object($image)) {
+            $image->filename = HTMLHelper::cleanImageURL($image->filename)->url;
+        } else {
+            $image = HTMLHelper::cleanImageURL($image)->url;
+        }
         $filename           = (is_object($image) ? basename($image->filename) : basename($image));
         $relative_base_path = rtrim(self::getParam('images_path', '/images/gallery'), '/');
         $options['quality'] = self::getParam('quality', '85');
