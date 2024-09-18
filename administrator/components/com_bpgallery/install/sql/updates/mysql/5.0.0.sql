@@ -11,7 +11,7 @@ ALTER TABLE `#__bpgallery_images`
     MODIFY COLUMN `modified` DATETIME NOT NULL;
 
 -- Altera data
-UPDATE `#s`
+UPDATE `#__bpgallery_images`
 SET `checked_out_time` = NULL
 WHERE `checked_out_time` = '0000-00-00 00:00:00';
 
