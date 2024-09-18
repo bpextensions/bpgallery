@@ -30,9 +30,9 @@ $this->layoutCategory  = new FileLayout('bpgallery.category.squares', JPATH_ROOT
 $category = $this->get('category');
 $canEdit  = $params->get('access-edit');
 
-$afterDisplayTitle    = $category->event->afterDisplayTitle;
-$beforeDisplayContent = $category->event->beforeDisplayContent;
-$afterDisplayContent  = $category->event->afterDisplayContent;
+$afterDisplayTitle    = implode(',', $category->event->afterDisplayTitle);
+$beforeDisplayContent = implode(',', $category->event->beforeDisplayContent);
+$afterDisplayContent  = implode(',', $category->event->afterDisplayContent);
 ?>
 <section class="bpgallery-category bpgallery-category-square<?php echo $this->pageclass_sfx ?>">
 
@@ -43,7 +43,14 @@ $afterDisplayContent  = $category->event->afterDisplayContent;
             </h1>
         <?php endif; ?>
 
-        <?php if ($params->get('show_category_title', 1)) : ?>
+        <?php
+        if (!$params->get('show_page_heading') && $params->get('show_category_title', 1)) : ?>
+            <h1>
+                <?php
+                echo HTMLHelper::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
+            </h1>
+        <?php
+        elseif ($params->get('show_category_title', 1)): ?>
             <h2>
                 <?php echo HTMLHelper::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
             </h2>

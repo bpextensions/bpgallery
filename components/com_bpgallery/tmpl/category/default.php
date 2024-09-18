@@ -30,9 +30,9 @@ $this->layoutCategory  = new FileLayout('bpgallery.category.default', JPATH_ROOT
 $category = $this->get('category');
 $canEdit  = $params->get('access-edit');
 
-$afterDisplayTitle    = $category->event->afterDisplayTitle;
-$beforeDisplayContent = $category->event->beforeDisplayContent;
-$afterDisplayContent  = $category->event->afterDisplayContent;
+$afterDisplayTitle    = implode(',', $category->event->afterDisplayTitle);
+$beforeDisplayContent = implode(',', $category->event->beforeDisplayContent);
+$afterDisplayContent  = implode(',', $category->event->afterDisplayContent);
 
 ?>
 <section class="bpgallery-category bpgallery-category-default<?php echo $this->pageclass_sfx ?>">
@@ -44,14 +44,22 @@ $afterDisplayContent  = $category->event->afterDisplayContent;
             </h1>
         <?php endif; ?>
 
-        <?php if ($params->get('show_category_title', 1)) : ?>
+        <?php
+        if (!$params->get('show_page_heading') && $params->get('show_category_title', 1)) : ?>
+            <h1>
+                <?php
+                echo HTMLHelper::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
+            </h1>
+        <?php
+        elseif ($params->get('show_category_title', 1)): ?>
             <h2>
                 <?php echo HTMLHelper::_('content.prepare', $category->title, '', 'com_bpgallery.category.title'); ?>
             </h2>
         <?php endif; ?>
     </div>
 
-    <?php echo $afterDisplayTitle; ?>
+    <?php
+    echo $afterDisplayTitle ?>
 
     <?php if ($beforeDisplayContent || $afterDisplayContent || $params->get('show_description',
             1) || $params->def('show_description_image', 1)) : ?>
@@ -61,13 +69,14 @@ $afterDisplayContent  = $category->event->afterDisplayContent;
                      alt="<?php echo htmlspecialchars($category->getParams()->get('image_alt'), ENT_COMPAT,
                          'UTF-8'); ?>"/>
             <?php endif; ?>
-            <?php echo $beforeDisplayContent; ?>
+            <?php
+            echo $beforeDisplayContent ?>
             <?php if ($params->get('show_description') && $category->description) : ?>
-                <?php echo JHtml::_('content.prepare', $category->description, '',
-                    'com_bpgallery.category.description'); ?>
+                <?php
+                echo JHtml::_('content.prepare', $category->description, '', 'com_bpgallery.category.description'); ?>
             <?php endif; ?>
-            <?php echo $afterDisplayContent; ?>
-            <div class="clr"></div>
+            <?php
+            echo $afterDisplayContent ?>
         </div>
     <?php endif; ?>
 
@@ -75,7 +84,8 @@ $afterDisplayContent  = $category->event->afterDisplayContent;
 
     <?php if ($this->maxLevel !== 0 && $this->get('children')) : ?>
         <div class="cat-children">
-            <?php if ($params->get('show_category_heading_title_text', 1) == 1) : ?>
+            <?php
+            if ($params->get('show_category_heading_title_text', 1) === 1) : ?>
                 <h3>
                     <?php echo Text::_('JGLOBAL_SUBCATEGORIES'); ?>
                 </h3>

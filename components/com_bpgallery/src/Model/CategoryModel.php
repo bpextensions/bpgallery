@@ -13,6 +13,7 @@ namespace BPExtensions\Component\BPGallery\Site\Model;
 
 defined('_JEXEC') or die;
 
+use BPExtensions\Component\BPGallery\Administrator\Extension\BPGalleryComponent;
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Categories\Categories;
@@ -20,10 +21,9 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\CMS\Pagination\Pagination;
-use Joomla\Component\Categories\Administrator\Extension\CategoriesComponent;
-use Joomla\Component\Categories\Administrator\Table\CategoryTable;
+use Joomla\CMS\User\CurrentUserTrait;
 use Joomla\Database\DatabaseQuery;
+use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
@@ -33,6 +33,8 @@ use Joomla\Utilities\ArrayHelper;
  */
 class CategoryModel extends ListModel
 {
+    use CurrentUserTrait;
+
     /**
      * Category items data
      *
@@ -105,12 +107,6 @@ class CategoryModel extends ListModel
         $app    = Factory::getApplication();
         $params = ComponentHelper::getParams('com_bpgallery');
 
-        // Optional filter text
-        $itemid = $app->input->get('Itemid', 0, 'int');
-        $search = $app->getUserStateFromRequest('com_bpgallery.category.list.' . $itemid . '.filter-search',
-            'filter-search', '', 'string');
-        $this->setState('list.filter', $search);
-
         // Prepare parameters
         $menuParams = new Registry;
         if ($menu = $app->getMenu()->getActive()) {
@@ -136,7 +132,7 @@ class CategoryModel extends ListModel
 
         $orderCol = $app->input->get('filter_order', $mergedParams->get('initial_sort', 'ordering'));
         if (!in_array($orderCol, $this->filter_fields)) {
-            $orderCol = 'ordering';
+            $orderCol = 'a.ordering';
         }
         $this->setState('list.ordering', $orderCol);
 
@@ -159,20 +155,25 @@ class CategoryModel extends ListModel
         $this->setState('filter.max_category_levels', $mergedParams->get('maxLevel', 1));
         $this->setState('filter.subcategories', true);
 
-        $user = $app->getIdentity();
+        $user = $this->getCurrentUser();
 
         if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise(
                 'core.edit',
                 'com_bpgallery'
             ))) {
-            // Limit to published for people who can't edit or edit.state.
-            $this->setState('filter.published', 1);
-
-            // Filter by start and end dates.
-            $this->setState('filter.publish_date', true);
+            // Filter on published for those who do not have edit or edit.state rights.
+            $this->setState('filter.published', BPGalleryComponent::CONDITION_PUBLISHED);
         }
 
         $this->setState('filter.language', Multilanguage::isEnabled());
+
+
+        // Process show_noauth parameter
+        if ((!$params->get('show_noauth')) || (!ComponentHelper::getParams('com_bpgallery')->get('show_noauth'))) {
+            $this->setState('filter.access', true);
+        } else {
+            $this->setState('filter.access', false);
+        }
 
         // Load the parameters.
         $this->setState('params', $mergedParams);
@@ -198,6 +199,7 @@ class CategoryModel extends ListModel
         return $items;
     }
 
+
     /**
      * Get the parent category.
      *
@@ -217,24 +219,23 @@ class CategoryModel extends ListModel
     /**
      * Method to get category data for the current category
      *
-     * @return  object  The category object
+     * @return  object|array  The category object
      *
      * @throws Exception
      */
-    public function getCategory()
+    public function getCategory(): object|array
     {
         if (!is_object($this->_item)) {
             /**
-             * @var CMSApplication $app
              * @var Categories     $categories
              */
-            $app = Factory::getApplication();
-            $user = $app->getIdentity();
+            $user = $this->getCurrentUser();
 
             $options = [];
 
             if ($params = $this->state->get('params')) {
-                $options['countItems'] = $params->get('show_cat_num_articles',
+                $options['countItems'] = $params->get(
+                        'show_cat_num_images',
                         1) || !$params->get('show_empty_categories_cat', 0);
                 $options['access']     = $params->get('check_access_rights', 1);
             } else {
@@ -324,34 +325,6 @@ class CategoryModel extends ListModel
     }
 
     /**
-     * Increment the hit counter for the category.
-     *
-     * @param integer $pk Optional primary key of the category to increment.
-     *
-     * @return  boolean  True if successful; false otherwise and internal error set.
-     *
-     * @throws Exception
-     */
-    public function hit($pk = 0)
-    {
-        $input         = Factory::getApplication()->getInput();
-        $hitcount = $input->getInt('hitcount', 1);
-
-        if ($hitcount) {
-            /**
-             * @var CategoriesComponent $component
-             * @var CategoryTable       $table
-             */
-            $pk = (!empty($pk)) ? $pk : (int)$this->getState('filter.category_id');
-            $component = Factory::getApplication()->bootComponent('Categories');
-            $table     = $component->getMVCFactory()->createTable('Category');
-            $table->load($pk) && $table->hit($pk);
-        }
-
-        return true;
-    }
-
-    /**
      * TODO: Verify if this method is required at all.
      *
      * Method to build an SQL query to load the list data.
@@ -359,138 +332,278 @@ class CategoryModel extends ListModel
      * @return DatabaseQuery|QueryInterface
      * @throws Exception
      */
-    protected function getListQuery()
+    protected function getListQuery(): QueryInterface|DatabaseQuery
     {
         $user = Factory::getApplication()->getIdentity();
-        $groups = implode(',', $user->getAuthorisedViewLevels());
-
-        // Create a new query object.
-        $db = $this->getDbo();
+        $db = $this->getDatabase();
         $query = $db->getQuery(true);
+        $nowDate = Factory::getDate()->toSql();
+
+        $conditionArchived    = BPGalleryComponent::CONDITION_ARCHIVED;
+        $conditionUnpublished = BPGalleryComponent::CONDITION_UNPUBLISHED;
 
         // Select required fields from the categories.
-        $case_when = ' CASE WHEN ';
-        $case_when .= $query->charLength('a.alias', '!=', '0');
-        $case_when .= ' THEN ';
-        $a_id      = $query->castAsChar('a.id');
-        $case_when .= $query->concatenate(array($a_id, 'a.alias'), ':');
-        $case_when .= ' ELSE ';
-        $case_when .= $a_id . ' END as slug';
-
-        $case_when1 = ' CASE WHEN ';
-        $case_when1 .= $query->charLength('c.alias', '!=', '0');
-        $case_when1 .= ' THEN ';
-        $c_id       = $query->castAsChar('c.id');
-        $case_when1 .= $query->concatenate(array($c_id, 'c.alias'), ':');
-        $case_when1 .= ' ELSE ';
-        $case_when1 .= $c_id . ' END as catslug';
-        $query->select($this->getState(
+        $query->select(
+            $this->getState(
                 'list.select',
-                'a.*,c.title AS catname'
-            ) . ',' . $case_when . ',' . $case_when1)
-            /**
-             * TODO: we actually should be doing it but it's wrong this way
-             *    . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug, '
-             *    . ' CASE WHEN CHAR_LENGTH(c.alias) THEN CONCAT_WS(\':\', c.id, c.alias) ELSE c.id END AS catslug ');
-             */
-            ->from($db->quoteName('#__bpgallery_images') . ' AS a')
-            ->join('LEFT', '#__categories AS c ON c.id = a.catid')
-            ->where('a.access IN (' . $groups . ')');
+                [
+                    $db->qn('a.id'),
+                    $db->qn('a.title'),
+                    $db->qn('a.alias'),
+                    $db->qn('a.intro'),
+                    $db->qn('a.description'),
+                    $db->qn('a.filename'),
+                    $db->qn('a.alt'),
+                    $db->qn('a.checked_out'),
+                    $db->qn('a.checked_out_time'),
+                    $db->qn('a.catid'),
+                    $db->qn('a.created'),
+                    $db->qn('a.created_by'),
+                    $db->qn('a.created_by_alias'),
+                    $db->qn('a.modified'),
+                    $db->qn('a.modified_by'),
+                    // Use created if publish_up is null
+                    'CASE WHEN ' . $db->qn('a.publish_up') . ' IS NULL THEN ' . $db->qn('a.created')
+                    . ' ELSE ' . $db->qn('a.publish_up') . ' END AS ' . $db->qn('publish_up'),
+                    $db->qn('a.publish_down'),
+                    $db->qn('a.params'),
+                    $db->qn('a.metadata'),
+                    $db->qn('a.access'),
+                    $db->qn('a.language'),
+                    $db->qn('a.ordering'),
+                ]
+            )
+        )
+            ->select(
+                [
+                    // Published/archived image in archived category is treated as archived image. If category is not published then force 0.
+                    'CASE WHEN ' . $db->qn('c.published') . ' = 2 AND ' . $db->qn(
+                        'a.state'
+                    ) . ' > 0 THEN ' . $conditionArchived
+                    . ' WHEN ' . $db->qn('c.published') . ' != 1 THEN ' . $conditionUnpublished
+                    . ' ELSE ' . $db->qn('a.state') . ' END AS ' . $db->qn('state'),
+                    $db->qn('c.title', 'category_title'),
+                    $db->qn('c.path', 'category_route'),
+                    $db->qn('c.access', 'category_access'),
+                    $db->qn('c.alias', 'category_alias'),
+                    $db->qn('c.language', 'category_language'),
+                    $db->qn('c.published'),
+                    $db->qn('c.published', 'parents_published'),
+                    $db->qn('c.lft'),
+                    'CASE WHEN ' . $db->qn('a.created_by_alias') . ' > ' . $db->quote(' ') . ' THEN ' . $db->qn(
+                        'a.created_by_alias'
+                    )
+                    . ' ELSE ' . $db->qn('ua.name') . ' END AS ' . $db->qn('author'),
+                    $db->qn('ua.email', 'author_email'),
+                    $db->qn('uam.name', 'modified_by_name'),
+                    $db->qn('parent.title', 'parent_title'),
+                    $db->qn('parent.id', 'parent_id'),
+                    $db->qn('parent.path', 'parent_route'),
+                    $db->qn('parent.alias', 'parent_alias'),
+                    $db->qn('parent.language', 'parent_language'),
+                ]
+            )
+            ->from($db->qn('#__bpgallery_images') . ' AS a')
+            ->join('LEFT', $db->qn('#__categories', 'c'), $db->qn('c.id') . ' = ' . $db->qn('a.catid'))
+            ->join('LEFT', $db->qn('#__users', 'ua'), $db->qn('ua.id') . ' = ' . $db->qn('a.created_by'))
+            ->join('LEFT', $db->qn('#__users', 'uam'), $db->qn('uam.id') . ' = ' . $db->qn('a.modified_by'))
+            ->join('LEFT', $db->qn('#__categories', 'parent'), $db->qn('parent.id') . ' = ' . $db->qn('c.parent_id'));
 
-        // We need to group images to add lft data
-        if ($this->getState('list.group', 0)) {
-            $query->select('c.lft as catlft');
+        // Filter by access level.
+        if ($this->getState('filter.access', true)) {
+            $groups = $this->getState('filter.viewlevels', $user->getAuthorisedViewLevels());
+            $query->whereIn($db->qn('a.access'), $groups)
+                ->whereIn($db->qn('c.access'), $groups);
         }
 
-        // Filter by category.
+        // Filter by published state
+        $condition = $this->getState('filter.published');
+
+        if (is_numeric($condition) && $condition == 2) {
+            /**
+             * If category is archived then image has to be published or archived.
+             * Or category is published then image has to be archived.
+             */
+            $query->where(
+                '((' . $db->qn('c.published') . ' = 2 AND ' . $db->qn('a.state') . ' > :conditionUnpublished)'
+                . ' OR (' . $db->qn('c.published') . ' = 1 AND ' . $db->qn('a.state') . ' = :conditionArchived))'
+            )
+                ->bind(':conditionUnpublished', $conditionUnpublished, ParameterType::INTEGER)
+                ->bind(':conditionArchived', $conditionArchived, ParameterType::INTEGER);
+        } elseif (is_numeric($condition)) {
+            $condition = (int)$condition;
+
+            // Category has to be published
+            $query->where($db->qn('c.published') . ' = 1 AND ' . $db->qn('a.state') . ' = :condition')
+                ->bind(':condition', $condition, ParameterType::INTEGER);
+        } elseif (\is_array($condition)) {
+            // Category has to be published
+            $query->where(
+                $db->qn('c.published') . ' = 1 AND ' . $db->qn('a.state')
+                . ' IN (' . implode(',', $query->bindArray($condition)) . ')'
+            );
+        }
+
+        // Filter by a single or group of images.
+        $imageId = $this->getState('filter.image_id');
+
+        if (is_numeric($imageId)) {
+            $imageId = (int)$imageId;
+            $type    = $this->getState('filter.image_id.include', true) ? ' = ' : ' <> ';
+            $query->where($db->qn('a.id') . $type . ':imageId')
+                ->bind(':imageId', $imageId, ParameterType::INTEGER);
+        } elseif (\is_array($imageId)) {
+            $imageId = ArrayHelper::toInteger($imageId);
+
+            if ($this->getState('filter.image_id.include', true)) {
+                $query->whereIn($db->qn('a.id'), $imageId);
+            } else {
+                $query->whereNotIn($db->qn('a.id'), $imageId);
+            }
+        }
+
+        // Filter by a single or group of categories
         $categoryId = $this->getState('filter.category_id');
+
         if (is_numeric($categoryId)) {
-            $type = $this->getState('filter.category_id.include', true) ? '= ' : '<> ';
+            $type = $this->getState('filter.category_id.include', true) ? ' = ' : ' <> ';
 
             // Add subcategory check
             $includeSubcategories = $this->getState('filter.subcategories', false);
-            $categoryEquals       = 'a.catid ' . $type . (int)$categoryId;
 
             if ($includeSubcategories) {
-                $levels = (int)$this->getState('filter.max_category_levels', '1');
+                $categoryId = (int)$categoryId;
+                $levels     = (int)$this->getState('filter.max_category_levels', 1);
 
                 // Create a subquery for the subcategory list
                 $subQuery = $db->getQuery(true)
-                    ->select('sub.id')
-                    ->from('#__categories as sub')
-                    ->join('INNER', '#__categories as this ON sub.lft > this.lft AND sub.rgt < this.rgt')
-                    ->where('this.id = ' . (int)$categoryId);
+                    ->select($db->qn('sub.id'))
+                    ->from($db->qn('#__categories', 'sub'))
+                    ->join(
+                        'INNER',
+                        $db->qn('#__categories', 'this'),
+                        $db->qn('sub.lft') . ' > ' . $db->qn('this.lft')
+                        . ' AND ' . $db->qn('sub.rgt') . ' < ' . $db->qn('this.rgt')
+                    )
+                    ->where($db->qn('this.id') . ' = :subCategoryId');
 
-                // Show only published categories images
-                if (!Factory::getUser()->authorise('core.edit.state', $this->option)) {
-                    $subQuery->where('sub.published = 1');
-
-                    // User can change state, so show all categories
-                } else {
-                    $subQuery->where('sub.published IN(0,1,2)');
-                }
+                $query->bind(':subCategoryId', $categoryId, ParameterType::INTEGER);
 
                 if ($levels >= 0) {
-                    $subQuery->where('sub.level <= this.level + ' . $levels);
+                    $subQuery->where($db->qn('sub.level') . ' <= ' . $db->qn('this.level') . ' + :levels');
+                    $query->bind(':levels', $levels, ParameterType::INTEGER);
                 }
 
                 // Add the subquery to the main query
-                $query->where('(' . $categoryEquals . ' OR a.catid IN (' . (string)$subQuery . '))');
+                $query->where(
+                    '(' . $db->qn('a.catid') . $type . ':categoryId OR ' . $db->qn(
+                        'a.catid'
+                    ) . ' IN (' . $subQuery . '))'
+                );
+                $query->bind(':categoryId', $categoryId, ParameterType::INTEGER);
             } else {
-                $query->where($categoryEquals);
+                $query->where($db->qn('a.catid') . $type . ':categoryId');
+                $query->bind(':categoryId', $categoryId, ParameterType::INTEGER);
             }
-        } elseif (is_array($categoryId) && (count($categoryId) > 0)) {
+        } elseif (\is_array($categoryId) && (\count($categoryId) > 0)) {
             $categoryId = ArrayHelper::toInteger($categoryId);
-            $categoryId = implode(',', $categoryId);
 
             if (!empty($categoryId)) {
-                $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
-                $query->where('a.catid ' . $type . ' (' . $categoryId . ')');
+                if ($this->getState('filter.category_id.include', true)) {
+                    $query->whereIn($db->qn('a.catid'), $categoryId);
+                } else {
+                    $query->whereNotIn($db->qn('a.catid'), $categoryId);
+                }
             }
         }
 
-        // Join over the users for the author and modified_by names.
-        $query->select("CASE WHEN a.created_by_alias > ' ' THEN a.created_by_alias ELSE ua.name END AS author")
-            ->select('ua.email AS author_email')
-            ->join('LEFT', '#__users AS ua ON ua.id = a.created_by')
-            ->join('LEFT', '#__users AS uam ON uam.id = a.modified_by');
+        // Filter by author
+        $authorId    = $this->getState('filter.author_id');
+        $authorWhere = '';
 
-        // Filter by state
-        $state = $this->getState('filter.published');
+        if (is_numeric($authorId)) {
+            $authorId    = (int)$authorId;
+            $type        = $this->getState('filter.author_id.include', true) ? ' = ' : ' <> ';
+            $authorWhere = $db->qn('a.created_by') . $type . ':authorId';
+            $query->bind(':authorId', $authorId, ParameterType::INTEGER);
+        } elseif (\is_array($authorId)) {
+            $authorId = array_values(array_filter($authorId, 'is_numeric'));
 
-        if (is_numeric($state)) {
-            $query->where('a.state = ' . (int)$state);
-        } else {
-            $query->where('(a.state IN (0,1,2))');
+            if ($authorId) {
+                $type        = $this->getState('filter.author_id.include', true) ? ' IN' : ' NOT IN';
+                $authorWhere = $db->qn('a.created_by') . $type . ' (' . implode(
+                        ',',
+                        $query->bindArray($authorId)
+                    ) . ')';
+            }
+        }
+
+        // Filter by author alias
+        $authorAlias      = $this->getState('filter.author_alias');
+        $authorAliasWhere = '';
+
+        if (\is_string($authorAlias)) {
+            $type             = $this->getState('filter.author_alias.include', true) ? ' = ' : ' <> ';
+            $authorAliasWhere = $db->qn('a.created_by_alias') . $type . ':authorAlias';
+            $query->bind(':authorAlias', $authorAlias);
+        } elseif (\is_array($authorAlias) && !empty($authorAlias)) {
+            $type             = $this->getState('filter.author_alias.include', true) ? ' IN' : ' NOT IN';
+            $authorAliasWhere = $db->qn('a.created_by_alias') . $type
+                . ' (' . implode(',', $query->bindArray($authorAlias, ParameterType::STRING)) . ')';
+        }
+
+        if (!empty($authorWhere) && !empty($authorAliasWhere)) {
+            $query->where('(' . $authorWhere . ' OR ' . $authorAliasWhere . ')');
+        } elseif (!empty($authorWhere) || !empty($authorAliasWhere)) {
+            // One of these is empty, the other is not so we just add both
+            $query->where($authorWhere . $authorAliasWhere);
         }
 
         // Filter by start and end dates.
-        $nullDate = $db->quote($db->getNullDate());
-        $nowDate = $db->quote(Factory::getDate()->toSql());
-
-        if ($this->getState('filter.publish_date')) {
-            $query->where('(a.publish_up = ' . $nullDate . ' OR a.publish_up <= ' . $nowDate . ')')
-                ->where('(a.publish_down = ' . $nullDate . ' OR a.publish_down >= ' . $nowDate . ')');
+        if ((!$user->authorise('core.edit.state', 'com_bpgallery')) && (!$user->authorise(
+                'core.edit',
+                'com_bpgallery'
+            ))) {
+            $query->where(
+                [
+                    '(' . $db->qn('a.publish_up') . ' IS NULL OR ' . $db->qn('a.publish_up') . ' <= :publishUp)',
+                    '(' . $db->qn('a.publish_down') . ' IS NULL OR ' . $db->qn('a.publish_down') . ' >= :publishDown)',
+                ]
+            )
+                ->bind(':publishUp', $nowDate)
+                ->bind(':publishDown', $nowDate);
         }
 
         // Filter by Date Range or Relative Date
         $dateFiltering = $this->getState('filter.date_filtering', 'off');
-        $dateField = $this->getState('filter.date_field', 'a.created');
+        $dateField        = $db->escape($this->getState('filter.date_field', 'a.created'));
 
         switch ($dateFiltering) {
             case 'range':
-                $startDateRange = $db->quote($this->getState('filter.start_date_range', $nullDate));
-                $endDateRange = $db->quote($this->getState('filter.end_date_range', $nullDate));
-                $query->where(
-                    '(' . $dateField . ' >= ' . $startDateRange . ' AND ' . $dateField .
-                    ' <= ' . $endDateRange . ')'
-                );
+                $startDateRange = $this->getState('filter.start_date_range', '');
+                $endDateRange   = $this->getState('filter.end_date_range', '');
+
+                if ($startDateRange || $endDateRange) {
+                    $query->where($db->qn($dateField) . ' IS NOT NULL');
+
+                    if ($startDateRange) {
+                        $query->where($db->qn($dateField) . ' >= :startDateRange')
+                            ->bind(':startDateRange', $startDateRange);
+                    }
+
+                    if ($endDateRange) {
+                        $query->where($db->qn($dateField) . ' <= :endDateRange')
+                            ->bind(':endDateRange', $endDateRange);
+                    }
+                }
+
                 break;
 
             case 'relative':
                 $relativeDate = (int)$this->getState('filter.relative_date', 0);
                 $query->where(
-                    $dateField . ' >= ' . $query->dateAdd($nowDate, -1 * $relativeDate, 'DAY')
+                    $db->qn($dateField) . ' IS NOT NULL AND '
+                    . $db->qn($dateField) . ' >= ' . $query->dateAdd($db->quote($nowDate), -1 * $relativeDate, 'DAY')
                 );
                 break;
 
@@ -499,37 +612,61 @@ class CategoryModel extends ListModel
                 break;
         }
 
-        // Filter by search in title
-        $search = $this->getState('list.filter');
-        if (!empty($search)) {
-            $search = $db->quote('%' . $db->escape($search, true) . '%');
-            $query->where('(a.name LIKE ' . $search . ')');
-        }
+
 
         // Filter by language
         if ($this->getState('filter.language')) {
-            $query->where('a.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
+            $query->whereIn(
+                $db->qn('a.language'),
+                [Factory::getApplication()->getLanguage()->getTag(), '*'],
+                ParameterType::STRING
+            );
         }
 
-        // Filter images ids
-        $filter_image_id = $this->getState('filter.image_id');
-        $filter_image_id = (!is_array($filter_image_id) and $filter_image_id > 0) ? [$filter_image_id] : $filter_image_id;
-        $filter_image_id_include = $this->getState('filter.image_id.include', false);
+        // Filter by a single or group of tags.
+        $tagId = $this->getState('filter.tag');
 
-        if (!empty($filter_image_id) and $filter_image_id_include) {
-            $query->where('a.id IN(' . implode(',', $filter_image_id) . ')');
-        } elseif (!empty($filter_image_id) and !$filter_image_id_include) {
-            $query->where('a.id NOT IN(' . implode(',', $filter_image_id) . ')');
+        if (\is_array($tagId) && \count($tagId) === 1) {
+            $tagId = current($tagId);
         }
 
-        // Set sortname ordering if selected
-        if ($this->getState('list.ordering') === 'sortname') {
-            $query->order($db->escape('a.sortname1') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
-                ->order($db->escape('a.sortname2') . ' ' . $db->escape($this->getState('list.direction', 'ASC')))
-                ->order($db->escape('a.sortname3') . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
-        } else {
-            $query->order($db->escape($this->getState('list.ordering', 'a.ordering')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
+        if (\is_array($tagId)) {
+            $tagId = ArrayHelper::toInteger($tagId);
+
+            if ($tagId) {
+                $subQuery = $db->getQuery(true)
+                    ->select('DISTINCT ' . $db->qn('content_item_id'))
+                    ->from($db->qn('#__contentitem_tag_map'))
+                    ->where(
+                        [
+                            $db->qn('tag_id') . ' IN (' . implode(',', $query->bindArray($tagId)) . ')',
+                            $db->qn('type_alias') . ' = ' . $db->quote('com_bpgallery.image'),
+                        ]
+                    );
+
+                $query->join(
+                    'INNER',
+                    '(' . $subQuery . ') AS ' . $db->qn('tagmap'),
+                    $db->qn('tagmap.content_item_id') . ' = ' . $db->qn('a.id')
+                );
+            }
+        } elseif ($tagId = (int)$tagId) {
+            $query->join(
+                'INNER',
+                $db->qn('#__contentitem_tag_map', 'tagmap'),
+                $db->qn('tagmap.content_item_id') . ' = ' . $db->qn('a.id')
+                . ' AND ' . $db->qn('tagmap.type_alias') . ' = ' . $db->quote('com_bpgallery.image')
+            )
+                ->where($db->qn('tagmap.tag_id') . ' = :tagId')
+                ->bind(':tagId', $tagId, ParameterType::INTEGER);
         }
+
+        // Add the list ordering clause.
+        $query->order(
+            $db->escape($this->getState('list.ordering', 'a.ordering')) . ' ' . $db->escape(
+                $this->getState('list.direction', 'ASC')
+            )
+        );
 
         return $query;
     }
@@ -559,18 +696,4 @@ class CategoryModel extends ListModel
         }
     }
 
-
-    /**
-     * Method to get a JPagination object for the data set.
-     *
-     * @return Pagination|null A JPagination object for the data set.
-     */
-    public function getPagination(): ?Pagination
-    {
-        if (empty($this->_pagination)) {
-            return null;
-        }
-
-        return $this->_pagination;
-    }
 }

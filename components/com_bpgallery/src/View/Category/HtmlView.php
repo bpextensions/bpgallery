@@ -15,8 +15,12 @@ defined('_JEXEC') or die;
 
 use BPExtensions\Component\BPGallery\Site\Helper\LayoutHelper;
 use BPExtensions\Component\BPGallery\Site\Helper\RouteHelper;
+use Exception;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Document\HtmlDocument;
+use Joomla\CMS\Event\Content\AfterDisplayEvent;
+use Joomla\CMS\Event\Content\AfterTitleEvent;
+use Joomla\CMS\Event\Content\BeforeDisplayEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Menu\MenuItem;
@@ -24,6 +28,7 @@ use Joomla\CMS\MVC\View\CategoryView;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
+use stdClass;
 
 /**
  * HTML View class for the BPGallery component
@@ -67,11 +72,11 @@ class HtmlView extends CategoryView
      *
      * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
      *
-     * @return  mixed  A string if successful, otherwise an Error object.
+     * @throws Exception
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
-        parent::commonCategoryDisplay();
+        $this->commonCategoryDisplay();
 
         // Flag indicates to not add limitstart=0 to URL
         $this->pagination->hideEmptyLimitstart = true;
@@ -160,6 +165,38 @@ class HtmlView extends CategoryView
                 $doc->setMetaData($k, $v);
             }
         }
+
+        // Bind category events
+        $afterTitleEvent    = new AfterTitleEvent('ContentAfterTitle', [
+            'context' => $this->category->extension . '.categories',
+            'subject' => $this->category,
+            'params'  => $this->params,
+        ]);
+        $beforeDisplayEvent = new BeforeDisplayEvent('ContentBeforeDisplay', [
+            'context' => $this->category->extension . '.categories',
+            'subject' => $this->category,
+            'params'  => $this->params,
+        ]);
+        $afterDisplayEvent  = new AfterDisplayEvent('ContentAfterDisplay', [
+            'context' => $this->category->extension . '.categories',
+            'subject' => $this->category,
+            'params'  => $this->params,
+        ]);
+
+        $this->category->event = new stdClass();
+
+        $this->category->event->afterDisplayTitle    = $dispatcher->dispatch(
+            $afterTitleEvent->getName(),
+            $afterTitleEvent
+        )->getArgument('result', []);
+        $this->category->event->beforeDisplayContent = $dispatcher->dispatch(
+            $beforeDisplayEvent->getName(),
+            $beforeDisplayEvent
+        )->getArgument('result', []);
+        $this->category->event->afterDisplayContent  = $dispatcher->dispatch(
+            $afterDisplayEvent->getName(),
+            $afterDisplayEvent
+        )->getArgument('result', []);
 
         parent::display($tpl);
     }
