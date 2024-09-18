@@ -23,7 +23,11 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
 
 // Group items if required
 if ($this->params->get('group_images')) {
-    $groups = LayoutHelper::groupItemsByCategory($this->items);
+    try {
+        $groups = LayoutHelper::groupItemsByCategory($this->items);
+    } catch (JsonException $e) {
+        $groups = [];
+    }
 }
 
 $layoutOptions = [

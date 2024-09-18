@@ -47,7 +47,11 @@ $lightbox_options = [
         'easing'   => 'ease-in-out'
     ]
 ];
-$lightbox_options = json_encode($lightbox_options, JSON_THROW_ON_ERROR);
+try {
+    $lightbox_options = json_encode($lightbox_options, JSON_THROW_ON_ERROR);
+} catch (JsonException $e) {
+    $lightbox_options = [];
+}
 
 // Enable or disable image title in a lightbox
 $titleSrc = '"title"';

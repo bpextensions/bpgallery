@@ -40,7 +40,7 @@ class HtmlView extends CategoryView
      *
      * @var  array
      */
-    protected $items;
+    public $items;
 
     /**
      * @var    string  The name of the extension for the category
@@ -57,15 +57,17 @@ class HtmlView extends CategoryView
      */
     protected $viewName = 'image';
 
-    protected ?Registry $params = null;
+    public ?Registry $params = null;
 
     protected ?MenuItem $menu = null;
 
     protected ?int $maxLevel = null;
 
-    protected ?FileLayout $layoutThumbnail = null;
+    public ?FileLayout $layoutThumbnail = null;
 
-    protected ?FileLayout $layoutCategory = null;
+    public ?FileLayout $layoutCategory = null;
+
+    public $pagination = null;
 
     /**
      * Execute and display a template script.
