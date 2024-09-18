@@ -6,23 +6,27 @@ ALTER TABLE `#__bpgallery_images`
 ALTER TABLE `#__bpgallery_images`
     MODIFY COLUMN `publish_down` DATETIME DEFAULT NULL;
 ALTER TABLE `#__bpgallery_images`
-    MODIFY COLUMN `created` DATETIME DEFAULT NULL;
+    MODIFY COLUMN `created` DATETIME NOT NULL;
 ALTER TABLE `#__bpgallery_images`
-    MODIFY COLUMN `modified` DATETIME DEFAULT NULL;
+    MODIFY COLUMN `modified` DATETIME NOT NULL;
 
 -- Altera data
 UPDATE `#s`
 SET `checked_out_time` = NULL
 WHERE `checked_out_time` = '0000-00-00 00:00:00';
+
 UPDATE `#__bpgallery_images`
 SET `publish_up` = NULL
 WHERE `publish_up` = '0000-00-00 00:00:00';
+
 UPDATE `#__bpgallery_images`
 SET `publish_down` = NULL
 WHERE `publish_down` = '0000-00-00 00:00:00';
+
 UPDATE `#__bpgallery_images`
-SET `created` = NULL
+SET `created` = NOW()
 WHERE `created` = '0000-00-00 00:00:00';
+
 UPDATE `#__bpgallery_images`
-SET `modified` = NULL
+SET `modified` = NOW()
 WHERE `modified` = '0000-00-00 00:00:00';
