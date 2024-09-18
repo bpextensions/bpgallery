@@ -15,7 +15,9 @@
 
     <target name="test:compatibility">
         <echo msg="Testing PHP Compatibility"/>
-        <exec command="composer test:compatibility" checkreturn="true"/>
+        <exec executable="composer" checkreturn="true">
+            <arg value="test:compatibility"/>
+        </exec>
     </target>
 
     <target name="test:com_bpgallery">
@@ -30,24 +32,26 @@
 
     <target name="build:com_bpgallery">
         <echo msg="Creating component directories"/>
-        <mkdir dir="./.build"/>
-        <mkdir dir="./.build/com_bpgallery/admin"/>
-        <mkdir dir="./.build/com_bpgallery/site"/>
-        <mkdir dir="./.build/com_bpgallery/install"/>
+        <mkdir dir=".build/com_bpgallery/admin"/>
+        <mkdir dir=".build/com_bpgallery/site"/>
 
         <echo msg="Building assets with Webpack"/>
-        <exec command="npm run build" checkreturn="true"/>
+        <exec executable="npm" checkreturn="true">
+            <arg value="run"/>
+            <arg value="build"/>
+        </exec>
 
         <echo msg="Building component installer"/>
         <copy todir="./.build/com_bpgallery/admin">
             <fileset dir="./administrator/components/com_bpgallery">
                 <include name="**/*"/>
-                <exclude name="install/script.php"/>
             </fileset>
             <filterchain>
                 <expandproperties/>
             </filterchain>
         </copy>
+
+        <copy file=".build/com_bpgallery/admin/script.php" tofile=".build/com_bpgallery/script.php" overwrite="true"/>
 
         <copy todir="./.build/com_bpgallery/site">
             <fileset dir="./components/com_bpgallery">
@@ -70,18 +74,7 @@
             </filterchain>
         </copy>
 
-
-        <copy todir="./.build/com_bpgallery/install">
-            <fileset dir="./administrator/components/com_bpgallery/install/">
-                <include name="script.php"/>
-                <include name="defaults.json"/>
-            </fileset>
-            <filterchain>
-                <expandproperties/>
-            </filterchain>
-        </copy>
-
-        <move file="./.build/com_bpgallery/admin/bpgallery.xml" tofile="./.build/com_bpgallery/bpgallery.xml"
+        <copy file="./.build/com_bpgallery/admin/bpgallery.xml" tofile="./.build/com_bpgallery/bpgallery.xml"
               overwrite="true"/>
 
         <echo msg="Creating component zipfile."/>
@@ -142,7 +135,7 @@
 
     <target name="clean">
         <echo msg="Removing build directory ./.build if exists"/>
-        <delete dir="./.build" includeemptydirs="true"/>
+        <delete dir="./.build" includeemptydirs="true" quiet="true"/>
     </target>
 
     <target name="build:clean">
