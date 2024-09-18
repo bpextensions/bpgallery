@@ -11,12 +11,17 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
+        with:
+          php-version: 8.1
 
       - name: Composer Installation
         uses: php-actions/composer@v5
+        with:
+          php-version: 8.1
 
       - name: PHP 8.1+ Compatibility
         id: php81
         uses: php-actions/composer@v5
         with:
+          php-version: 8.1
           command: "test:compatibility:php81"
